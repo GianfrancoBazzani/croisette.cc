@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+
+# output
+dist/
+out/
+build/
+
+# next.js
+.next/
+.vercel/
+next-env.d.ts
+
+# bun
+bun.lockb
+
+# environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
