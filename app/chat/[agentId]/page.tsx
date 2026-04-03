@@ -10,7 +10,13 @@ export default function ChatPage() {
   const params = useParams<{ agentId: string }>();
   const agentId = params.agentId;
   const agent = AGENTS[agentId];
-  const sessionId = useMemo(() => crypto.randomUUID(), []);
+  // TODO: replace with crypto.randomUUID() once HTTPS certificate is installed
+  const sessionId = useMemo(
+    () =>
+      Math.random().toString(36).slice(2) +
+      Date.now().toString(36),
+    []
+  );
 
   if (!agent) {
     return (
