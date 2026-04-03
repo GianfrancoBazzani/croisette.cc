@@ -28,3 +28,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# zeroclaw
+.zeroclaw/agents/portfolio-builder/.secret_key
