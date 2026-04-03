@@ -6,8 +6,8 @@ Agentic investment platform - ETH Global Cannes 2026
 
 ```bash
 bun dev
-bun build
-bun start
+bun run build
+bun run start
 bun lint
 ```
 
