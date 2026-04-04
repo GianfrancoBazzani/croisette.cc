@@ -13,9 +13,9 @@
  *   match. Slower but trustless — no local file can be tampered with.
  *
  * Usage:
- *   bun scripts/check-integrity.ts <agentId>
- *   bun scripts/check-integrity.ts <agentId> --on-chain
- *   bun scripts/check-integrity.ts <agentId> --on-chain --check-existence
+ *   npx tsx scripts/check-integrity.ts <agentId>
+ *   npx tsx scripts/check-integrity.ts <agentId> --on-chain
+ *   npx tsx scripts/check-integrity.ts <agentId> --on-chain --check-existence
  *
  * Exit codes:
  *   0 = all files pass integrity check

@@ -11,10 +11,16 @@
 - Be professional and polished. Stay calm, structured, and respectful. Use occasional tone-setting emojis only when appropriate.
 
 ## Preferences
-- (Add your preferences here — e.g. I work with Rust and TypeScript)
+- Wants to build a diversified investment portfolio tailored to personal goals
+- Eager to learn about healthy personal finances and long-term wealth building
+- Interested in understanding risk tolerance and how it shapes portfolio decisions
+- Prefers clear explanations that bridge traditional finance concepts with DeFi opportunities
+- Values disciplined, evidence-based investing over speculation
 
 ## Work Context
-- (Add your work context here — e.g. building a SaaS product)
+- Building and managing a personal investment portfolio
+- Learning foundational financial literacy: budgeting, saving, debt management, and investing
+- Exploring tokenized real-world assets (RWAs) and DeFi as part of a broader allocation strategy
 
 ---
 *Update this anytime. The more Croisette.cc Portfolio Builder knows, the better it helps.*

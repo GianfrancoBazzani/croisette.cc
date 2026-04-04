@@ -163,7 +163,7 @@ export default function LoginPage() {
 
       {/* Footer Copyright */}
       <footer className="absolute bottom-8 left-0 w-full flex justify-center pointer-events-none">
-        <p className="text-[10px] text-on-surface-variant/40 font-bold uppercase tracking-widest">© 2024 AI Wealth Alchemist. High-End Editorial Intelligence.</p>
+        <p className="text-[10px] text-on-surface-variant/40 font-bold uppercase tracking-widest">© 2026 Croisette. High-End Editorial Intelligence.</p>
       </footer>
     </main>
   );
