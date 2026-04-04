@@ -806,7 +806,7 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
               token
             </span>
             <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">
-              Powered by OG Verification Protocol
+              Powered by OG Agent Verification Protocol
             </span>
           </div>
         </div>
