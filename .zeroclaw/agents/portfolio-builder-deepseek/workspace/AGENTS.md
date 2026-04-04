@@ -1,4 +1,4 @@
-# AGENTS.md — Operating Procedures
+# AGENTS.md — Croisette.cc Portfolio Builder
 
 ## Every Session (required)
 
