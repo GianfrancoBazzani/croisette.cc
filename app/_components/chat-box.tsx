@@ -10,23 +10,10 @@ interface ChatBoxProps {
   agentName: string;
 }
 
-interface ChatOption {
-  label: string;
-  text: string;
-}
-
 interface ParsedMessage {
   body: string;
-  options: ChatOption[];
+  options: { label: string; text: string }[];
 }
-
-const DEFAULT_OPTIONS: ChatOption[] = [
-  { label: "A", text: "Build my first investment portfolio" },
-  { label: "B", text: "Design an emergency fund" },
-  { label: "C", text: "Set up a DCA strategy" },
-  { label: "D", text: "Learn about investing fundamentals" },
-  { label: "E", text: "Something else" },
-];
 
 function parseMessageWithOptions(text: string): ParsedMessage {
   const lines = text.split("\n");
@@ -156,13 +143,7 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
               : null;
           const isInteractive = isLastAssistant && isReady;
 
-          // Fallback: if last assistant message has no parsed options, show defaults
-          const displayOptions =
-            parsed && parsed.options.length > 0
-              ? parsed.options
-              : isLastAssistant && isReady
-                ? DEFAULT_OPTIONS
-                : [];
+          const displayOptions = parsed?.options ?? [];
 
           if (message.role === "user") {
             return (
