@@ -108,7 +108,15 @@ export default function OnboardingPage() {
   const isReady = status === "ready";
   const hasSentWakeUp = useRef(false);
 
-  const wakeUpPrompt = "Hello Croissette my name is Jonathan";
+  // Wake up prompt
+  function generateWakeUpPrompt(): string {
+    return `Hello Croissette Portfolio Agent, I am ${profile.name}, a ${profile.age}-year-old investor from ${countries.getName(profile.country, "en")}.
+    I have selected the "${HORIZONS.find(h => h.id === selectedHorizon)?.title}" financial horizon and the "${RISKS.find(r => r.id === selectedRisk)?.title}" risk architecture.
+    Please use this information to tailor your investment strategies and recommendations for me.
+    Let's work together to optimize my portfolio according to my preferences and goals.
+    To ensure a easier iteration can you switch to my natal language during this conversation?
+    `
+  }
 
   // Start the chat connection when we enter step 3 (verification)
   useEffect(() => {
@@ -119,9 +127,9 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (chatStarted && isReady && !hasSentWakeUp.current) {
       hasSentWakeUp.current = true;
-      sendMessage({ text: wakeUpPrompt });
+      sendMessage({ text: generateWakeUpPrompt() });
     }
-  }, [chatStarted, isReady, sendMessage, wakeUpPrompt]);
+  }, [chatStarted, isReady, sendMessage]);
 
   const hasFirstResponse = messages.some(
     (m) => m.role === "assistant" && m.parts.some((p) => p.type === "text" && p.text),
