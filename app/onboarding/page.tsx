@@ -510,79 +510,181 @@ function StepProfile({
   const update = (field: keyof typeof profile, value: string) =>
     onChange({ ...profile, [field]: value });
 
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
+  const countryRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const filteredCountries = useMemo(
+    () =>
+      countrySearch.trim()
+        ? COUNTRY_LIST.filter((c) =>
+            c.name.toLowerCase().includes(countrySearch.toLowerCase()),
+          )
+        : COUNTRY_LIST,
+    [countrySearch],
+  );
+
+  const selectedCountryName = profile.country
+    ? countries.getName(profile.country, "en") ?? ""
+    : "";
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (countryRef.current && !countryRef.current.contains(e.target as Node)) {
+        setCountryOpen(false);
+      }
+    }
+    if (countryOpen) {
+      document.addEventListener("mousedown", handleClick);
+      return () => document.removeEventListener("mousedown", handleClick);
+    }
+  }, [countryOpen]);
+
+  // Focus search input when opened
+  useEffect(() => {
+    if (countryOpen) searchInputRef.current?.focus();
+  }, [countryOpen]);
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-[100dvh] flex flex-col items-center justify-center relative px-6 pt-20 pb-24 overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/3 -translate-x-1/3" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-secondary-fixed/10 blur-[100px] rounded-full translate-y-1/3 translate-x-1/3" />
 
       <div className="w-full max-w-xl z-10">
         {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface leading-tight">
+        <div className="text-center mb-8 space-y-2">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-on-surface leading-tight">
             Tell Us About <span className="text-primary">You.</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-tertiary-fixed-dim font-medium text-sm md:text-base uppercase tracking-[0.2em]">
             A few details to personalize your experience.
           </p>
         </div>
 
         {/* Form */}
-        <div className="space-y-8">
+        <div className="space-y-5">
           {/* Name */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Full Name
             </label>
             <input
               type="text"
+              autoComplete="name"
               value={profile.name}
               onChange={(e) => update("name", e.target.value)}
               placeholder="e.g. Julien Delacroix"
-              className="w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+              className="w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
             />
           </div>
 
           {/* Age */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Age
             </label>
             <input
               type="number"
+              autoComplete="bday-year"
               value={profile.age}
               onChange={(e) => update("age", e.target.value)}
               placeholder="e.g. 34"
               min="18"
               max="120"
-              className="w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+              className="w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
             />
           </div>
 
           {/* Country */}
-          <div className="space-y-2">
+          <div className="space-y-1.5" ref={countryRef}>
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Country
             </label>
-            <select
-              value={profile.country}
-              onChange={(e) => update("country", e.target.value)}
-              className={`w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium appearance-none focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all ${profile.country ? "text-on-surface" : "text-on-surface-variant/40"
-                }`}
-            >
-              <option value="" disabled>
-                Select your country
-              </option>
-              {COUNTRY_LIST.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              {/* Trigger */}
+              <button
+                type="button"
+                onClick={() => {
+                  setCountryOpen((o) => !o);
+                  setCountrySearch("");
+                }}
+                className={`w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-left transition-all flex items-center justify-between cursor-pointer ${
+                  countryOpen
+                    ? "bg-surface-container-highest ring-1 ring-primary/30"
+                    : ""
+                } ${selectedCountryName ? "text-on-surface" : "text-on-surface-variant/40"}`}
+              >
+                <span>{selectedCountryName || "Select your country"}</span>
+                <span
+                  className={`material-symbols-outlined text-on-surface-variant/40 text-lg transition-transform duration-200 ${
+                    countryOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  expand_more
+                </span>
+              </button>
+
+              {/* Dropdown */}
+              {countryOpen && (
+                <div className="absolute z-50 top-full mt-2 w-full bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_rgba(29,27,26,0.10)] overflow-hidden">
+                  {/* Search */}
+                  <div className="p-3">
+                    <div className="flex items-center gap-3 bg-surface-container-high rounded-lg px-4 py-2.5">
+                      <span className="material-symbols-outlined text-on-surface-variant/40 text-lg">
+                        search
+                      </span>
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        value={countrySearch}
+                        onChange={(e) => setCountrySearch(e.target.value)}
+                        placeholder="Search countries…"
+                        className="flex-1 bg-transparent text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* List */}
+                  <ul className="max-h-48 overflow-y-auto px-1.5 pb-1.5">
+                    {filteredCountries.length === 0 ? (
+                      <li className="px-5 py-3 text-sm text-on-surface-variant/40">
+                        No countries found
+                      </li>
+                    ) : (
+                      filteredCountries.map((c) => {
+                        const isActive = profile.country === c.code;
+                        return (
+                          <li key={c.code}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                update("country", c.code);
+                                setCountryOpen(false);
+                                setCountrySearch("");
+                              }}
+                              className={`w-full text-left px-5 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                                isActive
+                                  ? "bg-primary/10 text-primary"
+                                  : "text-on-surface hover:bg-surface-container-high"
+                              }`}
+                            >
+                              {c.name}
+                            </button>
+                          </li>
+                        );
+                      })
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Telegram */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Telegram Handle
             </label>
@@ -592,10 +694,11 @@ function StepProfile({
               </span>
               <input
                 type="text"
+                autoComplete="username"
                 value={profile.telegram}
                 onChange={(e) => update("telegram", e.target.value)}
                 placeholder="username"
-                className="w-full bg-surface-container-high rounded-xl pl-11 pr-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                className="w-full bg-surface-container-high rounded-xl pl-11 pr-6 py-4 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
               />
             </div>
           </div>
@@ -865,7 +968,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
   }, [activeIndex, charIndex, onComplete]);
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-[100dvh] flex flex-col items-center justify-center relative px-6 pt-20 pb-24 overflow-hidden">
       {/* Background accents */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/3 -translate-x-1/3" />
@@ -873,17 +976,17 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
 
       <div className="w-full max-w-2xl z-10">
         {/* Header */}
-        <div className="text-center mb-20 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface leading-tight">
+        <div className="text-center mb-10 space-y-2">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-on-surface leading-tight">
             Preparing Your <span className="text-primary">Intelligence.</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-tertiary-fixed-dim font-medium text-sm md:text-base uppercase tracking-[0.2em]">
             Building a bespoke experience for you.
           </p>
         </div>
 
         {/* Steps */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {PERSONALIZATION_STEPS.map((step, i) => {
             const isActive = i === activeIndex;
             const isCompleted = i < activeIndex;
@@ -892,7 +995,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
             return (
               <div
                 key={i}
-                className={`flex items-center gap-5 transition-all duration-500 ${isHidden
+                className={`flex items-center gap-4 transition-all duration-500 ${isHidden
                   ? "opacity-0 translate-y-4"
                   : isCompleted
                     ? "opacity-40"
@@ -901,7 +1004,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
               >
                 {/* Icon */}
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-colors duration-500 ${isActive
+                  className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors duration-500 ${isActive
                     ? "bg-primary/20 text-primary"
                     : isCompleted
                       ? "bg-surface-container-high text-on-surface-variant"
@@ -910,13 +1013,13 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
                 >
                   {isCompleted ? (
                     <span
-                      className="material-symbols-outlined text-primary"
+                      className="material-symbols-outlined text-primary text-xl"
                       style={{ fontVariationSettings: "'FILL' 1" }}
                     >
                       check_circle
                     </span>
                   ) : (
-                    <span className="material-symbols-outlined">
+                    <span className="material-symbols-outlined text-xl">
                       {step.icon}
                     </span>
                   )}
@@ -924,7 +1027,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
 
                 {/* Text */}
                 <span
-                  className={`text-lg font-medium tracking-tight transition-colors duration-500 ${isActive ? "text-on-surface" : "text-on-surface-variant"
+                  className={`text-base font-medium tracking-tight transition-colors duration-500 ${isActive ? "text-on-surface" : "text-on-surface-variant"
                     }`}
                 >
                   {isActive
@@ -933,7 +1036,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
                       ? step.text
                       : ""}
                   {isActive && (
-                    <span className="inline-block w-[2px] h-5 bg-primary ml-0.5 align-middle animate-pulse" />
+                    <span className="inline-block w-[2px] h-4 bg-primary ml-0.5 align-middle animate-pulse" />
                   )}
                 </span>
               </div>
@@ -942,7 +1045,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {/* Progress bar */}
-        <div className="mt-16 w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+        <div className="mt-10 w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
           <div
             className="h-full bg-primary transition-all duration-700 ease-out"
             style={{
