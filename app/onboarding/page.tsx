@@ -1100,7 +1100,7 @@ function StepAdvisor({
       </div>
 
       {/* Input bar */}
-      <div className="px-6 md:px-12 pt-6 max-w-4xl mx-auto w-full">
+      <div className="px-6 md:px-12 pt-6 pb-6 max-w-4xl mx-auto w-full">
         <form onSubmit={handleSubmit}>
           <div className="flex items-center bg-surface-container-lowest rounded-xl shadow-ambient ghost-border p-2 pl-6 focus-within:ring-2 focus-within:ring-primary/20 transition-colors">
             <input
