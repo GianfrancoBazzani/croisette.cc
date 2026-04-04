@@ -46,10 +46,10 @@ export default function LoginPage() {
           setError((passkeyRes.error.message as string) || passkeyRes.error.statusText || "Account created, but failed to register passkey. Please try again from your profile.");
         } else {
           // Successfully created user & passkey, we can redirect or show success
-          window.location.href = "/";
+          window.location.href = "/onboarding";
         }
       } else {
-        window.location.href = "/";
+        window.location.href = "/onboarding";
       }
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred");
