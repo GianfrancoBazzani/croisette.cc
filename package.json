@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "bun --bun next build", 
+    "build": "bun --bun next build",
     "start": "bun --bun next start -p 80",
-    "lint": "eslint"
+    "lint": "eslint",
+    "agent:register": "bun scripts/register-agent.ts",
+    "agent:check": "bun scripts/check-integrity.ts"
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "^0.18.0",
@@ -17,12 +19,15 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@0gfoundation/0g-ts-sdk": "^1.2.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
+    "ethers": "^6.16.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
