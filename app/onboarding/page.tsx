@@ -6,6 +6,7 @@ import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
 import { AdvisorSidebar, type FunnelData } from "@/app/_components/advisor-sidebar";
 import Markdown from "react-markdown";
+import Link from "next/link";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 
@@ -173,9 +174,9 @@ export default function OnboardingPage() {
     <>
       {/* ── Header ── */}
       <header className="fixed top-0 w-full z-50 glass shadow-ambient h-16 flex items-center px-6 justify-between">
-        <span className="text-2xl font-black text-inverse-surface tracking-tighter">
+        <Link href="/" className="text-2xl font-black text-inverse-surface tracking-tighter">
           Croisette
-        </span>
+        </Link>
         <div className="flex items-center gap-4">
           <span className="text-xs font-label uppercase tracking-widest text-on-surface/40">
             Step {String(step + 1).padStart(2, "0")} / 05
