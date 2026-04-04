@@ -605,7 +605,7 @@ const VERIFICATION_CARDS = [
   {
     icon: "cloud_upload",
     title: "Blockchain Upload",
-    detail: "Submitting signed payload to OG Verification Network for immutable storage.",
+    detail: "Submitting signed payload to 0G Verification Network for immutable storage.",
     hash: "0x3e8b…f402",
   },
   {
@@ -806,7 +806,7 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
               token
             </span>
             <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">
-              Powered by OG Verification Protocol
+              Powered by 0G Verification Protocol
             </span>
           </div>
         </div>
