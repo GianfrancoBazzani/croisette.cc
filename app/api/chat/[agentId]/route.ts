@@ -5,8 +5,9 @@ import {
 } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 import { AGENTS } from "@/app/_lib/constants";
-import { ZeroClawClient } from "@/app/_lib/acp";
 import { getSession, setSession } from "@/app/_lib/session-store";
+import { ZeroClawClient } from "@/app/_lib/acp";
+import { parseAgentResponse } from "@/app/_lib/agent-response";
 
 export const maxDuration = 60;
 
@@ -53,15 +54,29 @@ export async function POST(
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      const textId = crypto.randomUUID();
-
-      writer.write({ type: "start" });
-      writer.write({ type: "text-start", id: textId });
-
+      // Buffer the full response from the agent
+      let fullResponse = "";
       await session!.client.prompt(prompt, (chunk) => {
-        writer.write({ type: "text-delta", id: textId, delta: chunk });
+        fullResponse += chunk;
       });
 
+      // Parse the JSON envelope
+      const envelope = parseAgentResponse(fullResponse);
+
+      // Send structured message with metadata
+      writer.write({
+        type: "start",
+        messageMetadata: {
+          options: envelope.options ?? null,
+          profile_update: envelope.profile_update ?? null,
+          insight: envelope.insight ?? null,
+          allocation: envelope.allocation ?? null,
+        },
+      });
+
+      const textId = crypto.randomUUID();
+      writer.write({ type: "text-start", id: textId });
+      writer.write({ type: "text-delta", id: textId, delta: envelope.text });
       writer.write({ type: "text-end", id: textId });
       writer.write({ type: "finish", finishReason: "stop" });
     },
