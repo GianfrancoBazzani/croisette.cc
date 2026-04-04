@@ -162,8 +162,8 @@ export default function LoginPage() {
       </div>
 
       {/* Footer Copyright */}
-      <footer className="absolute bottom-8 left-0 w-full flex justify-center pointer-events-none">
-        <p className="text-[10px] text-on-surface-variant/40 font-bold uppercase tracking-widest">© 2026 Croisette. High-End Editorial Intelligence.</p>
+      <footer className="absolute bottom-0 left-0 w-full bg-inverse-surface flex justify-center px-8 py-5 pointer-events-none">
+        <p className="text-[10px] text-surface-variant/40 font-label uppercase tracking-widest">&copy; 2026 Croisette. High-End Editorial Intelligence.</p>
       </footer>
     </main>
   );
