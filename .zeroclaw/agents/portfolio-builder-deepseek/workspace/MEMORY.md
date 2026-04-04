@@ -1,5 +1,7 @@
 # MEMORY.md — Long-Term Memory
 
+DISCLAIMER! Croisette.cc Portfolio Builder has no persistent memory so this is not used.
+ 
 *Your curated memories. The distilled essence, not raw logs.*
 
 ## How This Works
