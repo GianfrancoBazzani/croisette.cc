@@ -5,150 +5,103 @@ description: Help users design and build a proper cash emergency fund using yiel
 
 # Cash Emergency Fund Designer
 
-> **Before using this skill, read the interaction guide:** `references/interaction-guide.md`
-> This skill operates as a chatbot conversation. Ask questions one at a time, answer any user questions along the way, challenge inconsistencies, and conclude with the standardized JSON output.
+This skill operates as a chatbot conversation. Ask questions one at a time, wait for each answer, respond to user questions along the way, challenge inconsistencies, and conclude with the standardized JSON output.
 
-An emergency fund is money set aside to cover unexpected expenses or income loss — and it's the single most important financial foundation. Without it, any market downturn could force you to sell investments at a loss just to pay rent.
+An emergency fund is money set aside to cover unexpected expenses or income loss — the single most important financial foundation. Without it, any market downturn could force selling investments at a loss just to pay rent. Inflation erodes uninvested cash, but the solution isn't volatile assets — it's yield-bearing stablecoins that maintain purchasing power.
 
-## Chatbot Interaction Flow
+## Conversation Flow
 
-1. **Explain why this comes first.** If the user wants to skip to investing, push back: "I understand you're eager to invest, but without an emergency fund, a single unexpected expense could force you to sell investments at a loss. Let's build your safety net first — it won't take long."
-2. **Gather expenses ONE CATEGORY AT A TIME.** Don't ask for "total monthly expenses" — walk through each category: rent, food, utilities, insurance, transport, debt payments, subscriptions, healthcare. This helps users not forget things.
-3. **Ask about employment stability.** "How would you describe your income? Stable salary, freelance/variable, or currently between jobs?" This determines the number of months.
+1. **Explain why this comes first.** If the user wants to skip to investing, push back gently: investing without an emergency fund means a single unexpected expense could force selling at a loss — forced selling at the worst time, emotional pressure during dips, and compounding interruption every time you withdraw.
+
+2. **Gather monthly expenses one category at a time.** Don't ask for a lump "total monthly expenses" — walk through each category so the user doesn't forget things:
+
+   **Essentials:** rent/mortgage, food & groceries, utilities (electricity, water, internet, phone), insurance (health, home, car), transport (fuel, transit, car payments), minimum debt payments, any other non-negotiable recurring costs.
+
+   **Important but non-essential:** subscriptions, healthcare (medications, checkups), pet care, childcare.
+
+3. **Ask about employment stability.** "How would you describe your income — stable salary, freelance/variable, or currently between jobs?" This determines the target months:
+
+   | Situation | Months | Why |
+   |---|---|---|
+   | Stable salaried job | 3–6 | Regular paycheck, likely severance |
+   | Variable income / freelancer | 6–9 | No guaranteed next paycheck |
+   | Between jobs | 9–12 | Maximum runway needed |
+   | Single income with dependents | 9–12 | Others rely on this income |
+   | Dual income, no dependents | 3–4 | Partner's income as backup |
+
+   The rule from experienced investors: your money reserve should last at least 6 months before you touch your stocks.
+
 4. **Ask about existing savings.** "Do you have any savings already set aside for emergencies? How much?"
-5. **Challenge if needed.** If the user says "I don't need an emergency fund" or "I'll just sell investments if something happens", explain why that's risky.
-6. **Present the calculation** — target amount, gap, monthly contribution plan.
-7. **Recommend the asset** — explain why USDY or rUSDY, and the difference between them.
-8. **Summarize the plan** in plain language.
-9. **Get confirmation** before generating the JSON.
-10. **Output the JSON** and transition to portfolio-allocation skill.
 
-The rule from experienced investors: **your money reserve should last at least 6 months before you have to touch your stocks.**
+5. **Challenge if needed.** If the user says "I don't need one" or "I'll sell investments if something happens", explain the risk: selling during a downturn locks in losses, and markets tend to crash exactly when layoffs happen.
 
-## Why You Need an Emergency Fund BEFORE Investing
+6. **Present the calculation:**
+   ```
+   Target = Monthly Expenses × Recommended Months
+   Gap = Target − Current Savings
+   Monthly Contribution = Gap ÷ Months to Complete (suggest 6–12)
+   ```
 
-Investing without an emergency fund is like building a house without a foundation:
+7. **Recommend the asset** — explain USDY vs rUSDY and why they fit (see below).
 
-1. **Forced selling at the worst time:** If you lose your job during a market crash, you'll need to sell investments at a loss to cover expenses
-2. **Emotional pressure:** Knowing you have no safety net makes every market dip feel like an emergency
-3. **Compounding interruption:** Every time you withdraw from investments to cover emergencies, you reset the compounding clock
+8. **Present the building plan** based on the user's situation (see below).
 
-Inflation erodes uninvested cash — $50,000 in a savings account becomes roughly $30,000 in purchasing power over 20 years at 2% inflation. But the solution isn't to invest your emergency fund in volatile assets. It's to park it in yield-bearing stablecoins that maintain purchasing power.
+9. **Summarize the full plan** in plain language.
 
-## How Much Do You Need?
+10. **Get explicit confirmation** before generating the JSON.
 
-### Inputs to Gather from the User
+11. **Output the JSON** and transition to the portfolio-allocation skill.
 
-**Monthly essential expenses:**
-- Rent/mortgage
-- Food and groceries
-- Utilities (electricity, water, internet, phone)
-- Insurance (health, home, car)
-- Transport (fuel, public transit, car payments)
-- Minimum debt payments
-- Any other non-negotiable recurring costs
+## Where to Park It: USDY vs rUSDY
 
-**Monthly important but non-essential expenses:**
-- Subscriptions
-- Healthcare (regular medications, checkups)
-- Pet care
-- Childcare
+An emergency fund needs three things: **safe, liquid, inflation-resistant.**
 
-**Total monthly expenses** = essentials + important non-essentials
+**USDY (accumulating)** — yield-bearing stablecoin backed by US Treasuries and bank deposits. Earns daily interest while maintaining stability. The token price rises over time (buy at $1.00, worth $1.04 after a year). Token count stays the same, each token worth more.
 
-### How Many Months to Save
+**rUSDY (rebasing)** — same backing, but the price stays at $1.00 and your balance increases. If your target is $15,000, you see exactly 15,000 rUSDY in your wallet. Easier to track mentally.
 
-| Employment Situation | Recommended Months | Reasoning |
-|---|---|---|
-| **Stable salaried job** | 3-6 months | Regular paycheck, likely severance if laid off |
-| **Variable income / freelancer** | 6-9 months | Income fluctuates, no guaranteed next paycheck |
-| **Between jobs** | 9-12 months | Need maximum runway while job searching |
-| **Single income with dependents** | 9-12 months | Others rely on your income, higher stakes |
-| **Dual income household, no dependents** | 3-4 months | Partner's income provides backup |
+The economic outcome is identical — choose based on preference.
 
-### The Calculation
-
-```
-Target Emergency Fund = Monthly Expenses × Recommended Months
-Current Savings = [ask user]
-Gap = Target - Current Savings
-```
-
-## Where to Park Your Emergency Fund: Ondo Assets
-
-An emergency fund has three requirements: **safe, liquid, and inflation-resistant.** Here's how Ondo assets fit:
-
-### Primary Recommendation: USDY
-- **What it is:** Yield-bearing stablecoin backed by US Treasuries and bank deposits
-- **Why it works:** Earns daily interest while maintaining stability — your emergency fund grows instead of shrinking to inflation
-- **Liquidity:** Accessible anytime
-- **Risk:** Very low — backed by US government securities
-
-### Alternative: rUSDY (Rebasing)
-- **What it is:** Same backing as USDY, but the token price stays at $1 while your balance increases
-- **Why some prefer it:** The $1 price makes it easier to mentally track how much you have. If your emergency fund target is $15,000, you can see exactly 15,000 rUSDY in your wallet.
-
-### What NOT to Use for Emergency Funds
+### What NOT to Use
 
 | Asset | Why Not |
 |---|---|
-| **OGM tokenized ETFs/stocks** | Too volatile — could be down 30% when you need the money |
-| **bIB01** | Less immediately liquid than USDY, designed for longer-term holding |
-| **Volatile crypto (BTC, ETH, etc.)** | Far too volatile — could lose half its value overnight |
-| **Regular stablecoins (USDC, USDT)** | Safe and liquid, but earn zero yield — inflation still erodes them |
+| OGM tokenized ETFs/stocks | Too volatile — could be down 30% when you need it |
+| bIB01 | Less immediately liquid, designed for longer-term holding |
+| Volatile crypto (BTC, ETH) | Could lose half its value overnight |
+| Regular stablecoins (USDC, USDT) | Safe and liquid, but zero yield — inflation still erodes them |
 
-USDY gives you the safety and liquidity of a stablecoin PLUS the yield to fight inflation. It's the best of both worlds for emergency funds.
+## Building the Emergency Fund
 
-## Building the Emergency Fund: The Plan
+### Starting from zero
+1. Pause all investing until the fund is at least 50% of target
+2. Direct all available savings to USDY/rUSDY
+3. Once 50% funded, split: 60% emergency fund / 40% investments
+4. Once fully funded, redirect 100% to investments
 
-### If Starting from Zero
+### Partially funded
+1. Calculate the gap and monthly contribution to fill it in 6–12 months
+2. Split contributions: majority to emergency fund, minority to investments
+3. Once filled, redirect entirely to investments
 
-1. **Pause all investing** until the emergency fund is at least 50% funded
-2. Direct all available savings to USDY
-3. Once 50% funded, split new savings: 60% to emergency fund, 40% to investments
-4. Once fully funded, redirect 100% of savings to investments
-
-### If Partially Funded
-
-1. Calculate the gap
-2. Determine monthly contribution needed to fill it within a target timeframe
-3. Split contributions: majority to emergency fund, minority to investments
-4. Once filled, redirect entirely to investments
-
-### If Already Funded
-
+### Already funded
 1. Verify the fund is in a yield-bearing asset (USDY/rUSDY)
-2. Check that the amount still covers the recommended months (expenses may have changed)
-3. Proceed to portfolio allocation and investment strategy skills
-
-## Monthly Contribution Calculation
-
-```
-Gap = Target Emergency Fund - Current Savings
-Target Months to Complete = 6-12 months (suggest based on urgency)
-Monthly Contribution = Gap ÷ Target Months to Complete
-```
-
-Example:
-- Monthly expenses: $3,000
-- Recommended: 6 months = $18,000 target
-- Current savings: $5,000
-- Gap: $13,000
-- Target to complete in 10 months: $1,300/month to USDY
+2. Check the amount still covers recommended months — expenses may have changed
+3. Proceed to portfolio allocation
 
 ## Important Reminders
 
-- **Don't touch the emergency fund for investments.** No matter how good an opportunity looks, the emergency fund is off-limits. Its purpose is to be there when everything goes wrong.
-- **Replenish after using it.** If you dip into the fund for a genuine emergency, pause investing and refill it before resuming.
-- **Review annually.** Expenses change. If your rent increased or you added a dependent, recalculate.
-- **Keep it separate.** Use a different wallet or clearly label this allocation. Mixing emergency funds with investment capital leads to confusion and temptation.
+- **Don't touch it for investments.** No matter how good an opportunity looks, the emergency fund is off-limits.
+- **Replenish after using it.** If you dip in for a genuine emergency, pause investing and refill before resuming.
+- **Review annually.** If rent increased or you added a dependent, recalculate.
+- **Keep it separate.** Different wallet or clearly labeled allocation — mixing with investment capital leads to confusion and temptation.
 
 ## Output Format
 
 After calculating the emergency fund and getting user confirmation, provide:
 
-1. **Plain-language summary** of the emergency fund plan
-2. **JSON output** following the standardized format:
+1. **Plain-language summary** of the plan
+2. **JSON output:**
 
 ```json
 {
@@ -165,6 +118,7 @@ After calculating the emergency fund and getting user confirmation, provide:
 }
 ```
 
-Note: The `investment` array is empty if the user hasn't yet designed their portfolio. It will be populated when they progress to the portfolio-allocation skill.
+The `investment` array is empty until the user progresses to the portfolio-allocation skill.
 
-3. **Next steps** — once the fund is complete or building, route to Portfolio Allocation skill
+3. **Save the JSON immediately** using `file_write` to `portfolio-plan.json` in the workspace root — the frontend dashboard reads this file to display the portfolio visualization.
+4. **Next steps** — route to the portfolio-allocation skill.
