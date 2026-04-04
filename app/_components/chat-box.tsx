@@ -4,6 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatBoxProps {
   agentId: string;
@@ -174,7 +175,7 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
                     {agentName}
                   </p>
                   <div className="text-on-surface leading-relaxed prose prose-sm max-w-none prose-headings:text-inverse-surface prose-headings:tracking-tight prose-strong:text-on-surface prose-p:text-on-surface prose-li:text-on-surface">
-                    <ReactMarkdown>{parsed?.body || fullText}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{parsed?.body || fullText}</ReactMarkdown>
                   </div>
 
                   {displayOptions.length > 0 && (
