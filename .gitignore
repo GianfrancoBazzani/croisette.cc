@@ -29,5 +29,11 @@ Thumbs.db
 # zeroclaw
 **/.secret_key
 
+# database
+sqlite.db
+
+# typescript
+tsconfig.tsbuildinfo
+
 # claude
 .claude/
