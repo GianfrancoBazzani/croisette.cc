@@ -63,22 +63,26 @@ export async function POST(
       // Parse the JSON envelope
       const envelope = parseAgentResponse(fullResponse);
 
-      // Send structured message with metadata
-      writer.write({
-        type: "start",
-        messageMetadata: {
-          options: envelope.options ?? null,
-          profile_update: envelope.profile_update ?? null,
-          insight: envelope.insight ?? null,
-          allocation: envelope.allocation ?? null,
-        },
-      });
+      console.log("[chat-route] raw response length:", fullResponse.length);
+      console.log("[chat-route] parsed envelope keys:", Object.keys(envelope));
+      console.log("[chat-route] has options:", !!envelope.options);
+      console.log("[chat-route] has profile_update:", !!envelope.profile_update);
+
+      const metadata = {
+        options: envelope.options ?? null,
+        profile_update: envelope.profile_update ?? null,
+        insight: envelope.insight ?? null,
+        allocation: envelope.allocation ?? null,
+      };
+
+      // Send metadata on both start and finish for SDK compatibility
+      writer.write({ type: "start", messageMetadata: metadata });
 
       const textId = crypto.randomUUID();
       writer.write({ type: "text-start", id: textId });
       writer.write({ type: "text-delta", id: textId, delta: envelope.text });
       writer.write({ type: "text-end", id: textId });
-      writer.write({ type: "finish", finishReason: "stop" });
+      writer.write({ type: "finish", finishReason: "stop", messageMetadata: metadata });
     },
   });
 

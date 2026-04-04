@@ -47,6 +47,7 @@ export function ChatBox({
     lastProcessedIdRef.current = lastMsg.id;
 
     const meta = lastMsg.metadata as AgentMetadata | undefined;
+    console.log("[chat-box] message metadata:", JSON.stringify(meta));
     if (meta) {
       onMetadata(meta);
     }
