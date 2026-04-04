@@ -73,7 +73,7 @@ const RISKS = [
   },
 ] as const;
 
-const AGENT_ID = "portfolio-builder-og";
+const AGENT_ID = process.env.NEXT_PUBLIC_AGENT_ID;
 
 /* ═════════════════════════════════════════════
    Main Component
@@ -217,11 +217,10 @@ function StepHorizons({
               <button
                 key={h.id}
                 onClick={() => onSelect(h.id)}
-                className={`group relative p-10 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col h-full overflow-hidden text-left ${
-                  isSelected
+                className={`group relative p-10 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col h-full overflow-hidden text-left ${isSelected
                     ? "bg-inverse-surface shadow-[0_30px_60px_rgba(29,27,26,0.12)] ring-4 ring-primary"
                     : "bg-surface-container-lowest shadow-ambient ghost-border"
-                }`}
+                  }`}
               >
                 {isSelected && (
                   <div className="absolute top-0 right-0 p-4">
@@ -238,11 +237,10 @@ function StepHorizons({
 
                 <div className="mb-8">
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                      isSelected
+                    className={`w-16 h-16 rounded-full flex items-center justify-center ${isSelected
                         ? "bg-primary/20 text-primary-fixed"
                         : "bg-surface-container-high text-primary"
-                    }`}
+                      }`}
                   >
                     <span className="material-symbols-outlined text-4xl">
                       {h.icon}
@@ -251,29 +249,26 @@ function StepHorizons({
                 </div>
 
                 <h3
-                  className={`text-2xl font-bold mb-4 ${
-                    isSelected ? "text-surface-bright" : "text-on-surface"
-                  }`}
+                  className={`text-2xl font-bold mb-4 ${isSelected ? "text-surface-bright" : "text-on-surface"
+                    }`}
                 >
                   {h.title}
                 </h3>
                 <p
-                  className={`leading-relaxed text-[15px] ${
-                    isSelected
+                  className={`leading-relaxed text-[15px] ${isSelected
                       ? "text-surface-variant/80"
                       : "text-on-surface-variant"
-                  }`}
+                    }`}
                 >
                   {h.description}
                 </p>
 
                 <div className="mt-auto pt-8">
                   <span
-                    className={`material-symbols-outlined transition-colors ${
-                      isSelected
+                    className={`material-symbols-outlined transition-colors ${isSelected
                         ? "text-primary"
                         : "text-outline-variant group-hover:text-primary"
-                    }`}
+                      }`}
                   >
                     north_east
                   </span>
@@ -320,11 +315,10 @@ function StepRisk({
               <button
                 key={r.id}
                 onClick={() => onSelect(r.id)}
-                className={`group relative flex flex-col text-left p-8 rounded-xl transition-all duration-300 hover:scale-[1.02] outline-none cursor-pointer ${
-                  isSelected
+                className={`group relative flex flex-col text-left p-8 rounded-xl transition-all duration-300 hover:scale-[1.02] outline-none cursor-pointer ${isSelected
                     ? "bg-inverse-surface text-on-primary scale-[1.02] shadow-[0_20px_40px_rgba(29,27,26,0.12)] ghost-border"
                     : "bg-surface-container-low hover:bg-surface-container-high"
-                }`}
+                  }`}
               >
                 {isSelected && (
                   <div className="absolute top-4 right-4">
@@ -340,11 +334,10 @@ function StepRisk({
                 )}
 
                 <div
-                  className={`mb-12 h-12 w-12 flex items-center justify-center rounded-full transition-colors ${
-                    isSelected
+                  className={`mb-12 h-12 w-12 flex items-center justify-center rounded-full transition-colors ${isSelected
                       ? "bg-white/10 text-primary"
                       : "bg-surface-container-lowest text-on-surface-variant group-hover:text-primary"
-                  }`}
+                    }`}
                 >
                   <span
                     className="material-symbols-outlined"
@@ -360,29 +353,26 @@ function StepRisk({
 
                 <div>
                   <h3
-                    className={`text-2xl font-bold mb-2 ${
-                      isSelected ? "text-surface" : "text-inverse-surface"
-                    }`}
+                    className={`text-2xl font-bold mb-2 ${isSelected ? "text-surface" : "text-inverse-surface"
+                      }`}
                   >
                     {r.title}
                   </h3>
                   <p
-                    className={`text-sm leading-relaxed mb-6 ${
-                      isSelected
+                    className={`text-sm leading-relaxed mb-6 ${isSelected
                         ? "text-surface-variant"
                         : "text-on-surface-variant"
-                    }`}
+                      }`}
                   >
                     {r.description}
                   </p>
                   <span
-                    className={`text-xs font-bold uppercase tracking-widest ${
-                      r.featured && isSelected
+                    className={`text-xs font-bold uppercase tracking-widest ${r.featured && isSelected
                         ? "text-primary"
                         : isSelected
                           ? "text-primary"
                           : "text-on-surface/40"
-                    }`}
+                      }`}
                   >
                     {r.label}
                   </span>
