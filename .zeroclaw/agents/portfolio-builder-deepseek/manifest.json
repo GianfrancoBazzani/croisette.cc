@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2026-04-04T11:13:00.540Z",
+  "created": "2026-04-04T13:57:29.332Z",
   "agentId": "portfolio-builder-deepseek",
   "files": {
     "SOUL.md": {
@@ -44,5 +44,5 @@
       "size": 325
     }
   },
-  "manifestRootHash": "0xc417eaa3773c6340aa4d144ec3dfa02d2f5c934e8927ae76bd4f27d4620fed2d"
+  "manifestRootHash": "0xa899488d9d88e38a46a60457f587f4c99d33970154a972bdef2f278a35f2c09c"
 }

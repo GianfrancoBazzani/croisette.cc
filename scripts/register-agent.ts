@@ -5,10 +5,10 @@
  * manifest. Run this once at agent creation time.
  *
  * Usage:
- *   bun scripts/register-agent.ts <agentId>
+ *   npm run agent:register <agentId>
  *
  * Example:
- *   bun scripts/register-agent.ts portfolio-builder-og
+ *   npm run agent:register portfolio-builder-og
  *
  * Requires:
  *   - .env at project root with PRIVATE_KEY set
@@ -17,8 +17,11 @@
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync, statSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { uploadFile, uploadData } from "./lib/0g-storage";
 import { getConfig } from "./lib/0g-config";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function sha256(filePath: string): string {
   return createHash("sha256").update(readFileSync(filePath)).digest("hex");
@@ -38,12 +41,12 @@ const WORKSPACE_FILES = [
 async function main() {
   const agentId = process.argv[2];
   if (!agentId) {
-    console.error("Usage: bun scripts/register-agent.ts <agentId>");
-    console.error("Example: bun scripts/register-agent.ts portfolio-builder-og");
+    console.error("Usage: npm run agent:register <agentId>");
+    console.error("Example: npm run agent:register portfolio-builder-og");
     process.exit(1);
   }
 
-  const projectRoot = path.resolve(import.meta.dirname, "..");
+  const projectRoot = path.resolve(__dirname, "..");
   const agentConfigDir = path.join(projectRoot, ".zeroclaw", "agents", agentId);
   const workspaceDir = path.join(agentConfigDir, "workspace");
 
@@ -132,7 +135,7 @@ async function main() {
     console.log(`\n=== ADD TO constants.ts ===`);
     console.log(`Add this to the "${agentId}" entry in app/_lib/constants.ts:\n`);
     console.log(`    manifestRootHash: "${mrh}",`);
-    console.log(`\nThis enables on-chain verification: bun run agent:check ${agentId} --on-chain`);
+    console.log(`\nThis enables on-chain verification: npm run agent:check ${agentId} --on-chain`);
   }
 }
 

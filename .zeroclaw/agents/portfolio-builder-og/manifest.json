@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2026-04-04T12:55:19.215Z",
+  "created": "2026-04-04T13:53:14.013Z",
   "agentId": "portfolio-builder-og",
   "files": {
     "SOUL.md": {
@@ -39,5 +39,5 @@
       "size": 325
     }
   },
-  "manifestRootHash": "0xe7f826b3dbe8c619eda9411c82851e87dd92f949bdb5cf84b614731b712ff9a8"
+  "manifestRootHash": "0x8f69908e32d5e066d98a75bacee34c1a57c474c7f5531c9f4de0dea2fca4a2c2"
 }
