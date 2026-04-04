@@ -6,6 +6,38 @@ import { useState } from "react";
 import type { VerifyStatus } from "@/app/chat/[agentId]/page";
 import { VerifyBanner } from "@/app/_components/verify-banner";
 
+/**
+ * Split a message into separate bubble segments:
+ * - Paragraphs separated by blank lines become individual bubbles.
+ * - Sentences ending with "?" are extracted as their own bubble.
+ */
+function splitIntoBubbles(text: string): string[] {
+  const paragraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const bubbles: string[] = [];
+
+  for (const para of paragraphs) {
+    const parts = para.split(/(?<=\?)\s+/);
+    let nonQuestion = "";
+
+    for (const part of parts) {
+      if (part.trimEnd().endsWith("?")) {
+        if (nonQuestion.trim()) {
+          bubbles.push(nonQuestion.trim());
+          nonQuestion = "";
+        }
+        bubbles.push(part.trim());
+      } else {
+        nonQuestion += (nonQuestion ? " " : "") + part;
+      }
+    }
+    if (nonQuestion.trim()) {
+      bubbles.push(nonQuestion.trim());
+    }
+  }
+
+  return bubbles.length > 0 ? bubbles : [text];
+}
+
 interface ChatBoxProps {
   agentId: string;
   sessionId: string;
@@ -43,52 +75,56 @@ export function ChatBox({
           const showSpinner =
             !isReady && message.role === "assistant" && !hasText;
 
+          const isUser = message.role === "user";
+          const fullText = message.parts
+            .filter((p): p is { type: "text"; text: string } => p.type === "text")
+            .map((p) => p.text)
+            .join("");
+          const bubbles = splitIntoBubbles(fullText);
+
           return (
             <div
               key={message.id}
-              className={`p-3 rounded-lg ${
-                message.role === "user"
-                  ? "bg-surface-container-high ml-auto max-w-[80%]"
-                  : "bg-surface-container-low mr-auto max-w-[80%]"
-              }`}
+              className={`flex flex-col gap-3 ${isUser ? "items-end" : "items-start"}`}
             >
+              <p className="text-xs font-semibold mb-0.5">
+                {isUser ? "You" : agentName}
+              </p>
               {showSpinner ? (
-                <div className="flex items-center gap-2">
-                  <svg
-                    className="animate-spin h-4 w-4 text-on-surface-variant"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  <span className="text-on-surface-variant text-sm">
-                    Thinking...
-                  </span>
+                <div className={`p-3 rounded-lg ${isUser ? "bg-surface-container-high max-w-[80%]" : "bg-surface-container-low max-w-[80%]"}`}>
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="animate-spin h-4 w-4 text-on-surface-variant"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      />
+                    </svg>
+                    <span className="text-on-surface-variant text-sm">Thinking...</span>
+                  </div>
                 </div>
               ) : (
-                <>
-                  <p className="text-xs font-semibold mb-1 text-on-surface-variant">
-                    {message.role === "user" ? "You" : agentName}
-                  </p>
-                  {message.parts.map((part, index) =>
-                    part.type === "text" ? (
-                      <span key={index}>{part.text}</span>
-                    ) : null
-                  )}
-                </>
+                bubbles.map((bubble, bi) => (
+                  <div
+                    key={bi}
+                    className={`p-3 rounded-lg ${isUser ? "bg-surface-container-high max-w-[80%]" : "bg-surface-container-low max-w-[80%]"}`}
+                  >
+                    <span>{bubble}</span>
+                  </div>
+                ))
               )}
             </div>
           );

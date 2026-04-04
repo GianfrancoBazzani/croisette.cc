@@ -5,10 +5,47 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
 import { AdvisorSidebar, type FunnelData } from "@/app/_components/advisor-sidebar";
+import Markdown from "react-markdown";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 
 countries.registerLocale(enLocale);
+
+/**
+ * Split a message into separate bubble segments:
+ * - Paragraphs separated by blank lines become individual bubbles.
+ * - Within a paragraph, sentences ending with "?" are extracted as their own bubble.
+ */
+function splitIntoBubbles(text: string): string[] {
+  const paragraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const bubbles: string[] = [];
+
+  for (const para of paragraphs) {
+    // Split sentences that end with "?" into their own bubble,
+    // while keeping non-question sentences grouped together.
+    // Match: everything up to and including a "?" (possibly followed by whitespace)
+    const parts = para.split(/(?<=\?)\s+/);
+    let nonQuestion = "";
+
+    for (const part of parts) {
+      if (part.trimEnd().endsWith("?")) {
+        // Flush any accumulated non-question text first
+        if (nonQuestion.trim()) {
+          bubbles.push(nonQuestion.trim());
+          nonQuestion = "";
+        }
+        bubbles.push(part.trim());
+      } else {
+        nonQuestion += (nonQuestion ? " " : "") + part;
+      }
+    }
+    if (nonQuestion.trim()) {
+      bubbles.push(nonQuestion.trim());
+    }
+  }
+
+  return bubbles.length > 0 ? bubbles : [text];
+}
 
 const COUNTRY_LIST = Object.entries(countries.getNames("en"))
   .map(([code, name]) => ({ code, name }))
@@ -141,6 +178,20 @@ export default function OnboardingPage() {
   const isReady = status === "ready";
   const hasSentWakeUp = useRef(false);
 
+  // Deterministic user identifier from email (first 16 bytes of SHA-256)
+  const [userHash, setUserHash] = useState<string | null>(null);
+  useEffect(() => {
+    const email = session?.user?.email;
+    if (!email) return;
+    const encoded = new TextEncoder().encode(email);
+    crypto.subtle.digest("SHA-256", encoded).then((digest) => {
+      const hex = Array.from(new Uint8Array(digest).slice(0, 8))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      setUserHash(hex);
+    });
+  }, [session?.user?.email]);
+
   // Wake up prompt
   function generateWakeUpPrompt(): string {
     return `Hello Croissette Portfolio Agent, I am ${profile.name}, a ${profile.age}-year-old investor from ${countries.getName(profile.country, "en")}.
@@ -148,16 +199,17 @@ export default function OnboardingPage() {
     Please use this information to tailor your investment strategies and recommendations for me.
     Let's work together to optimize my portfolio according to my preferences and goals.
     To ensure a easier iteration switch to my natal language during this conversation, do not notify me just doo switch it.
+    My unique identifier is ${userHash}.
     `
   }
 
   // Send wakeup prompt only AFTER verification passes and session exists
   useEffect(() => {
-    if (verified && isReady && !hasSentWakeUp.current) {
+    if (verified && isReady && userHash && !hasSentWakeUp.current) {
       hasSentWakeUp.current = true;
       sendMessage({ text: generateWakeUpPrompt() });
     }
-  }, [verified, isReady, sendMessage]);
+  }, [verified, isReady, userHash, sendMessage]);
 
   const hasFirstResponse = messages.some(
     (m) => m.role === "assistant" && m.parts.some((p) => p.type === "text" && p.text),
@@ -226,7 +278,7 @@ export default function OnboardingPage() {
           sendMessage={sendMessage}
           isReady={isReady}
           hasFirstResponse={hasFirstResponse}
-          userName={session.user.name}
+          userName={profile.name}
           funnelData={{
             name: profile.name,
             age: profile.age,
@@ -237,55 +289,57 @@ export default function OnboardingPage() {
         />
       )}
 
-      {/* ── Footer ── */}
-      <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-8 py-5">
-        <span className="hidden md:block text-surface-variant/40 text-[10px] font-label uppercase tracking-widest">
-          &copy; 2026 Croisette. High-End Editorial Intelligence.
-        </span>
-        <div className="flex items-center gap-8 w-full md:w-auto justify-between">
-          {step > 0 ? (
-            <button
-              onClick={() => setStep((s) => s - 1)}
-              className="text-surface-variant/60 hover:text-surface text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-sm">
-                arrow_back
-              </span>
-              Previous
-            </button>
-          ) : (
-            <span />
-          )}
+      {/* ── Footer (hidden on chat step) ── */}
+      {step !== 4 && (
+        <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-8 py-5">
+          <span className="hidden md:block text-[10px] text-surface-variant/40 font-label uppercase tracking-widest">
+            &copy; 2026 Croisette. High-End Editorial Intelligence.
+          </span>
+          <div className="flex items-center gap-8 w-full md:w-auto justify-between">
+            {step > 0 ? (
+              <button
+                onClick={() => setStep((s) => s - 1)}
+                className="text-surface-variant/60 hover:text-surface text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-sm">
+                  arrow_back
+                </span>
+                Previous
+              </button>
+            ) : (
+              <span />
+            )}
 
-          {step < 3 ? (
-            <button
-              disabled={!canContinue}
-              onClick={() => setStep((s) => s + 1)}
-              className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-            >
-              Continue
-              <span className="material-symbols-outlined text-lg">
-                north_east
-              </span>
-            </button>
-          ) : step === 3 ? (
-            /* Step 4 (verification) auto-advances — hide the button */
-            <span />
-          ) : (
-            <button
-              onClick={() => {
-                /* TODO: persist & navigate */
-              }}
-              className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
-            >
-              Finish Setup
-              <span className="material-symbols-outlined text-lg">
-                north_east
-              </span>
-            </button>
-          )}
-        </div>
-      </footer>
+            {step < 3 ? (
+              <button
+                disabled={!canContinue}
+                onClick={() => setStep((s) => s + 1)}
+                className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              >
+                Continue
+                <span className="material-symbols-outlined text-lg">
+                  north_east
+                </span>
+              </button>
+            ) : step === 3 ? (
+              /* Step 4 (verification) auto-advances — hide the button */
+              <span />
+            ) : (
+              <button
+                onClick={() => {
+                  /* TODO: persist & navigate */
+                }}
+                className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
+              >
+                Finish Setup
+                <span className="material-symbols-outlined text-lg">
+                  north_east
+                </span>
+              </button>
+            )}
+          </div>
+        </footer>
+      )}
     </>
   );
 }
@@ -301,38 +355,39 @@ function StepHorizons({
   onSelect: (id: string) => void;
 }) {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       {/* Background accents */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-secondary-fixed/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-fixed/10 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
       <div className="w-full max-w-5xl z-10">
-        {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface max-w-2xl mx-auto leading-tight">
-            What are your Financial Horizons?
+        {/* Editorial Header */}
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
+            What are your Financial<br />
+            <span className="text-primary">Horizons?</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             Select your primary investment goal.
           </p>
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {HORIZONS.map((h) => {
             const isSelected = selected === h.id;
             return (
               <button
                 key={h.id}
                 onClick={() => onSelect(h.id)}
-                className={`group relative p-10 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col h-full overflow-hidden text-left ${isSelected
+                className={`group relative p-6 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col h-full overflow-hidden text-left ${isSelected
                   ? "bg-inverse-surface shadow-[0_30px_60px_rgba(29,27,26,0.12)] ring-4 ring-primary"
                   : "bg-surface-container-lowest shadow-ambient ghost-border"
                   }`}
               >
                 {isSelected && (
-                  <div className="absolute top-0 right-0 p-4">
+                  <div className="absolute top-0 right-0 p-3">
                     <span
                       className="material-symbols-outlined text-primary"
                       style={{
@@ -344,27 +399,27 @@ function StepHorizons({
                   </div>
                 )}
 
-                <div className="mb-8">
+                <div className="mb-4">
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center ${isSelected
+                    className={`w-12 h-12 rounded-full flex items-center justify-center ${isSelected
                       ? "bg-primary/20 text-primary-fixed"
                       : "bg-surface-container-high text-primary"
                       }`}
                   >
-                    <span className="material-symbols-outlined text-4xl">
+                    <span className="material-symbols-outlined text-2xl">
                       {h.icon}
                     </span>
                   </div>
                 </div>
 
                 <h3
-                  className={`text-2xl font-bold mb-4 ${isSelected ? "text-surface-bright" : "text-on-surface"
+                  className={`text-xl font-bold mb-2 ${isSelected ? "text-surface-bright" : "text-on-surface"
                     }`}
                 >
                   {h.title}
                 </h3>
                 <p
-                  className={`leading-relaxed text-[15px] ${isSelected
+                  className={`leading-relaxed text-sm ${isSelected
                     ? "text-surface-variant/80"
                     : "text-on-surface-variant"
                     }`}
@@ -372,7 +427,7 @@ function StepHorizons({
                   {h.description}
                 </p>
 
-                <div className="mt-auto pt-8">
+                <div className="mt-auto pt-4">
                   <span
                     className={`material-symbols-outlined transition-colors ${isSelected
                       ? "text-primary"
@@ -402,35 +457,35 @@ function StepRisk({
   onSelect: (id: string) => void;
 }) {
   return (
-    <main className="flex-grow flex flex-col items-center justify-center pt-32 pb-40 px-6">
+    <main className="h-dvh flex flex-col items-center justify-center px-6 pt-16 pb-[66px] overflow-hidden relative">
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="max-w-6xl w-full z-10">
         {/* Editorial Header */}
-        <div className="mb-16 md:mb-24 flex flex-col items-start gap-4">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-inverse-surface leading-none">
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
             Your Risk <br />
             <span className="text-primary">Architecture.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-4">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             How should the AI agents manage your volatility?
           </p>
         </div>
 
         {/* Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-stretch">
           {RISKS.map((r) => {
             const isSelected = selected === r.id;
             return (
               <button
                 key={r.id}
                 onClick={() => onSelect(r.id)}
-                className={`group relative flex flex-col text-left p-8 rounded-xl transition-all duration-300 hover:scale-[1.02] outline-none cursor-pointer ${isSelected
+                className={`group relative flex flex-col text-left p-6 rounded-xl transition-all duration-300 hover:scale-[1.02] outline-none cursor-pointer ${isSelected
                   ? "bg-inverse-surface text-on-primary scale-[1.02] shadow-[0_20px_40px_rgba(29,27,26,0.12)] ghost-border"
                   : "bg-surface-container-low hover:bg-surface-container-high"
                   }`}
               >
                 {isSelected && (
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-3 right-3">
                     <span
                       className="material-symbols-outlined text-primary"
                       style={{
@@ -443,13 +498,13 @@ function StepRisk({
                 )}
 
                 <div
-                  className={`mb-12 h-12 w-12 flex items-center justify-center rounded-full transition-colors ${isSelected
+                  className={`mb-6 h-10 w-10 flex items-center justify-center rounded-full transition-colors ${isSelected
                     ? "bg-white/10 text-primary"
                     : "bg-surface-container-lowest text-on-surface-variant group-hover:text-primary"
                     }`}
                 >
                   <span
-                    className="material-symbols-outlined"
+                    className="material-symbols-outlined text-xl"
                     style={
                       r.featured
                         ? { fontVariationSettings: "'FILL' 1" }
@@ -462,13 +517,13 @@ function StepRisk({
 
                 <div>
                   <h3
-                    className={`text-2xl font-bold mb-2 ${isSelected ? "text-surface" : "text-inverse-surface"
+                    className={`text-xl font-bold mb-1 ${isSelected ? "text-surface" : "text-inverse-surface"
                       }`}
                   >
                     {r.title}
                   </h3>
                   <p
-                    className={`text-sm leading-relaxed mb-6 ${isSelected
+                    className={`text-sm leading-relaxed mb-4 ${isSelected
                       ? "text-surface-variant"
                       : "text-on-surface-variant"
                       }`}
@@ -508,14 +563,14 @@ function StepRisk({
         </div>
 
         {/* Editorial quote */}
-        <div className="mt-20 max-w-2xl">
-          <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
+        <div className="mt-6 max-w-2xl">
+          <div className="bg-surface-container-low p-4 rounded-xl border-l-4 border-primary">
             <p className="text-sm font-medium italic text-on-surface-variant">
               &ldquo;The Croisette  Engine realigns your risk architecture every
               300 milliseconds, ensuring that market volatility becomes an
               instrument of growth rather than a threat to stability.&rdquo;
             </p>
-            <p className="mt-2 text-xs font-bold uppercase tracking-tighter text-inverse-surface">
+            <p className="mt-1 text-xs font-bold uppercase tracking-tighter text-inverse-surface">
               &mdash; Intelligence Protocol A-12
             </p>
           </div>
@@ -538,79 +593,179 @@ function StepProfile({
   const update = (field: keyof typeof profile, value: string) =>
     onChange({ ...profile, [field]: value });
 
+  const [countryOpen, setCountryOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState("");
+  const countryRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const filteredCountries = useMemo(
+    () =>
+      countrySearch.trim()
+        ? COUNTRY_LIST.filter((c) =>
+          c.name.toLowerCase().includes(countrySearch.toLowerCase()),
+        )
+        : COUNTRY_LIST,
+    [countrySearch],
+  );
+
+  const selectedCountryName = profile.country
+    ? countries.getName(profile.country, "en") ?? ""
+    : "";
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (countryRef.current && !countryRef.current.contains(e.target as Node)) {
+        setCountryOpen(false);
+      }
+    }
+    if (countryOpen) {
+      document.addEventListener("mousedown", handleClick);
+      return () => document.removeEventListener("mousedown", handleClick);
+    }
+  }, [countryOpen]);
+
+  // Focus search input when opened
+  useEffect(() => {
+    if (countryOpen) searchInputRef.current?.focus();
+  }, [countryOpen]);
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/3 -translate-x-1/3" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-secondary-fixed/10 blur-[100px] rounded-full translate-y-1/3 translate-x-1/3" />
 
       <div className="w-full max-w-xl z-10">
-        {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface leading-tight">
-            Tell Us About <span className="text-primary">You.</span>
+        {/* Editorial Header */}
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
+            Tell Us About<br />
+            <span className="text-primary">You.</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             A few details to personalize your experience.
           </p>
         </div>
 
         {/* Form */}
-        <div className="space-y-8">
+        <div className="space-y-5">
           {/* Name */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Full Name
             </label>
             <input
               type="text"
+              autoComplete="name"
               value={profile.name}
               onChange={(e) => update("name", e.target.value)}
               placeholder="e.g. Julien Delacroix"
-              className="w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+              className="w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
             />
           </div>
 
           {/* Age */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Age
             </label>
             <input
               type="number"
+              autoComplete="bday-year"
               value={profile.age}
               onChange={(e) => update("age", e.target.value)}
               placeholder="e.g. 34"
               min="18"
               max="120"
-              className="w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+              className="w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
             />
           </div>
 
           {/* Country */}
-          <div className="space-y-2">
+          <div className="space-y-1.5" ref={countryRef}>
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Country
             </label>
-            <select
-              value={profile.country}
-              onChange={(e) => update("country", e.target.value)}
-              className={`w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium appearance-none focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all ${profile.country ? "text-on-surface" : "text-on-surface-variant/40"
-                }`}
-            >
-              <option value="" disabled>
-                Select your country
-              </option>
-              {COUNTRY_LIST.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              {/* Trigger */}
+              <button
+                type="button"
+                onClick={() => {
+                  setCountryOpen((o) => !o);
+                  setCountrySearch("");
+                }}
+                className={`w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-left transition-all flex items-center justify-between cursor-pointer ${countryOpen
+                    ? "bg-surface-container-highest ring-1 ring-primary/30"
+                    : ""
+                  } ${selectedCountryName ? "text-on-surface" : "text-on-surface-variant/40"}`}
+              >
+                <span>{selectedCountryName || "Select your country"}</span>
+                <span
+                  className={`material-symbols-outlined text-on-surface-variant/40 text-lg transition-transform duration-200 ${countryOpen ? "rotate-180" : ""
+                    }`}
+                >
+                  expand_more
+                </span>
+              </button>
+
+              {/* Dropdown */}
+              {countryOpen && (
+                <div className="absolute z-50 top-full mt-2 w-full bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_rgba(29,27,26,0.10)] overflow-hidden">
+                  {/* Search */}
+                  <div className="p-3">
+                    <div className="flex items-center gap-3 bg-surface-container-high rounded-lg px-4 py-2.5">
+                      <span className="material-symbols-outlined text-on-surface-variant/40 text-lg">
+                        search
+                      </span>
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        value={countrySearch}
+                        onChange={(e) => setCountrySearch(e.target.value)}
+                        placeholder="Search countries…"
+                        className="flex-1 bg-transparent text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* List */}
+                  <ul className="max-h-48 overflow-y-auto px-1.5 pb-1.5">
+                    {filteredCountries.length === 0 ? (
+                      <li className="px-5 py-3 text-sm text-on-surface-variant/40">
+                        No countries found
+                      </li>
+                    ) : (
+                      filteredCountries.map((c) => {
+                        const isActive = profile.country === c.code;
+                        return (
+                          <li key={c.code}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                update("country", c.code);
+                                setCountryOpen(false);
+                                setCountrySearch("");
+                              }}
+                              className={`w-full text-left px-5 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${isActive
+                                  ? "bg-primary/10 text-primary"
+                                  : "text-on-surface hover:bg-surface-container-high"
+                                }`}
+                            >
+                              {c.name}
+                            </button>
+                          </li>
+                        );
+                      })
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Telegram */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
               Telegram Handle
             </label>
@@ -620,10 +775,11 @@ function StepProfile({
               </span>
               <input
                 type="text"
+                autoComplete="username"
                 value={profile.telegram}
                 onChange={(e) => update("telegram", e.target.value)}
                 placeholder="username"
-                className="w-full bg-surface-container-high rounded-xl pl-11 pr-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+                className="w-full bg-surface-container-high rounded-xl pl-11 pr-6 py-4 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
               />
             </div>
           </div>
@@ -733,19 +889,20 @@ function StepVerification({
     : ((activeIndex + (cardState === "exiting" ? 1 : 0.5)) / totalCards) * 100;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       {/* Background accents */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary-fixed/10 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
       <div className="w-full max-w-xl z-10">
-        {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface leading-tight">
-            Agent <span className="text-primary">Verification.</span>
+        {/* Editorial Header */}
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
+            Agent<br />
+            <span className="text-primary">Verification.</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             Securely hashed &amp; verified via OG Blockchain.
           </p>
         </div>
@@ -1028,7 +1185,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
   }, [activeIndex, charIndex, onComplete]);
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       {/* Background accents */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/3 -translate-x-1/3" />
@@ -1036,17 +1193,17 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
 
       <div className="w-full max-w-2xl z-10">
         {/* Header */}
-        <div className="text-center mb-20 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface leading-tight">
+        <div className="text-center mb-10 space-y-2">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-on-surface leading-tight">
             Preparing Your <span className="text-primary">Intelligence.</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-tertiary-fixed-dim font-medium text-sm md:text-base uppercase tracking-[0.2em]">
             Building a bespoke experience for you.
           </p>
         </div>
 
         {/* Steps */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {PERSONALIZATION_STEPS.map((step, i) => {
             const isActive = i === activeIndex;
             const isCompleted = i < activeIndex;
@@ -1055,7 +1212,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
             return (
               <div
                 key={i}
-                className={`flex items-center gap-5 transition-all duration-500 ${isHidden
+                className={`flex items-center gap-4 transition-all duration-500 ${isHidden
                   ? "opacity-0 translate-y-4"
                   : isCompleted
                     ? "opacity-40"
@@ -1064,7 +1221,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
               >
                 {/* Icon */}
                 <div
-                  className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-colors duration-500 ${isActive
+                  className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors duration-500 ${isActive
                     ? "bg-primary/20 text-primary"
                     : isCompleted
                       ? "bg-surface-container-high text-on-surface-variant"
@@ -1073,13 +1230,13 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
                 >
                   {isCompleted ? (
                     <span
-                      className="material-symbols-outlined text-primary"
+                      className="material-symbols-outlined text-primary text-xl"
                       style={{ fontVariationSettings: "'FILL' 1" }}
                     >
                       check_circle
                     </span>
                   ) : (
-                    <span className="material-symbols-outlined">
+                    <span className="material-symbols-outlined text-xl">
                       {step.icon}
                     </span>
                   )}
@@ -1087,7 +1244,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
 
                 {/* Text */}
                 <span
-                  className={`text-lg font-medium tracking-tight transition-colors duration-500 ${isActive ? "text-on-surface" : "text-on-surface-variant"
+                  className={`text-base font-medium tracking-tight transition-colors duration-500 ${isActive ? "text-on-surface" : "text-on-surface-variant"
                     }`}
                 >
                   {isActive
@@ -1096,7 +1253,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
                       ? step.text
                       : ""}
                   {isActive && (
-                    <span className="inline-block w-[2px] h-5 bg-primary ml-0.5 align-middle animate-pulse" />
+                    <span className="inline-block w-[2px] h-4 bg-primary ml-0.5 align-middle animate-pulse" />
                   )}
                 </span>
               </div>
@@ -1105,7 +1262,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {/* Progress bar */}
-        <div className="mt-16 w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+        <div className="mt-10 w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
           <div
             className="h-full bg-primary transition-all duration-700 ease-out"
             style={{
@@ -1178,123 +1335,137 @@ function StepAdvisor({
 
   // Phase 3: Chat is ready
   return (
-    <main className="fixed inset-0 top-16 bottom-20 flex bg-surface-bright">
+    <main className="fixed inset-0 top-16 bottom-0 flex bg-surface-bright">
       {/* Chat panel */}
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-500">
 
-      {/* Messages */}
-      <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 md:px-12 py-6 space-y-10 max-w-4xl mx-auto w-full"
-      >
-        {messages.slice(1).map((message) => { // Hide the wakeup prompt message
-          const hasText = message.parts.some(
-            (part) => part.type === "text" && part.text
-          );
-          const showSpinner =
-            !isReady && message.role === "assistant" && !hasText;
-
-          if (message.role === "user") {
-            return (
-              <div key={message.id} className="flex justify-end">
-                <div className="max-w-[70%] space-y-1">
-                  <p className="text-xs font-semibold text-on-surface-variant text-right mr-1">{userName}</p>
-                  <div className="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-ambient ghost-border">
-                    {message.parts.map((part, i) =>
-                      part.type === "text" ? (
-                        <p key={i} className="leading-relaxed text-[15px]">
-                          {part.text}
-                        </p>
-                      ) : null
-                    )}
-                  </div>
-                </div>
-              </div>
+        {/* Messages */}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto px-6 md:px-12 py-6 space-y-10 max-w-4xl mx-auto w-full"
+        >
+          {messages.slice(1).map((message) => { // Hide the wakeup prompt message
+            const hasText = message.parts.some(
+              (part) => part.type === "text" && part.text
             );
-          }
+            const showSpinner =
+              !isReady && message.role === "assistant" && !hasText;
 
-          /* Assistant message */
-          return (
-            <div key={message.id} className="flex">
-              <div className="max-w-[85%] space-y-1">
-                <p className="text-xs font-semibold text-secondary ml-1">Croissete Sailor</p>
-                <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient">
-                    {showSpinner ? (
+            if (message.role === "user") {
+              const fullText = message.parts
+                .filter((p): p is { type: "text"; text: string } => p.type === "text")
+                .map((p) => p.text)
+                .join("");
+              const userBubbles = splitIntoBubbles(fullText);
+
+              return (
+                <div key={message.id} className="flex flex-col items-end gap-3">
+                  <p className="text-xs font-semibold text-on-surface-variant text-right mr-1">{userName}</p>
+                  {userBubbles.map((bubble, bi) => (
+                    <div key={bi} className="max-w-[70%]">
+                      <div className="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-bubble-user ghost-border">
+                        <div className="leading-relaxed text-[15px]">
+                          <Markdown>{bubble}</Markdown>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+
+            /* Assistant message */
+            if (showSpinner) {
+              return (
+                <div key={message.id} className="flex">
+                  <div className="max-w-[85%] space-y-1">
+                    <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
+                    <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-bubble-assistant ghost-border">
                       <div className="flex items-center gap-3">
                         <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                         <span className="text-on-surface-variant text-sm">
                           Thinking&hellip;
                         </span>
                       </div>
-                    ) : (
-                      message.parts.map((part, i) =>
-                        part.type === "text" ? (
-                          <p
-                            key={i}
-                            className="leading-relaxed text-[15px] whitespace-pre-wrap"
-                          >
-                            {part.text}
-                          </p>
-                        ) : null
-                      )
-                    )}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            const assistantText = message.parts
+              .filter((p): p is { type: "text"; text: string } => p.type === "text")
+              .map((p) => p.text)
+              .join("");
+            const assistantBubbles = splitIntoBubbles(assistantText);
+
+            return (
+              <div key={message.id} className="flex flex-col items-start gap-3">
+                <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
+                {assistantBubbles.map((bubble, bi) => (
+                  <div key={bi} className="max-w-[85%]">
+                    <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-bubble-assistant ghost-border">
+                      <div className="leading-relaxed text-[15px]">
+                        <Markdown>{bubble}</Markdown>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+
+          {/* Standalone spinner when waiting for first assistant chunk */}
+          {!isReady &&
+            (messages.length === 0 ||
+              messages[messages.length - 1].role === "user") && (
+              <div className="flex">
+                <div className="max-w-[85%] space-y-1">
+                  <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
+                  <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-bubble-assistant ghost-border flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                    <span className="text-on-surface-variant text-sm">
+                      Thinking&hellip;
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            )}
+        </div>
 
-        {/* Standalone spinner when waiting for first assistant chunk */}
-        {!isReady &&
-          (messages.length === 0 ||
-            messages[messages.length - 1].role === "user") && (
-            <div className="flex">
-              <div className="max-w-[85%] space-y-1">
-                <p className="text-xs font-semibold text-secondary ml-1">Croissete Sailor</p>
-                <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                  <span className="text-on-surface-variant text-sm">
-                    Thinking&hellip;
-                  </span>
-                </div>
+        {/* Input bar */}
+        <div className="px-6 md:px-12 pt-6 pb-6 max-w-4xl mx-auto w-full">
+          <form onSubmit={handleSubmit}>
+            <div className="flex items-center bg-surface-container-high rounded-xl shadow-ambient p-2 pl-6 focus-within:bg-surface-container-highest focus-within:ghost-border transition-colors">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={!isReady}
+                placeholder="Ask Croissette about your portfolio..."
+                className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium placeholder:text-on-surface-variant/40 placeholder:font-normal py-4"
+              />
+              <div className="flex items-center gap-2 pr-2">
+                <button
+                  type="button"
+                  className="p-3 text-on-surface-variant/40 hover:text-primary transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined">attach_file</span>
+                </button>
+                <button
+                  type="submit"
+                  disabled={!isReady || !input.trim()}
+                  className="gradient-primary text-on-primary p-4 rounded-lg flex items-center justify-center hover:scale-[1.02] active:scale-95 transition-all shadow-md disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                >
+                  <span className="material-symbols-outlined">north_east</span>
+                </button>
               </div>
             </div>
-          )}
-      </div>
-
-      {/* Input bar */}
-      <div className="px-6 md:px-12 pt-6 max-w-4xl mx-auto w-full">
-        <form onSubmit={handleSubmit}>
-          <div className="flex items-center bg-surface-container-lowest rounded-xl shadow-ambient ghost-border p-2 pl-6 focus-within:ring-2 focus-within:ring-primary/20 transition-colors">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={!isReady}
-              placeholder="Ask Croissette about your portfolio..."
-              className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium placeholder:text-on-surface-variant/40 placeholder:font-normal py-4"
-            />
-            <div className="flex items-center gap-2 pr-2">
-              <button
-                type="button"
-                className="p-3 text-on-surface-variant/40 hover:text-primary transition-colors cursor-pointer"
-              >
-                <span className="material-symbols-outlined">attach_file</span>
-              </button>
-              <button
-                type="submit"
-                disabled={!isReady || !input.trim()}
-                className="gradient-primary text-on-primary p-4 rounded-lg flex items-center justify-center hover:scale-[1.02] active:scale-95 transition-all shadow-md disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-              >
-                <span className="material-symbols-outlined">north_east</span>
-              </button>
-            </div>
-          </div>
-        </form>
-        <p className="text-center mt-4 text-[9px] text-on-surface-variant/40 uppercase tracking-[0.2em] font-medium">
-          Croissette AI may provide financial modeling that requires human
-          verification.
-        </p>
-      </div>
+          </form>
+          <p className="text-center mt-4 text-[9px] text-on-surface-variant/40 uppercase tracking-[0.2em] font-medium">
+            Croissette AI may provide financial modeling that requires human
+            verification.
+          </p>
+        </div>
 
       </div>{/* end chat panel */}
 
