@@ -1,6 +1,28 @@
 # TOOLS.md — Local Notes
 
-## Portfolio state
+## Assets Database
+
+- Path: sqlite.db (project root)
+- Access via: `sqlite3 -header -column sqlite.db '<SQL>'`
+- For JSON output: `sqlite3 -json sqlite.db '<SQL>'`
+- Check schema: `sqlite3 sqlite.db '.schema'`
+- Read available assets: `sqlite3 -json sqlite.db 'SELECT ticker, type, description FROM asset'`
+- Asset types: stocks, crypto, cash, commodities, precious_metals, bonds
+- All asset and portfolio data lives here — never use flat files for structured data
+- DB schema is defined in `lib/db.ts` — refer to it for table definitions and constraints
+
+## Portfolio Database
+
+- Tables: `ideal_portfolio` and `ideal_portfolio_entry` (see `lib/db.ts` for full schema)
+- One portfolio per user: `ideal_portfolio` has a UNIQUE constraint on `userId`
+- Each entry links a portfolio to an asset with an allocation percentage (0–100)
+- Read a user's target portfolio: `sqlite3 -json sqlite.db 'SELECT a.ticker, a.type, e.allocation FROM ideal_portfolio p JOIN ideal_portfolio_entry e ON e.portfolioId = p.id JOIN asset a ON a.id = e.assetId WHERE p.userId = "<USER_ID>"'`
+- Create a portfolio: `sqlite3 sqlite.db "INSERT INTO ideal_portfolio (id, userId, createdAt, updatedAt) VALUES ('<UUID>', '<USER_ID>', <NOW_MS>, <NOW_MS>)"`
+- Add an entry: `sqlite3 sqlite.db "INSERT INTO ideal_portfolio_entry (id, portfolioId, assetId, allocation, createdAt, updatedAt) VALUES ('<UUID>', '<PORTFOLIO_ID>', '<ASSET_ID>', <ALLOCATION>, <NOW_MS>, <NOW_MS>)"`
+- Update an entry: `sqlite3 sqlite.db "UPDATE ideal_portfolio_entry SET allocation = <ALLOCATION>, updatedAt = <NOW_MS> WHERE portfolioId = '<PORTFOLIO_ID>' AND assetId = '<ASSET_ID>'"`
+- Delete an entry: `sqlite3 sqlite.db "DELETE FROM ideal_portfolio_entry WHERE portfolioId = '<PORTFOLIO_ID>' AND assetId = '<ASSET_ID>'"`
+- Constraints: allocation must be > 0 and <= 100; each (portfolioId, assetId) pair must be unique
+- Generate UUIDs for `id` fields; use millisecond timestamps for `createdAt`/`updatedAt`
 
 ## Portfolio Design Skills
 
