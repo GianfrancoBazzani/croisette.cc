@@ -18,6 +18,7 @@ interface ChatBoxProps {
   sessionId: string;
   agentName: string;
   userName?: string;
+  initialMessages?: import("ai").UIMessage[];
   onMetadata?: (metadata: AgentMetadata) => void;
 }
 
@@ -26,9 +27,11 @@ export function ChatBox({
   sessionId,
   agentName,
   userName,
+  initialMessages,
   onMetadata,
 }: ChatBoxProps) {
   const { messages, sendMessage, status } = useChat({
+    messages: initialMessages,
     transport: new DefaultChatTransport({
       api: `/api/chat/${agentId}`,
       body: { sessionId },
