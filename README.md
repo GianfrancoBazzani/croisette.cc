@@ -11,9 +11,9 @@ bun run start
 bun lint
 ```
 
-Init ZeroClaw portfolio builder agent:
+Init ZeroClaw agents:
 ```
-zeroclaw onboard --config-dir .zeroclaw/agents/portfolio-builder/
+zeroclaw onboard --config-dir .zeroclaw/agents/<agent-name>/
 ```
 
 

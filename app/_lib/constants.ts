@@ -12,16 +12,16 @@ export interface AgentConfig {
 }
 
 export const AGENTS: Record<string, AgentConfig> = {
-  "portfolio-builder": {
-    slug: "portfolio-builder",
-    name: "Portfolio Builder",
+  "portfolio-builder-og": {
+    slug: "portfolio-builder-og",
+    name: "Portfolio Builder (OG Compute)",
     description: "Portfolio allocation, DCA strategies, FIRE calculator",
-    configDir: ".zeroclaw/agents/portfolio-builder",
-  }
-  //trader: {
-  //  slug: "trader",
-  //  name: "Trader",
-  //  description: "Uniswap trading, hedging, rebalancing",
-  //  configDir: ".zeroclaw/agents/trader",
-  //},
+    configDir: ".zeroclaw/agents/portfolio-builder-og",
+  },
+  "portfolio-builder-deepseek": {
+    slug: "portfolio-builder-deepseek",
+    name: "Portfolio Builder (DeepSeek)",
+    description: "Portfolio allocation, DCA strategies, FIRE calculator",
+    configDir: ".zeroclaw/agents/portfolio-builder-deepseek",
+  },
 };
