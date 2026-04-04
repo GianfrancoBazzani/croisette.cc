@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "bun --bun next build",
-    "start": "bun --bun next start -p 80",
-    "lint": "eslint",
-    "postinstall": "npm rebuild better-sqlite3"
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "^0.18.0",
