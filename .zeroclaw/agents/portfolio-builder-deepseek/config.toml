@@ -17,7 +17,7 @@ runtime_trace_path = "state/runtime-trace.jsonl"
 runtime_trace_max_entries = 200
 
 [autonomy]
-level = "supervised"
+level = "readonly"
 workspace_only = true
 allowed_commands = [
     "git",
