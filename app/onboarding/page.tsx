@@ -4,6 +4,14 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
+import countries from "i18n-iso-countries";
+import enLocale from "i18n-iso-countries/langs/en.json";
+
+countries.registerLocale(enLocale);
+
+const COUNTRY_LIST = Object.entries(countries.getNames("en"))
+  .map(([code, name]) => ({ code, name }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 /* ─────────────────────────────────────────────
    Step 1 — Horizon options
@@ -83,6 +91,7 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [selectedHorizon, setSelectedHorizon] = useState<string | null>(null);
   const [selectedRisk, setSelectedRisk] = useState<string | null>(null);
+  const [profile, setProfile] = useState({ name: "", age: "", country: "", telegram: "" });
 
   useEffect(() => {
     if (!isPending && !session) {
@@ -97,7 +106,8 @@ export default function OnboardingPage() {
   const canContinue =
     (step === 0 && selectedHorizon !== null) ||
     (step === 1 && selectedRisk !== null) ||
-    step === 2;
+    (step === 2 && profile.name.trim() !== "" && profile.age.trim() !== "" && profile.country.trim() !== "") ||
+    step === 3;
 
   return (
     <>
@@ -108,12 +118,12 @@ export default function OnboardingPage() {
         </span>
         <div className="flex items-center gap-4">
           <span className="text-xs font-label uppercase tracking-widest text-on-surface/40">
-            Step {String(step + 1).padStart(2, "0")} / 03
+            Step {String(step + 1).padStart(2, "0")} / 04
           </span>
           <div className="w-32 h-1 bg-surface-container-highest rounded-full overflow-hidden">
             <div
               className="h-full bg-primary transition-all duration-500"
-              style={{ width: `${((step + 1) / 3) * 100}%` }}
+              style={{ width: `${((step + 1) / 4) * 100}%` }}
             />
           </div>
         </div>
@@ -129,7 +139,10 @@ export default function OnboardingPage() {
       {step === 1 && (
         <StepRisk selected={selectedRisk} onSelect={setSelectedRisk} />
       )}
-      {step === 2 && <StepAdvisor />}
+      {step === 2 && (
+        <StepProfile profile={profile} onChange={setProfile} />
+      )}
+      {step === 3 && <StepAdvisor />}
 
       {/* ── Footer ── */}
       <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-12 py-8">
@@ -151,7 +164,7 @@ export default function OnboardingPage() {
             <span />
           )}
 
-          {step < 2 ? (
+          {step < 3 ? (
             <button
               disabled={!canContinue}
               onClick={() => setStep((s) => s + 1)}
@@ -417,7 +430,116 @@ function StepRisk({
 }
 
 /* ═════════════════════════════════════════════
-   Step 3 — Croissette Advisor (Chat)
+   Step 3 — Profile Details
+   ═════════════════════════════════════════════ */
+function StepProfile({
+  profile,
+  onChange,
+}: {
+  profile: { name: string; age: string; country: string; telegram: string };
+  onChange: (p: { name: string; age: string; country: string; telegram: string }) => void;
+}) {
+  const update = (field: keyof typeof profile, value: string) =>
+    onChange({ ...profile, [field]: value });
+
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/3 -translate-x-1/3" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-secondary-fixed/10 blur-[100px] rounded-full translate-y-1/3 translate-x-1/3" />
+
+      <div className="w-full max-w-xl z-10">
+        {/* Header */}
+        <div className="text-center mb-16 space-y-4">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface leading-tight">
+            Tell Us About <span className="text-primary">You.</span>
+          </h1>
+          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+            A few details to personalize your experience.
+          </p>
+        </div>
+
+        {/* Form */}
+        <div className="space-y-8">
+          {/* Name */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={profile.name}
+              onChange={(e) => update("name", e.target.value)}
+              placeholder="e.g. Julien Delacroix"
+              className="w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+            />
+          </div>
+
+          {/* Age */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
+              Age
+            </label>
+            <input
+              type="number"
+              value={profile.age}
+              onChange={(e) => update("age", e.target.value)}
+              placeholder="e.g. 34"
+              min="18"
+              max="120"
+              className="w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+            />
+          </div>
+
+          {/* Country */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
+              Country
+            </label>
+            <select
+              value={profile.country}
+              onChange={(e) => update("country", e.target.value)}
+              className={`w-full bg-surface-container-high rounded-xl px-6 py-5 text-sm font-medium appearance-none focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all ${
+                profile.country ? "text-on-surface" : "text-on-surface-variant/40"
+              }`}
+            >
+              <option value="" disabled>
+                Select your country
+              </option>
+              {COUNTRY_LIST.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Telegram */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-on-surface/40">
+              Telegram Handle
+            </label>
+            <div className="relative">
+              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant/40 font-medium">
+                @
+              </span>
+              <input
+                type="text"
+                value={profile.telegram}
+                onChange={(e) => update("telegram", e.target.value)}
+                placeholder="username"
+                className="w-full bg-surface-container-high rounded-xl pl-11 pr-6 py-5 text-sm font-medium text-on-surface placeholder:text-on-surface-variant/40 focus:bg-surface-container-highest focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+/* ═════════════════════════════════════════════
+   Step 4 — Croissette Advisor (Chat)
    ═════════════════════════════════════════════ */
 function StepAdvisor() {
   const sessionId = useMemo(() => crypto.randomUUID(), []);
