@@ -101,8 +101,8 @@ export function ChatBox({
               <div
                 className={`px-4 py-3 rounded-xl text-sm leading-relaxed ${
                   message.role === "user"
-                    ? "bg-primary text-on-primary ml-auto max-w-[70%]"
-                    : "bg-surface-container-low text-on-surface mr-auto max-w-[85%]"
+                    ? "bg-primary text-on-primary ml-auto max-w-[70%] w-fit"
+                    : "bg-surface-container-low text-on-surface mr-auto max-w-[85%] w-fit"
                 }`}
               >
                 {showSpinner ? (
@@ -153,7 +153,7 @@ export function ChatBox({
         {!isReady &&
           (messages.length === 0 ||
             messages[messages.length - 1].role === "user") && (
-            <div className="px-4 py-3 rounded-xl bg-surface-container-low mr-auto max-w-[85%] flex items-center gap-2">
+            <div className="px-4 py-3 rounded-xl bg-surface-container-low mr-auto max-w-[85%] w-fit flex items-center gap-2">
               <svg
                 className="animate-spin h-4 w-4 text-outline"
                 xmlns="http://www.w3.org/2000/svg"
