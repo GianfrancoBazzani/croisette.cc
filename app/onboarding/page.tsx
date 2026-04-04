@@ -1051,7 +1051,7 @@ function StepAdvisor({
           return (
             <div key={message.id} className="flex">
               <div className="max-w-[85%] space-y-1">
-                <p className="text-xs font-semibold text-secondary ml-1">Croissete Sailor</p>
+                <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
                 <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient">
                     {showSpinner ? (
                       <div className="flex items-center gap-3">
@@ -1084,7 +1084,7 @@ function StepAdvisor({
             messages[messages.length - 1].role === "user") && (
             <div className="flex">
               <div className="max-w-[85%] space-y-1">
-                <p className="text-xs font-semibold text-secondary ml-1">Croissete Sailor</p>
+                <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
                 <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                   <span className="text-on-surface-variant text-sm">
