@@ -75,14 +75,18 @@ export async function POST(
         allocation: envelope.allocation ?? null,
       };
 
-      // Send metadata on both start and finish for SDK compatibility
-      writer.write({ type: "start", messageMetadata: metadata });
+      writer.write({ type: "start" });
 
       const textId = crypto.randomUUID();
       writer.write({ type: "text-start", id: textId });
       writer.write({ type: "text-delta", id: textId, delta: envelope.text });
       writer.write({ type: "text-end", id: textId });
-      writer.write({ type: "finish", finishReason: "stop", messageMetadata: metadata });
+
+      // Send structured data as a data part — reliable across SDK versions
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      writer.write({ type: "data-agent", data: metadata } as any);
+
+      writer.write({ type: "finish", finishReason: "stop" });
     },
   });
 

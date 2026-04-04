@@ -46,8 +46,10 @@ export function ChatBox({
     if (lastMsg.id === lastProcessedIdRef.current) return;
     lastProcessedIdRef.current = lastMsg.id;
 
-    const meta = lastMsg.metadata as AgentMetadata | undefined;
-    console.log("[chat-box] message metadata:", JSON.stringify(meta));
+    // Read metadata from data-agent part (more reliable than messageMetadata)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dataPart = lastMsg.parts.find((p: any) => p.type === "data-agent") as any;
+    const meta = dataPart?.data as AgentMetadata | undefined;
     if (meta) {
       onMetadata(meta);
     }
@@ -69,12 +71,12 @@ export function ChatBox({
 
   // Find the latest assistant message's options (only if it's the last message)
   const lastMessage = messages[messages.length - 1];
-  const activeOptions =
-    isReady &&
-    lastMessage?.role === "assistant" &&
-    (lastMessage.metadata as AgentMetadata | undefined)?.options
-      ? (lastMessage.metadata as AgentMetadata).options!
-      : null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lastDataPart = lastMessage?.role === "assistant"
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? (lastMessage.parts.find((p: any) => p.type === "data-agent") as any)?.data as AgentMetadata | undefined
+    : undefined;
+  const activeOptions = isReady && lastDataPart?.options ? lastDataPart.options : null;
 
   return (
     <div className="flex flex-col h-full flex-1 bg-surface">
