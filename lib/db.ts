@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import { seedAssets } from "./assets";
 
 export const db = new Database("sqlite.db");
 
@@ -58,5 +59,33 @@ CREATE TABLE IF NOT EXISTS passkey (
     credentialID TEXT NOT NULL,
     aaguid TEXT
 );
+CREATE TABLE IF NOT EXISTS asset (
+    id TEXT PRIMARY KEY,
+    ticker TEXT NOT NULL UNIQUE,
+    address TEXT NOT NULL,
+    chainId INTEGER NOT NULL,
+    description TEXT,
+    decimals INTEGER NOT NULL,
+    type TEXT NOT NULL CHECK(type IN ('stocks', 'crypto', 'cash', 'commodities', 'precious_metals', 'bonds')),
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS ideal_portfolio (
+    id TEXT PRIMARY KEY,
+    userId TEXT NOT NULL UNIQUE REFERENCES user(id),
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS ideal_portfolio_entry (
+    id TEXT PRIMARY KEY,
+    portfolioId TEXT NOT NULL REFERENCES ideal_portfolio(id),
+    assetId TEXT NOT NULL REFERENCES asset(id),
+    allocation REAL NOT NULL CHECK(allocation > 0 AND allocation <= 100),
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL,
+    UNIQUE(portfolioId, assetId)
+);
 `);
+
+seedAssets();
 
