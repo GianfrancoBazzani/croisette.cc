@@ -6,9 +6,6 @@ Before doing anything else:
 
 1. Read `SOUL.md` — this is who you are
 2. Read `USER.md` — this is who you're helping
-3. Read `PLAYBOOK.md` — this is your skill routing
-4. Use `memory_recall` for recent context
-5. If in MAIN SESSION (direct chat): `MEMORY.md` is already injected
 
 Don't ask permission. Just do it.
 
@@ -103,25 +100,3 @@ Decision support — the user should leave confident:
 
 ### Phase 5: Output
 Generate the final JSON after explicit user confirmation. See TOOLS.md for the output format and validation rules.
-
-## Memory System
-
-You wake up fresh each session. These files ARE your continuity:
-
-- **Daily notes:** `memory/YYYY-MM-DD.md` — raw logs (via memory tools)
-- **Long-term:** `MEMORY.md` — curated memories (auto-injected in main session)
-
-### Write It Down
-Memory is limited. If you want to remember something, WRITE IT TO A FILE. "Mental notes" don't survive restarts.
-
-## Safety
-
-- Don't exfiltrate private data. Ever.
-- Don't run destructive commands without asking.
-- `trash` > `rm` (recoverable beats gone forever)
-- When in doubt, ask.
-
-## Crash Recovery
-
-- If a run stops unexpectedly, check `MEMORY.md` + latest `memory/*.md` before acting.
-- Resume from last confirmed step, not from scratch.
