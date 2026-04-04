@@ -8,7 +8,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCreateAccount = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
       setError("Please provide an email address.");
@@ -17,54 +17,37 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      const generatedName = email.split("@")[0] + "-" + Math.random().toString(36).substring(2, 6);
+      // Try to sign in via passkey first
+      const { data, error: passkeyError } = await signIn.passkey();
       
-      // We generate a long, secure random password so the user never has to type one.
-      // They will rely exclusively on Passkeys for subsequent logins.
-      const secureRandomPassword = crypto.randomUUID() + crypto.randomUUID();
-      
-      // 1. Sign up the user anonymously using the email/password provider behind the scenes
-      const signUpRes = await signUp.email({
-        email,
-        name: generatedName,
-        password: secureRandomPassword,
-      });
-      
-      if (signUpRes.error) {
-        setError(signUpRes.error.message || "Failed to create account");
-        setLoading(false);
-        return;
-      }
-      
-      // 2. Immediately attach a passkey to their new session
-      const passkeyRes = await authClient.passkey.addPasskey({
-        name: "Primary Device Passkey"
-      });
-      
-      if (passkeyRes.error) {
-        setError((passkeyRes.error.message as string) || passkeyRes.error.statusText || "Account created, but failed to register passkey. Please try again from your profile.");
-      } else {
-        // Successfully created user & passkey, we can redirect or show success
-        window.location.href = "/";
-      }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
-    } finally {
-      if (loading) setLoading(false);
-    }
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      // Better-auth allows signing in without an explicitly provided email if the browser
-      // offers passkey auto-fill or selection. 
-      const { data, error } = await signIn.passkey();
-      
-      if (error) {
-        setError((error.message as string) || error.statusText || "Failed to sign in with passkey. Ensure you have registered on this device.");
+      if (passkeyError) {
+        // If login fails (user not found, canceled, etc), fallback to automated registration flow
+        const generatedName = email.split("@")[0] + "-" + Math.random().toString(36).substring(2, 6);
+        const secureRandomPassword = crypto.randomUUID() + crypto.randomUUID();
+        
+        // 1. Sign up the user anonymously using the email/password provider behind the scenes
+        const signUpRes = await signUp.email({
+          email,
+          name: generatedName,
+          password: secureRandomPassword,
+        });
+        
+        if (signUpRes.error) {
+          setError(signUpRes.error.message || "Failed to authenticate or create account");
+          return;
+        }
+        
+        // 2. Immediately attach a passkey to their new session
+        const passkeyRes = await authClient.passkey.addPasskey({
+          name: "Primary Device Passkey"
+        });
+        
+        if (passkeyRes.error) {
+          setError((passkeyRes.error.message as string) || passkeyRes.error.statusText || "Account created, but failed to register passkey. Please try again from your profile.");
+        } else {
+          // Successfully created user & passkey, we can redirect or show success
+          window.location.href = "/";
+        }
       } else {
         window.location.href = "/";
       }
@@ -136,24 +119,10 @@ export default function LoginPage() {
                 disabled={loading}
                 className="gradient-primary text-on-primary font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 group transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-ambient font-label"
               >
-                <span>{loading ? "Authenticating..." : "Login via Passkey"}</span>
+                <span>{loading ? "Authenticating..." : "Continue via Passkey"}</span>
                 {!loading && (
                     <span className="material-symbols-outlined text-lg group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">north_east</span>
                 )}
-              </button>
-
-              <div className="relative flex items-center py-4">
-                <div className="flex-grow border-t border-outline-variant/20"></div>
-                <span className="flex-shrink mx-4 text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em]">or</span>
-                <div className="flex-grow border-t border-outline-variant/20"></div>
-              </div>
-
-              <button 
-                onClick={handleCreateAccount}
-                disabled={loading}
-                className="ghost-border bg-transparent text-inverse-surface font-bold py-4 px-6 rounded-lg transition-all duration-200 hover:bg-surface-container-low hover:border-outline-variant/80 active:scale-[0.98] font-label text-sm"
-              >
-                <span>{loading ? "Registering..." : "Create Account (Register Passkey)"}</span>
               </button>
             </div>
           </form>
