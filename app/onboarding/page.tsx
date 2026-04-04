@@ -206,7 +206,8 @@ export default function OnboardingPage() {
         />
       )}
 
-      {/* ── Footer ── */}
+      {/* ── Footer (hidden on chat step) ── */}
+      {step !== 4 && (
       <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-8 py-5">
         <span className="hidden md:block text-[10px] text-surface-variant/40 font-label uppercase tracking-widest">
           &copy; 2026 Croisette. High-End Editorial Intelligence.
@@ -255,6 +256,7 @@ export default function OnboardingPage() {
           )}
         </div>
       </footer>
+      )}
     </>
   );
 }
@@ -1012,7 +1014,7 @@ function StepAdvisor({
 
   // Phase 3: Chat is ready
   return (
-    <main className="fixed inset-0 top-16 bottom-20 flex bg-surface-bright">
+    <main className="fixed inset-0 top-16 bottom-0 flex bg-surface-bright">
       {/* Chat panel */}
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-500">
 
@@ -1052,7 +1054,7 @@ function StepAdvisor({
             <div key={message.id} className="flex">
               <div className="max-w-[85%] space-y-1">
                 <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
-                <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient">
+                <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient">
                     {showSpinner ? (
                       <div className="flex items-center gap-3">
                         <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
@@ -1085,7 +1087,7 @@ function StepAdvisor({
             <div className="flex">
               <div className="max-w-[85%] space-y-1">
                 <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
-                <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient flex items-center gap-3">
+                <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                   <span className="text-on-surface-variant text-sm">
                     Thinking&hellip;
