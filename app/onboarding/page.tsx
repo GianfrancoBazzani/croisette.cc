@@ -546,6 +546,8 @@ function StepAdvisor() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
 
+  const wakeUpPrompt = "Hello Croissette my name is Jonathan";
+
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: `/api/chat/${AGENT_ID}`,
@@ -553,7 +555,18 @@ function StepAdvisor() {
     }),
   });
 
+  useEffect(() => {console.log(status)}, [status]);
+
   const isReady = status === "ready";
+  const hasSentWakeUp = useRef(false);
+
+  // Send wakeup prompt once the chat is ready
+  useEffect(() => {
+    if (isReady && !hasSentWakeUp.current) {
+      hasSentWakeUp.current = true;
+      sendMessage({ text: wakeUpPrompt });
+    }
+  }, [isReady, sendMessage, wakeUpPrompt]);
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -590,7 +603,7 @@ function StepAdvisor() {
         ref={scrollRef}
         className="flex-1 overflow-y-auto px-6 md:px-12 space-y-10 max-w-4xl mx-auto w-full"
       >
-        {messages.map((message) => {
+        {messages.slice(1).map((message) => { // Hide the wakeup prompt message
           const hasText = message.parts.some(
             (part) => part.type === "text" && part.text
           );
