@@ -45,7 +45,6 @@ export function hashWorkspace(
     "AGENTS.md",
     "TOOLS.md",
     "USER.md",
-    "BOOTSTRAP.md",
   ];
 
   for (const file of WORKSPACE_FILES) {

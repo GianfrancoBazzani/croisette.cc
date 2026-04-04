@@ -1,42 +1,37 @@
 {
   "version": "1.0.0",
-  "created": "2026-04-04T13:57:29.332Z",
+  "created": "2026-04-04T16:03:49.901Z",
   "agentId": "portfolio-builder-deepseek",
   "files": {
     "SOUL.md": {
-      "rootHash": "0xe3e421f9ec26142d895c3d592879c130162eeb7b066b097b1db64005ee488a7c",
-      "sha256": "ee7c248c4334548cb5a4ab44646e632266ac4e6598c0fd97b5b8400c8743bc53",
-      "size": 1799
+      "rootHash": "0xca62a85775a0b503b447f93f272fe5122d90c4a65e4ab84911102f5ae8912a19",
+      "sha256": "3725b4c7246d17639c9f4d2d1834b17b7a98f2ed3b4598cfa64ca827946028ec",
+      "size": 2815
     },
     "IDENTITY.md": {
-      "rootHash": "0x0232dc4260463ce6d0d5b6ec5adf5bdfa2a18c146e582f9008d4122564304c25",
-      "sha256": "d61b36ce2ca6c36fb29fdf74db9e316f5fad00a920449d4825ad4d85f35b1481",
-      "size": 295
+      "rootHash": "0x68ecbd755597d49b11b36e6c103fc2fe3cf34bfad1929ab96b690cd07ffb7a9d",
+      "sha256": "04ccc54737149ee0caf5eb93407a33a384521d92e036041c17f52dfac91eee6f",
+      "size": 719
     },
     "AGENTS.md": {
-      "rootHash": "0x578ce3405406f3ae5d7627c56e3054ae9cec81b354a7d54aaad7d2a1f3787222",
-      "sha256": "b0d1020e70961f7f2ca367e7dd8310a49152493be6eff0ea186e07be1e9bee7f",
-      "size": 2331
+      "rootHash": "0x8d4154eafdb3747e6e54d8b02695f51941ccbe1d8901bdba7e0516f11d0fcaf2",
+      "sha256": "83c25e93726d50aea96201c292c1bb8a7ecadc4a7c5bbb8b4fb5a8fcacb42744",
+      "size": 8881
     },
     "TOOLS.md": {
-      "rootHash": "0x8293997a8decb9a0c11205ab5bfe5f4bacb68391390d73c33aafb887a71e2d81",
-      "sha256": "c9688671c36f11ef6e978da6920bd2dc21fb2874cdfdb3ef106e4c33ead811ae",
-      "size": 1518
+      "rootHash": "0xc097b84e07fdbe5cc7993403b2c9e9755fbb1a292214bb73dd3a1451269ac6c4",
+      "sha256": "b306e24497adb610049b45cd39a40a1cb3c926bafc24d2ccda44f4499748ef42",
+      "size": 4853
     },
     "USER.md": {
-      "rootHash": "0x210a2e3c94288f418aa3524a23f99f2f8ee72245f7047cbc790ed8e96cdf53ac",
-      "sha256": "da7593e88deca48ccd7341a491d9a71a10cf551ebeea02474f7b28e08872f117",
-      "size": 623
-    },
-    "BOOTSTRAP.md": {
-      "rootHash": "0x6780910e690f3dca6ca3c126264afaec59c2b0c0446e5d8fa4a8efb5949fb629",
-      "sha256": "33ec06200a1751961a2682af23c689708f15f4c0030c3b90480548583ce548ee",
-      "size": 749
+      "rootHash": "0x86761f2c74d77b7caa61d73c6f44aa524269e36ea21c55695b9f9ba1ce294a34",
+      "sha256": "e21e2827a66dcc5595f7107a543ec3fb619da9323fdfd873092233b3042cac11",
+      "size": 1133
     },
     "MEMORY.md": {
-      "rootHash": "0x7b4e0fe18243b6dfe97db73a2b9f0bee81ffb09c0118fce0ac391a3a6b9b2056",
-      "sha256": "042e86b07f9491642574f1736995d96a8334caf058007d1fc5ec34334e4860a7",
-      "size": 740
+      "rootHash": "0xe9f7994f11b4959f8256917c6fbaa11c9711fe5d96afde14d24b496dddbe599b",
+      "sha256": "623cd1e819e35c6869bb8fe895db667b2ae2ce50df2f5b357f36045eb8ab22c9",
+      "size": 76
     },
     "HEARTBEAT.md": {
       "rootHash": "0xb0779a4c54a45113ee30d598fa4f55fe635f5374102bbaae6d942023b0b14e46",
@@ -44,5 +39,5 @@
       "size": 325
     }
   },
-  "manifestRootHash": "0xa899488d9d88e38a46a60457f587f4c99d33970154a972bdef2f278a35f2c09c"
+  "manifestRootHash": "0xa711a57eac03f6ea2a53ef365859c4f79097a4a007bb0d59012e5f1486b79225"
 }

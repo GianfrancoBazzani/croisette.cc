@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2026-04-04T13:53:14.013Z",
+  "created": "2026-04-04T16:05:18.516Z",
   "agentId": "portfolio-builder-og",
   "files": {
     "SOUL.md": {
@@ -28,16 +28,11 @@
       "sha256": "ad60897c342163925c79d8166f7a6b486cb8b9fa0839a477ff9176f6ddef8d9f",
       "size": 623
     },
-    "BOOTSTRAP.md": {
-      "rootHash": "0x1e9cbc1a77042f93b80727b451ad59fde4b38f9357dcdea6d09188bca52c51e0",
-      "sha256": "c6584f1787dfba95a6f8063cc4249a08828b1017c5fa206210501982f535c775",
-      "size": 749
-    },
     "HEARTBEAT.md": {
       "rootHash": "0xb0779a4c54a45113ee30d598fa4f55fe635f5374102bbaae6d942023b0b14e46",
       "sha256": "3fa5b42475eaf5973c5b049ba2e429f3480babc2d2a0cb1ea57d7e3fa9d88b64",
       "size": 325
     }
   },
-  "manifestRootHash": "0x8f69908e32d5e066d98a75bacee34c1a57c474c7f5531c9f4de0dea2fca4a2c2"
+  "manifestRootHash": "0x75fc23f4b5307805afae84df2b9600e304038289fa51e7825b03ea6fabb6ae90"
 }

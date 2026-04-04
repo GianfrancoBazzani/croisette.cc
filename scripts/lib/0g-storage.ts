@@ -260,9 +260,14 @@ export async function checkFileExistsOnChain(
   config: AppConfig,
 ): Promise<boolean> {
   validateRootHash(rootHash);
-  const indexer = createIndexer(config);
-  const locations = await indexer.getFileLocations(rootHash);
-  return locations.length > 0;
+  try {
+    const indexer = createIndexer(config);
+    const locations = await indexer.getFileLocations(rootHash);
+    return locations.length > 0;
+  } catch {
+    // getFileLocations throws when the file doesn't exist on any node
+    return false;
+  }
 }
 
 /**

@@ -18,14 +18,14 @@ export const AGENTS: Record<string, AgentConfig> = {
     name: "Portfolio Builder (OG Compute)",
     description: "Portfolio allocation, DCA strategies, FIRE calculator",
     configDir: ".zeroclaw/agents/portfolio-builder-og",
-    manifestRootHash: "0x8f69908e32d5e066d98a75bacee34c1a57c474c7f5531c9f4de0dea2fca4a2c2",
+    manifestRootHash: "0x75fc23f4b5307805afae84df2b9600e304038289fa51e7825b03ea6fabb6ae90",
   },
   "portfolio-builder-deepseek": {
     slug: "portfolio-builder-deepseek",
     name: "Portfolio Builder (DeepSeek)",
     description: "Portfolio allocation, DCA strategies, FIRE calculator",
     configDir: ".zeroclaw/agents/portfolio-builder-deepseek",
-    manifestRootHash: "0xa899488d9d88e38a46a60457f587f4c99d33970154a972bdef2f278a35f2c09c",
+    manifestRootHash: "0xa711a57eac03f6ea2a53ef365859c4f79097a4a007bb0d59012e5f1486b79225",
 
   },
 };

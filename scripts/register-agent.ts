@@ -18,7 +18,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { uploadFile, uploadData } from "./lib/0g-storage";
+import { uploadFile, uploadData, computeRootHash, checkFileExistsOnChain } from "./lib/0g-storage";
 import { getConfig } from "./lib/0g-config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -33,7 +33,6 @@ const WORKSPACE_FILES = [
   "AGENTS.md",
   "TOOLS.md",
   "USER.md",
-  "BOOTSTRAP.md",
   "MEMORY.md",
   "HEARTBEAT.md",
 ];
@@ -80,13 +79,31 @@ async function main() {
     console.log(`[upload] ${fileName} (${size} bytes, sha256: ${hash.slice(0, 12)}...)`);
 
     try {
-      const result = await uploadFile(filePath, storageConfig);
-      files[fileName] = {
-        rootHash: result.rootHash,
-        sha256: hash,
-        size,
-      };
-      console.log(`  → rootHash: ${result.rootHash}`);
+      // Check if file already exists on-chain to avoid duplicate upload reverts
+      const rootHash = await computeRootHash(filePath);
+      const existsOnChain = await checkFileExistsOnChain(rootHash, storageConfig);
+
+      if (existsOnChain) {
+        console.log(`  → already on-chain, skipping upload (rootHash: ${rootHash})`);
+        files[fileName] = { rootHash, sha256: hash, size };
+      } else {
+        try {
+          const result = await uploadFile(filePath, storageConfig);
+          files[fileName] = {
+            rootHash: result.rootHash,
+            sha256: hash,
+            size,
+          };
+          console.log(`  → rootHash: ${result.rootHash}`);
+        } catch (uploadErr) {
+          // Upload can fail if the file was previously submitted to the flow
+          // contract but not yet replicated to storage nodes. Use the
+          // pre-computed root hash in this case.
+          console.log(`  → upload failed, using computed rootHash: ${rootHash}`);
+          console.error(`    (${uploadErr instanceof Error ? uploadErr.message : uploadErr})`);
+          files[fileName] = { rootHash, sha256: hash, size };
+        }
+      }
     } catch (err) {
       console.error(
         `  ✗ Failed: ${err instanceof Error ? err.message : err}`
