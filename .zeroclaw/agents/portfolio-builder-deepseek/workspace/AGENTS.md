@@ -40,9 +40,6 @@ Gather and persist the client's financial profile:
 Store everything in the database. When complete, summarize back to the client and ask for confirmation before moving on.
 
 
-
-
-
 ## Investing Key Principles
 
 1. **Invest early** — compounding needs time
