@@ -67,29 +67,49 @@ export default function Home() {
 
           {/* Right — Hero Visual */}
           <div className="lg:col-span-5 relative">
-            <div className="aspect-square bg-inverse-surface rounded-3xl overflow-hidden shadow-2xl relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="Financial Visualization — Abstract 3D digital visualization"
-                className="w-full h-full object-cover opacity-80"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCQLMOWIEJnUZdJkzUgiq17HeKMXDoZU7O66EbRHHWSe294VdsMCyITBdPexGcZp8F1lR08LH-coblJ8YnebDTleNWSNExJM1mWRbkH00AcWhV3OB_AT4i3TNzTjyR43lbGlaLjm0YsT4Fwsmgzelx8wAbQVgv9l1Gu-mSEjH0-h7H1yZmLXyJGnUT7DIy4kX2Xe8LC7ziimsZomXBImkgCn09jGYgU8NeSjODfq4uwSNOlUh1jlJbsX5BNNYQ29vV_Lb85qfu6ms"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-inverse-surface via-transparent to-transparent" />
-              <div className="absolute bottom-8 left-8 right-8 p-6 bg-surface-container-lowest/10 backdrop-blur-md rounded-xl border border-white/10">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-on-primary font-semibold tracking-tight">
-                    Active Engine Status
-                  </span>
-                  <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+            {/* Logo above the card */}
+            <div className="mb-6">
+              <img alt="Croisette" className="h-20 md:h-32" src="/croissete.svg" />
+            </div>
+            <div className="aspect-square bg-inverse-surface rounded-3xl overflow-hidden shadow-2xl relative p-10 flex flex-col justify-between">
+              {/* Radial art background texture */}
+              <div className="absolute inset-0 radial-art opacity-[0.06] pointer-events-none" />
+
+              {/* Top spacer */}
+              <div className="z-10" />
+
+              {/* Center — Key metric */}
+              <div className="z-10 flex flex-col items-start">
+                <span className="text-white/40 text-xs font-bold uppercase tracking-widest mb-3">
+                  Portfolio Performance
+                </span>
+                <div className="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none mb-2">
+                  +12.4%
                 </div>
-                <div className="space-y-2">
-                  <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary w-3/4" />
+                <span className="text-primary font-semibold text-sm tracking-tight">
+                  annualized return
+                </span>
+              </div>
+
+              {/* Bottom — Status bar */}
+              <div className="z-10 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
+                    <span className="text-white/60 text-xs font-bold uppercase tracking-widest">
+                      Engine Active
+                    </span>
                   </div>
-                  <div className="flex justify-between text-xs text-white/60">
-                    <span>Optimization Level</span>
-                    <span>89.4%</span>
-                  </div>
+                  <span className="text-white/40 text-xs tracking-tight">
+                    24/7 monitoring
+                  </span>
+                </div>
+                <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-primary w-[89%]" />
+                </div>
+                <div className="flex justify-between text-xs text-white/40">
+                  <span>Optimization Level</span>
+                  <span className="text-white/70 font-semibold">89.4%</span>
                 </div>
               </div>
             </div>
@@ -223,41 +243,16 @@ export default function Home() {
       </section>
 
       {/* ── The Fix Section (Editorial Layout) ── */}
-      <section className="py-32 px-8 bg-surface relative overflow-hidden">
+      <section className="py-32 px-8 bg-surface relative overflow-visible">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           {/* Left — Image + Quote */}
-          <div className="relative">
-            <div className="w-full aspect-[4/5] rounded-3xl overflow-hidden relative shadow-2xl">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt="The AI Engine — Elegant macro shot of data flow"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlKKOomnhhIvfUnwX-_xnio6SX50hywzq-mb0jIVtP61L-BV2d50JLHWg3LnKIjjAjvrgFRtW7fOvsMIAgS07yfVC4Si-btQCy8RXEEGDgjHTNGvwOO6bGhvy3RTq1oLpcnfu7qjRTKxS0VKVzkLz5M3G61CiGH-Md3aL5BJBIGSw8Fjt0WzyWMNChMRUFrqFfAVFt-4h8-Q5q1J0GFz67ZkoC0wPZhRdHi1t3Tu0MTP6eBjaZlYXzbg5fee0bemRsz0mpU_M7YwE"
-              />
-              <div className="absolute inset-0 bg-primary/10 mix-blend-overlay" />
-            </div>
-            <div className="absolute -bottom-6 -right-6 bg-surface-container-lowest p-8 rounded-xl shadow-ambient-lg max-w-[280px]">
-              <p className="text-sm font-semibold italic text-on-surface">
-                &quot;The first wealth platform that actually thinks ahead of
-                the curve.&quot;
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-surface-container-high overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt="Expert Avatar"
-                    className="w-full h-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkV1FuiwvGg7jVKd_wW79ZzWXPMtBWkvSzSjPuUeUikj8jdFdP5TwUoywlPa4dkWiyMVtOyjDqk1Wpmdl_9RwhlQLzucfqbXAo3VPxb0aKKEC5iWTUbX9tvM_vwdEaesbc9zRdMghE_mOaplkGbjE4KjjTChiDCJFuwbPte0k-GeJZKZ__z23c10QQfypFFNeNR1jspHYKW4QzCkwCXoFGxnfn-9uEDA6_3Fzr66P3cXvENRCLM1ow7s7C2022i9XLUbDt9joDiYk"
-                  />
-                </div>
-                <div>
-                  <p className="text-xs font-bold">Julian Croissette</p>
-                  <p className="text-[10px] text-on-surface-variant uppercase tracking-tighter">
-                    Founder &amp; CEO
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="relative overflow-visible">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="The AI Engine — 3D organic shape"
+              className="w-[130%] max-w-none -ml-[15%] -mt-[10%] -mb-[10%]"
+              src="/organic_shape_croisette.png"
+            />
           </div>
 
           {/* Right — Solution Copy */}

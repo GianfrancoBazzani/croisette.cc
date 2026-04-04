@@ -2,7 +2,7 @@
 # Design System Strategy: High-End Editorial Intelligence
 
 ## 1. Overview & Creative North Star
-**Creative North Star: "The Predictive Alchemist"**
+**Creative North Star: "The Predictive Croisette "**
 
 This design system moves away from the sterile, "off-the-shelf" SaaS aesthetic toward a high-end editorial experience. It is designed to feel like a bespoke financial concierge—authoritative yet effortless. By leveraging a warm, tactile base of Peach Cream contrasted against the sharp, cold intelligence of Deep Charcoal, we create a visual tension that represents the intersection of human intuition and AI precision.
 
@@ -97,4 +97,4 @@ Depth in this system is a result of **Tonal Layering**, not structural shadows.
 *   **Don't** crowd the interface. If it feels "full," remove an element or increase the padding. The brand is "effortless." Effortless brands have room to breathe.
 
 ---
-**Director's Note:** Every pixel should feel intentional. If an element exists, it should be there because it provides clarity or adds to the "Alchemist" aesthetic. If you find yourself reaching for a default border or a standard grid, step back and ask: "How would a luxury magazine layout this data?"```
+**Director's Note:** Every pixel should feel intentional. If an element exists, it should be there because it provides clarity or adds to the "Croisette " aesthetic. If you find yourself reaching for a default border or a standard grid, step back and ask: "How would a luxury magazine layout this data?"```

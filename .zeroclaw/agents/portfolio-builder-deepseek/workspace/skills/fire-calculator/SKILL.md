@@ -5,178 +5,105 @@ description: Calculate the user's path to Financial Independence and Retiring Ea
 
 # FIRE Calculator
 
-> **Before using this skill, read the interaction guide:** `references/interaction-guide.md`
-> This skill operates as a chatbot conversation. Ask questions one at a time, answer any user questions along the way, challenge inconsistencies, and conclude with the standardized JSON output.
+This skill operates as a chatbot conversation. Ask questions one at a time, wait for each answer, respond to user questions along the way, challenge inconsistencies, and conclude with the standardized JSON output.
 
-FIRE — Financial Independence, Retire Early — is the goal of saving and investing aggressively enough that your investment portfolio can sustain your living expenses indefinitely, freeing you from dependence on employment income.
+FIRE — Financial Independence, Retire Early — is saving and investing aggressively enough that your portfolio can sustain your living expenses indefinitely, freeing you from dependence on employment income. The core idea isn't unconditionally quitting work — it's attaining the freedom to pursue meaningful activities without relying on a paycheck.
 
-The core idea is not unconditionally quitting work. It's attaining the freedom to pursue meaningful activities without relying on a paycheck.
+## The Two Fundamental Rules
 
-## Chatbot Interaction Flow
+### The 4% Rule (Trinity Study)
+Withdraw 4% of your portfolio in the first year of retirement, adjust for inflation each year, and your savings have a high likelihood of lasting 30 years. This comes from the Trinity study analyzing historical US market returns.
 
-1. **Understand the user's motivation.** Ask: "What does financial independence mean to you? Quitting work entirely, switching to passion work, or just having the security of knowing you could?" This sets the tone.
-2. **Explain the 4% rule and 25x formula** before asking for any numbers. Make sure they understand the foundation.
-3. **Gather financial inputs ONE AT A TIME:**
+For very early retirement (age 35–40), consider a more conservative 3–3.5% rate — you may need 50+ years of withdrawals, not 30.
+
+### The 25x Formula
+Flip the 4% rule: you need **25 times your annual expenses** invested to be financially independent.
+
+- $30,000/year → FIRE number = $750,000
+- $50,000/year → FIRE number = $1,250,000
+- $80,000/year → FIRE number = $2,000,000
+
+## Conversation Flow
+
+1. **Understand the user's motivation.** Ask: "What does financial independence mean to you — quitting work entirely, switching to passion work, or just having the security of knowing you could?" This sets the tone and helps determine their FIRE variant.
+
+2. **Explain the 4% rule and 25x formula** before asking for numbers — make sure they understand the foundation.
+
+3. **Gather financial inputs one at a time:**
    - "What are your current monthly expenses?" (walk through categories if needed)
-   - "What would your monthly expenses be in retirement?"
+   - "What would your monthly expenses be in retirement?" (may differ from current)
    - "What's your current total invested portfolio value?"
    - "How much can you invest per month?"
    - "What's your current age?"
    - "What's your target retirement age?" (or "as soon as possible")
-4. **Calculate and present the FIRE number.** Explain what it means in plain language.
-5. **Run scenario analysis.** Show 2-3 what-if scenarios without being asked — this builds trust and shows the user the sensitivity of their plan.
-6. **Challenge unrealistic expectations.** If someone wants to FIRE in 5 years but saves 10% of a modest income, be honest: "At your current rate, FIRE would take approximately X years. Here's what it would take to reach 5 years..."
-7. **Connect to portfolio allocation.** Suggest how the portfolio should evolve from accumulation → transition → withdrawal phase.
-8. **Summarize and get confirmation.**
-9. **Output the JSON.**
 
-## The Two Fundamental Rules
+4. **Determine the expected return assumption** based on their risk tolerance:
+   - Conservative (4%): heavy cash/bIB01 allocation
+   - Moderate (5–6%): balanced allocation
+   - Aggressive (7–8%): heavy equity/OGM ETF allocation
+   - Crypto portfolios have higher potential but also higher volatility — use conservative estimates.
 
-### Rule 1: The 4% Rule (Trinity Study)
-If you withdraw 4% of your investment portfolio in the first year of retirement and adjust that amount for inflation each year, your savings have a high likelihood of lasting for a 30-year retirement period.
+5. **Calculate and present the FIRE number.** Explain it in plain language. Include:
+   - FIRE number (annual retirement expenses × 25)
+   - Gap (FIRE number − current portfolio)
+   - Years to FIRE (using compound growth with monthly contributions)
+   - Monthly investment needed to hit target age
+   - FIRE progress percentage
+   - Coast FIRE age — the age at which your current portfolio, growing with zero contributions, reaches your FIRE number by 65
 
-This comes from the Trinity study, which analyzed historical market returns and found that a 4% initial withdrawal rate had a very high success rate across nearly all 30-year periods in US market history.
+6. **Run 2–3 what-if scenarios** without being asked — this builds trust and shows sensitivity:
+   - "What if you save 10% more per month?" (often dramatically reduces timeline)
+   - "What if returns are only 3%?" (stress test)
+   - "What if expenses increase 20%?" (lifestyle creep adds $250k per $10k/year increase)
 
-### Rule 2: The 25x Formula
-Flip the 4% rule around: you need **25 times your annual expenses** saved and invested to be financially independent.
+7. **Challenge unrealistic expectations.** If someone wants FIRE in 5 years but saves 10% of a modest income, be direct: "At your current rate, FIRE would take ~X years. Here's what it would take to hit 5 years..."
 
-- Annual expenses of $30,000 → FIRE number = $750,000
-- Annual expenses of $50,000 → FIRE number = $1,250,000
-- Annual expenses of $80,000 → FIRE number = $2,000,000
+8. **Connect to portfolio allocation** — suggest how the portfolio should evolve across phases:
 
-This is your FIRE number — the portfolio value at which you can stop working.
+   | Phase | Stocks (OGM ETFs) | Cash (bIB01) | Yield (USDY) |
+   |---|---|---|---|
+   | Accumulation | 60–70% | 20–30% | 10% |
+   | Transition (5yr before FIRE) | 40–50% | 30–40% | 20% |
+   | Withdrawal | 30–40% | 30–40% | 20–30% |
+
+   In withdrawal, draw from USDY first and replenish from bIB01/bCSPX during rebalancing.
+
+9. **Summarize and get explicit confirmation** before generating JSON.
+
+10. **Output the JSON.**
 
 ## FIRE Variants
 
-### LeanFIRE
-- Annual expenses: $20,000–$40,000
-- FIRE number: $500,000–$1,000,000
-- Lifestyle: Minimal, frugal, often in low cost-of-living areas
-- Reachable faster but requires significant lifestyle constraints
+| Variant | Annual Expenses | FIRE Number | Lifestyle |
+|---|---|---|---|
+| LeanFIRE | $20k–$40k | $500k–$1M | Minimal, frugal, often LCOL areas |
+| Regular FIRE | $40k–$80k | $1M–$2M | Comfortable middle-class |
+| FatFIRE | $80k–$200k+ | $2M–$5M+ | Premium, no compromises |
 
-### Regular FIRE
-- Annual expenses: $40,000–$80,000
-- FIRE number: $1,000,000–$2,000,000
-- Lifestyle: Comfortable middle-class standard of living
-- The most common target
+## Compound Growth Formula
 
-### FatFIRE
-- Annual expenses: $80,000–$200,000+
-- FIRE number: $2,000,000–$5,000,000+
-- Lifestyle: Premium living, travel, no compromises
-- Takes longer but provides maximum comfort and buffer
-
-## FIRE Calculator: Required Inputs
-
-Gather these from the user:
-
-### Personal Information
-1. **Current age**
-2. **Target retirement age** (or "as soon as possible")
-
-### Financial Snapshot
-3. **Monthly expenses (current)** — rent, food, utilities, insurance, transport, everything
-4. **Expected monthly expenses in retirement** (may be lower or higher than current)
-5. **Current total invested portfolio value** (across all accounts)
-6. **Monthly amount available to invest**
-
-### Assumptions
-7. **Expected annual return** — suggest 5% as a conservative inflation-adjusted default
-   - Conservative: 4% (heavy cash/bIB01 allocation)
-   - Moderate: 5-6% (balanced allocation)
-   - Aggressive: 7-8% (heavy equity/OGM ETF allocation)
-   - Important: Crypto portfolios have higher potential returns but also higher volatility and risk. Use conservative estimates.
-
-## FIRE Calculations
-
-### Core Calculation
 ```
-FIRE Number = Annual Retirement Expenses × 25
-Gap = FIRE Number - Current Portfolio Value
-Years to FIRE = calculated using compound growth formula with monthly contributions
-Monthly Investment Needed = calculated to reach FIRE Number by target age
-```
-
-### Compound Growth Formula
 Future Value = PV × (1 + r)^n + PMT × [((1 + r)^n - 1) / r]
+```
 
-Where:
-- PV = current portfolio value
-- r = monthly rate of return (annual rate / 12)
-- n = number of months
-- PMT = monthly contribution
+Where PV = current portfolio, r = monthly return (annual / 12), n = months, PMT = monthly contribution. Solve for n (months to FIRE) or PMT (required monthly contribution).
 
-Solve for n (months to FIRE) or PMT (required monthly contribution).
+## Be Honest About the Challenges
 
-### FIRE Progress
-- **Percentage complete:** (Current Portfolio / FIRE Number) × 100
-- **Estimated years remaining**
-- **Coast FIRE age:** The age at which your current portfolio, if left to grow with zero additional contributions, would reach your FIRE number by age 65. If you've hit Coast FIRE, you only need to earn enough to cover current expenses — no more saving required.
-
-## Mapping FIRE to Ondo Assets
-
-### Accumulation Phase (Building to FIRE Number)
-Prioritize growth while maintaining stability:
-- 60-70% OGM tokenized ETFs (growth engine)
-- 20-30% bIB01 (cash — stable ballast)
-- 10% USDY (accessible reserve)
-
-Use DCA or value averaging to build systematically.
-
-### Transition Phase (5 years before FIRE)
-Gradually shift toward capital preservation:
-- 40-50% OGM tokenized ETFs
-- 30-40% bIB01 (cash)
-- 20% USDY
-
-Reduce risk as you approach the withdrawal phase.
-
-### Withdrawal Phase (Living off your portfolio)
-Prioritize income and stability:
-- 30-40% OGM tokenized ETFs (maintain some growth to outpace inflation)
-- 30-40% bIB01 (cash)
-- 20-30% USDY (immediate liquidity for living expenses)
-
-Withdraw from USDY first, replenish from bIB01/bCSPX during rebalancing.
-
-## Scenario Modeling
-
-Present these scenarios to help the user understand sensitivity:
-
-### "What if I save 10% more per month?"
-Recalculate years to FIRE. Often, a modest increase in savings rate dramatically reduces the timeline. Show the difference.
-
-### "What if returns are only 3% instead of 5%?"
-Stress test with lower returns. This is especially important for crypto portfolios where volatility can reduce effective returns.
-
-### "What if my expenses increase 20%?"
-Lifestyle creep is the biggest FIRE killer. Show how a $10,000/year increase in expenses adds $250,000 to the FIRE number and potentially years to the timeline.
-
-### "What if there's a major crash midway?"
-Model a 40% drop at the halfway point. Show recovery time based on historical data. The key message: crashes delay FIRE but don't prevent it if you stay invested and keep contributing.
-
-## Benefits and Challenges of FIRE
-
-### Benefits
-- **Freedom** to make choices based on personal values, not financial constraints
-- **Time** to pursue passions, spend with loved ones, explore new paths
-- **Reduced stress** from knowing your basic needs are permanently covered
-- **Autonomy** over your schedule and life direction
-
-### Challenges (Be Honest with Users)
-- **Years of discipline** — strict budgeting, aggressive saving, deferred gratification
-- **Market risk** — downturns can delay the timeline, especially in crypto
-- **Loss of purpose** — many people derive identity and social connections from work. Plan for this.
-- **Healthcare costs** — retiring early may mean decades without employer-provided insurance
-- **Longevity risk** — the 4% rule is tested for 30 years. Retiring at 35 means potentially 50+ years of withdrawals. Consider a 3.5% or 3% rate for very early retirement.
-- **Crypto-specific risk** — smart contract failures, regulatory changes, and extreme volatility add risk layers that don't exist in TradFi FIRE planning
+FIRE requires years of discipline and aggressive saving. Be upfront about:
+- **Market risk** — downturns delay the timeline, especially with crypto exposure
+- **Loss of purpose** — many people derive identity from work; plan for this
+- **Healthcare** — early retirement may mean decades without employer insurance
+- **Longevity risk** — retiring at 35 means 50+ years of withdrawals; use 3–3.5% rate
+- **Crypto-specific risk** — smart contract failures, regulatory changes, extreme volatility
 
 ## Output Format
 
-After running the FIRE calculations and getting user confirmation, provide:
+After running calculations and getting user confirmation, provide:
 
 1. **Plain-language summary** of FIRE number, years to FIRE, and key scenarios
-2. **JSON output** following the standardized format:
+2. **Honest assessment** — is the timeline realistic given their income and expenses?
+3. **JSON output:**
 
 ```json
 {
@@ -214,4 +141,5 @@ After running the FIRE calculations and getting user confirmation, provide:
 }
 ```
 
-3. **Honest assessment** — is the timeline realistic given their income and expenses?
+4. **Save the JSON immediately** using `file_write` to `portfolio-plan.json` in the workspace root — the frontend dashboard reads this file to display the portfolio visualization.
+5. **Next steps** — route to the appropriate strategy skill (DCA, Lump Sum, or Value Averaging) for implementation.
