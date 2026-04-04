@@ -537,9 +537,16 @@ function StepProfile({
     </main>
   );
 }
+/* ═════════════════════════════════════════════
+   Step 4 — Agent verification with OG Storage 
+   ═════════════════════════════════════════════ */
 
 /* ═════════════════════════════════════════════
-   Step 4 — Croissette Advisor (Chat)
+   Step 5 — Spinner loading sesion data
+   ═════════════════════════════════════════════ */
+
+/* ═════════════════════════════════════════════
+   Step 6 — Croissette Advisor (Chat)
    ═════════════════════════════════════════════ */
 function StepAdvisor() {
   const sessionId = useMemo(() => crypto.randomUUID(), []);
