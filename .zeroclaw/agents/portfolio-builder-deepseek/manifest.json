@@ -1,17 +1,17 @@
 {
   "version": "1.0.0",
-  "created": "2026-04-04T16:03:49.901Z",
+  "created": "2026-04-04T21:35:33.401Z",
   "agentId": "portfolio-builder-deepseek",
   "files": {
     "SOUL.md": {
-      "rootHash": "0xca62a85775a0b503b447f93f272fe5122d90c4a65e4ab84911102f5ae8912a19",
-      "sha256": "3725b4c7246d17639c9f4d2d1834b17b7a98f2ed3b4598cfa64ca827946028ec",
-      "size": 2815
+      "rootHash": "0x0275ed2b89b1fda2b0ef43f823c23a46ec718e1f0f45681a3b543256e9b30154",
+      "sha256": "262eb1f0eccba40dfff81ba8b2c808b4b94dd5bdb2528cad5eca75fb4dda08a6",
+      "size": 3203
     },
     "IDENTITY.md": {
-      "rootHash": "0x68ecbd755597d49b11b36e6c103fc2fe3cf34bfad1929ab96b690cd07ffb7a9d",
-      "sha256": "04ccc54737149ee0caf5eb93407a33a384521d92e036041c17f52dfac91eee6f",
-      "size": 719
+      "rootHash": "0x216afbe20583ce1834f57ea80921410dd90a5f7c50c3718dd5579f2841a5ea44",
+      "sha256": "dbbb7b6a90fae55a4cb3e95a500c45de1a17646274e18eab74752346ee76f5ad",
+      "size": 2332
     },
     "AGENTS.md": {
       "rootHash": "0x8d4154eafdb3747e6e54d8b02695f51941ccbe1d8901bdba7e0516f11d0fcaf2",
@@ -39,5 +39,5 @@
       "size": 325
     }
   },
-  "manifestRootHash": "0xa711a57eac03f6ea2a53ef365859c4f79097a4a007bb0d59012e5f1486b79225"
+  "manifestRootHash": "0x3fefb1274dd17385e1e00ab72e4961b14a29a3b3d4e87068fed7e957769ab66a"
 }
