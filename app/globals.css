@@ -1,1 +1,138 @@
 @import "tailwindcss";
+
+/* ============================================================
+   Croisette Design System — "The Predictive Alchemist"
+   High-End Editorial Intelligence
+   Tailwind CSS v4 Theme
+   ============================================================ */
+
+@theme {
+  /* ── Font Family ── */
+  --font-headline: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Primary (Data Pink) ── */
+  --color-primary: #af1c57;
+  --color-primary-container: #d1396f;
+  --color-primary-fixed: #ffd9e0;
+  --color-primary-fixed-dim: #ffb1c3;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #fffbff;
+  --color-on-primary-fixed: #3f0019;
+  --color-on-primary-fixed-variant: #8f0042;
+  --color-inverse-primary: #ffb1c3;
+
+  /* ── Secondary (Coral Sunset) ── */
+  --color-secondary: #8f4c35;
+  --color-secondary-container: #fda68a;
+  --color-secondary-fixed: #ffdbd0;
+  --color-secondary-fixed-dim: #ffb59d;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #773924;
+  --color-on-secondary-fixed: #390b00;
+  --color-on-secondary-fixed-variant: #723520;
+
+  /* ── Tertiary ── */
+  --color-tertiary: #5d5c5b;
+  --color-tertiary-container: #757474;
+  --color-tertiary-fixed: #e5e2e1;
+  --color-tertiary-fixed-dim: #c8c6c5;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #f7feff;
+  --color-on-tertiary-fixed: #1c1b1b;
+  --color-on-tertiary-fixed-variant: #474746;
+
+  /* ── Neutral / Surface Hierarchy (The Peach & Charcoal Axis) ── */
+  --color-surface: #fef8f6;
+  --color-surface-bright: #fef8f6;
+  --color-surface-dim: #ded9d7;
+  --color-surface-tint: #b31f59;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8f2f0;
+  --color-surface-container: #f2edeb;
+  --color-surface-container-high: #ede7e5;
+  --color-surface-container-highest: #e7e1df;
+  --color-surface-variant: #e7e1df;
+  --color-background: #fef8f6;
+  --color-on-surface: #1d1b1a;
+  --color-on-surface-variant: #584146;
+  --color-on-background: #1d1b1a;
+
+  /* ── Inverse ── */
+  --color-inverse-surface: #32302f;
+  --color-inverse-on-surface: #f5efed;
+
+  /* ── Outline ── */
+  --color-outline: #8b7076;
+  --color-outline-variant: #dfbec4;
+
+  /* ── Error ── */
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+
+  /* ── Border Radius ── */
+  --radius: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1.5rem;
+
+  /* ── Ambient Shadows (Tinted, never pure black) ── */
+  --shadow-ambient: 0 20px 40px rgba(29, 27, 26, 0.06);
+  --shadow-ambient-lg: 0 32px 64px rgba(29, 27, 26, 0.08);
+
+  /* ── Letter Spacing ── */
+  --tracking-editorial: -0.02em;
+}
+
+/* ── Base ── */
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-surface);
+    color: var(--color-on-surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Editorial typography — tighter headlines */
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: var(--tracking-editorial);
+    font-family: var(--font-headline);
+  }
+
+  /* Generous line-height for body text */
+  p {
+    line-height: 1.6;
+  }
+}
+
+/* ── Custom Utilities (Tailwind v4 @utility) ── */
+
+/* Concentric radial line art texture per design system */
+@utility radial-art {
+  background-image:
+    radial-gradient(circle at center, transparent 0%, transparent 40%, rgba(175, 28, 87, 0.05) 41%, transparent 42%);
+  background-size: 120px 120px;
+}
+
+/* Glassmorphism — for floating elements (nav, modals) */
+@utility glass {
+  background-color: color-mix(in srgb, var(--color-surface-container-lowest) 70%, transparent);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+}
+
+/* Ghost Border — 15% outline-variant for accessibility without breaking No-Line rule */
+@utility ghost-border {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-outline-variant) 15%, transparent);
+}
+
+/* Primary CTA gradient */
+@utility gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
+}
+
