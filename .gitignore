@@ -30,4 +30,4 @@ Thumbs.db
 *.swo
 
 # zeroclaw
-.zeroclaw/agents/portfolio-builder/.secret_key
+**/.secret_key
