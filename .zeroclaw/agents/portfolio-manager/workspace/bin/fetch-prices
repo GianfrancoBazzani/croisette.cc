@@ -1,0 +1,73 @@
+#!/bin/sh
+# Fetches Uniswap quotes for held assets against USDC
+# Usage: echo '<balances_json>' | ./bin/fetch-prices <chainId>
+# Or: ./bin/fetch-prices <chainId> <ticker1:address1:raw_balance1> <ticker2:address2:raw_balance2> ...
+# Reads Uniswap credentials from .env
+
+set -e
+
+CHAIN_ID="${1:-11155111}"
+shift
+
+# Load env
+export $(grep -v '^#' .env | xargs)
+
+API_KEY="$UNISWAP_API_KEY"
+API_BASE="$UNISWAP_API_BASE_URL"
+
+# USDC address per chain
+if [ "$CHAIN_ID" = "1" ]; then
+  USDC="0xA0b86991c6218b36c1d19D4a2e9Eb0Ce3606eB48"
+elif [ "$CHAIN_ID" = "11155111" ]; then
+  USDC="0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"
+else
+  echo "Unknown chainId: $CHAIN_ID" >&2
+  exit 1
+fi
+
+WALLET="$MANAGED_WALLET_ADDRESS"
+
+echo "{"
+echo "  \"chainId\": $CHAIN_ID,"
+echo "  \"usdc_address\": \"$USDC\","
+echo "  \"quotes\": ["
+
+FIRST=true
+for ITEM in "$@"; do
+  TICKER=$(echo "$ITEM" | cut -d: -f1)
+  ADDRESS=$(echo "$ITEM" | cut -d: -f2)
+  RAW_BALANCE=$(echo "$ITEM" | cut -d: -f3)
+
+  # Skip zero balances
+  if [ "$RAW_BALANCE" = "0" ] || [ -z "$RAW_BALANCE" ]; then
+    continue
+  fi
+
+  # Skip USDC (valued at par)
+  if [ "$ADDRESS" = "$USDC" ]; then
+    if [ "$FIRST" = true ]; then FIRST=false; else echo "    ,"; fi
+    echo "    {\"ticker\": \"$TICKER\", \"address\": \"$ADDRESS\", \"raw_balance\": \"$RAW_BALANCE\", \"value_usdc_raw\": \"$RAW_BALANCE\", \"routing\": \"PAR\", \"price_impact\": 0}"
+    continue
+  fi
+
+  if [ "$FIRST" = true ]; then FIRST=false; else echo "    ,"; fi
+
+  # Fetch Uniswap quote
+  RESULT=$(curl -s -X POST "$API_BASE/quote" \
+    -H "x-api-key: $API_KEY" \
+    -H "Content-Type: application/json" \
+    -H "x-universal-router-version: 2.0" \
+    -d "{\"tokenIn\":\"$ADDRESS\",\"tokenOut\":\"$USDC\",\"tokenInChainId\":$CHAIN_ID,\"tokenOutChainId\":$CHAIN_ID,\"amount\":\"$RAW_BALANCE\",\"type\":\"EXACT_INPUT\",\"swapper\":\"$WALLET\",\"routingPreference\":\"BEST_PRICE\",\"protocols\":[\"V2\",\"V3\",\"V4\"]}" 2>/dev/null)
+
+  ROUTING=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin).get('routing','ERROR'))" 2>/dev/null || echo "ERROR")
+  OUTPUT=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin).get('quote',{}).get('output',{}).get('amount','0'))" 2>/dev/null || echo "0")
+  IMPACT=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin).get('quote',{}).get('priceImpact','0'))" 2>/dev/null || echo "0")
+
+  echo "    {\"ticker\": \"$TICKER\", \"address\": \"$ADDRESS\", \"raw_balance\": \"$RAW_BALANCE\", \"value_usdc_raw\": \"$OUTPUT\", \"routing\": \"$ROUTING\", \"price_impact\": $IMPACT}"
+
+  # Rate limit
+  sleep 0.2
+done
+
+echo "  ]"
+echo "}"

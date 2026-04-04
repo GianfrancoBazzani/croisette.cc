@@ -1,0 +1,72 @@
+#!/bin/sh
+# Gets an unsigned swap transaction from Uniswap /swap endpoint and executes it
+# Usage: echo '<quote_json>' | ./bin/execute-swap
+# Or: ./bin/execute-swap <quote_json_file>
+# Reads wallet private key from .env
+# Steps: 1) call /swap with the quote, 2) sign and broadcast via cast
+
+set -e
+
+# Load env
+export $(grep -v '^#' .env | xargs)
+
+# Determine RPC from chain ID in the quote
+CAST="./bin/cast"
+
+# Read quote JSON from stdin or file
+if [ -n "$1" ] && [ -f "$1" ]; then
+  QUOTE_JSON=$(cat "$1")
+else
+  QUOTE_JSON=$(cat)
+fi
+
+# Extract chain ID to determine RPC
+CHAIN_ID=$(echo "$QUOTE_JSON" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('quote',{}).get('chainId', 11155111))")
+
+if [ "$CHAIN_ID" = "1" ]; then
+  RPC="$ETHEREUM_RPC_URL"
+else
+  RPC="$ETHEREUM_SEPOLIA_RPC_URL"
+fi
+
+# Step 1: Call /swap to get unsigned transaction (no simulation on testnet)
+echo ">>> Calling /swap endpoint..." >&2
+SWAP_BODY=$(echo "$QUOTE_JSON" | python3 -c "
+import json, sys
+full_response = json.load(sys.stdin)
+# Pass the quote sub-object to /swap
+req = {'quote': full_response.get('quote', full_response), 'simulateTransaction': False}
+print(json.dumps(req))
+")
+
+SWAP_RESULT=$(echo "$SWAP_BODY" | curl -s -X POST "$UNISWAP_API_BASE_URL/swap" \
+  -H "x-api-key: $UNISWAP_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "x-universal-router-version: 2.0" \
+  -d @-)
+
+# Check for errors
+HAS_SWAP=$(echo "$SWAP_RESULT" | python3 -c "import json,sys; d=json.load(sys.stdin); print('yes' if 'swap' in d else 'no')" 2>/dev/null)
+
+if [ "$HAS_SWAP" != "yes" ]; then
+  echo ">>> /swap failed:" >&2
+  echo "$SWAP_RESULT"
+  exit 1
+fi
+
+# Step 2: Extract unsigned tx and broadcast
+SWAP_TO=$(echo "$SWAP_RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['swap']['to'])")
+SWAP_DATA=$(echo "$SWAP_RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['swap']['data'])")
+SWAP_VALUE=$(echo "$SWAP_RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['swap'].get('value','0x00'))")
+
+echo ">>> Broadcasting transaction..." >&2
+echo ">>> to: $SWAP_TO" >&2
+echo ">>> value: $SWAP_VALUE" >&2
+
+TX_RESULT=$($CAST send "$SWAP_TO" \
+  --data "$SWAP_DATA" \
+  --value "$SWAP_VALUE" \
+  --private-key "$MANAGED_WALLET_PRIVATE_KEY" \
+  --rpc-url "$RPC" 2>&1)
+
+echo "$TX_RESULT"

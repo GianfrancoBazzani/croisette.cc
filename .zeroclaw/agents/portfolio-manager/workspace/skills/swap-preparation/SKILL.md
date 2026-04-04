@@ -64,8 +64,9 @@ Actions:
    routingPreference: BEST_PRICE
    protocols: [V2, V3, V4]
    ```
-   - On mainnet: set `slippageTolerance` from `constraints.max_slippage_bps` (convert to basis points string). Default: `80` (0.8%).
-   - On testnet: use `autoSlippage: DEFAULT` or an explicit loose ceiling from strategy.
+   - Do NOT include `generatePermitAsTransaction` or `permitAmount` — the execution phase handles approvals separately via Permit2.
+   - On mainnet: set `slippageTolerance` from `constraints.max_slippage_bps`. Default: `80` (0.8%).
+   - On testnet: omit slippageTolerance (use auto).
 2. Space requests by 150ms to respect rate limits. On HTTP 429, apply exponential backoff (1s initial, 30s max, with jitter).
 3. Accept only quotes with `routing` in: `CLASSIC`, `WRAP`, `UNWRAP`.
 

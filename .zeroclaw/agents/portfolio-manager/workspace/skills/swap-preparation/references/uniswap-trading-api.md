@@ -71,17 +71,32 @@ Fetches a swap quote with routing and price data.
 }
 ```
 
+**Do NOT include `generatePermitAsTransaction` or `permitAmount`.** These cause the swap calldata to embed a permit that doesn't work with `cast send`. Instead, handle token approvals manually before the swap (see swap-execution skill).
+
 For native ETH as input, use the zero address: `0x0000000000000000000000000000000000000000`.
 
 ### Slippage options
 
 - **Mainnet default:** `"slippageTolerance": "0.80"` (0.8% = 80 basis points). Override with strategy `max_slippage_bps` if tighter.
-- **Testnet:** `"autoSlippage": "DEFAULT"` or an explicit loose ceiling from strategy constraints.
+- **Testnet:** omit slippageTolerance (use auto).
+
+### Token approval requirements (for execution phase)
+
+Before a swap can execute, the input token needs two-layer approval:
+1. **Token → Permit2:** `token.approve(Permit2, maxUint256)` — standard ERC-20 approval
+2. **Permit2 → Router:** `Permit2.approve(token, router, amount, expiration)` — Permit2 internal allowance
+
+Without both, swaps revert with `TRANSFER_FROM_FAILED`.
+
+Key addresses:
+- Permit2: `0x000000000022D473030F116dDEE9F6B43aC78BA3` (same on all chains)
+- Universal Router (Sepolia): `0x3A9D48AB9751398BbFa63ad67599Bb04e4BdF98b`
 
 ### Response fields used
 
 - `requestId` — unique identifier for the quote request
 - `routing` — route type: `CLASSIC`, `WRAP`, `UNWRAP`, or others
+- `permitTransaction` — if present, must be executed BEFORE the swap tx. Contains `to`, `data` fields.
 - `quote.quoteId` — unique quote identifier (present for market trades)
 - `quote.output.amount` — raw output amount string
 - `quote.output.recipient` — should be the swapper address

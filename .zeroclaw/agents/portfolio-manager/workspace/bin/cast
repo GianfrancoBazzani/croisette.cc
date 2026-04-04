@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /Users/polurenaheras/.foundry/bin/cast "$@"

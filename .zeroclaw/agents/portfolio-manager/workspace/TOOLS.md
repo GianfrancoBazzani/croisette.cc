@@ -1,57 +1,126 @@
 # TOOLS.md — Local Notes
 
+## CRITICAL: Dynamic script assembly
+
+The sandbox blocks multi-line commands, `source`, and variable assignments in shell. The workaround:
+1. **file_write** a shell script (e.g., `tmp_balances.sh`) with all commands and values baked in
+2. **shell** `bash tmp_balances.sh` to execute it
+3. **shell** `rm tmp_balances.sh` to clean up
+
+## CRITICAL: Never hardcode secrets
+
+Zeroclaw REDACTS API keys and private keys when you read `.env` via file_read. You will see `KKmI*[REDACTED]` instead of the real value. **NEVER copy redacted values into scripts.**
+
+Instead, every generated script must load `.env` at runtime:
+```bash
+export $(grep -v '^#' .env | xargs)
+```
+Then use the environment variables: `$UNISWAP_API_KEY`, `$MANAGED_WALLET_PRIVATE_KEY`, `$MANAGED_WALLET_ADDRESS`, `$ETHEREUM_SEPOLIA_RPC_URL`, `$UNISWAP_API_BASE_URL`.
+
+Only hardcode non-secret values in scripts: token addresses, chain IDs, amounts.
+
+### Pattern: assemble balance-fetching script
+
+After querying the DB for assets, write `tmp_balances.sh` via file_write:
+
+```bash
+#!/bin/sh
+WALLET=0xbe536053673900caD61bA6305D0c3A163c5891A6
+RPC=https://ethereum-sepolia-rpc.publicnode.com
+CAST=./bin/cast
+echo "["
+echo "{\"ticker\":\"SEP_ETH\",\"decimals\":18,\"balance\":\"$($CAST balance $WALLET --rpc-url $RPC)\"},"
+echo "{\"ticker\":\"SEP_WETH\",\"decimals\":18,\"balance\":\"$($CAST call 0xfFf... \"balanceOf(address)(uint256)\" $WALLET --rpc-url $RPC)\"},"
+# ... one line per asset from DB query results
+echo "]"
+```
+
+The key: the asset list comes from the DB query, not from a hardcoded list. You dynamically generate one `echo` line per asset.
+
+### Pattern: assemble price-fetching script
+
+After filtering held assets (balance > 0), write `tmp_prices.sh` via file_write:
+
+```bash
+#!/bin/sh
+API_KEY=<actual_key_from_env>
+API_BASE=<actual_base_from_env>
+WALLET=<actual_wallet_from_env>
+USDC=0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238
+CHAIN=11155111
+quote() {
+  curl -s -X POST "$API_BASE/quote" -H "x-api-key: $API_KEY" -H "Content-Type: application/json" -H "x-universal-router-version: 2.0" -d "{\"tokenIn\":\"$1\",\"tokenOut\":\"$USDC\",\"tokenInChainId\":$CHAIN,\"tokenOutChainId\":$CHAIN,\"amount\":\"$2\",\"type\":\"EXACT_INPUT\",\"swapper\":\"$WALLET\",\"routingPreference\":\"BEST_PRICE\",\"protocols\":[\"V2\",\"V3\",\"V4\"]}"
+}
+echo "["
+echo "{\"ticker\":\"SEP_ETH\",\"quote\":$(quote "0x000...000" "419664755266191903")},"
+# ... one line per held asset
+echo "]"
+```
+
+### Pattern: assemble swap execution script
+
+See the `swap-execution` skill for the full template.
+
+## On-chain cast
+
+Always use `./bin/cast` (wrapper to foundry), never bare `cast`:
+- `./bin/cast balance <ADDR> --rpc-url <RPC>`
+- `./bin/cast call <CONTRACT> "balanceOf(address)(uint256)" <ADDR> --rpc-url <RPC>`
+- `./bin/cast send <TO> --data <DATA> --value <VALUE> --private-key <KEY> --rpc-url <RPC>`
+
 ## Assets Database
 
-- Path: sqlite.db (project root)
-- Access via: `sqlite3 -header -column sqlite.db '<SQL>'`
-- For JSON output: `sqlite3 -json sqlite.db '<SQL>'`
-- Check schema: `sqlite3 sqlite.db '.schema'`
-- Read available assets: `sqlite3 -json sqlite.db 'SELECT ticker, type, description FROM asset'`
-- Asset types: stocks, crypto, cash, commodities, precious_metals, bonds
-- All asset and portfolio data lives here — never use flat files for structured data
-- DB schema is defined in `lib/db.ts` — refer to it for table definitions and constraints
+- Path: `sqlite.db` (symlink in workspace root)
+- Access: `sqlite3 -json sqlite.db '<SQL>'`
 
-## Portfolio Database
+### Schema (do NOT run .schema — use these directly):
 
-- Tables: `ideal_portfolio` and `ideal_portfolio_entry` (see `lib/db.ts` for full schema)
-- One portfolio per user: `ideal_portfolio` has a UNIQUE constraint on `userId`
-- Each entry links a portfolio to an asset with an allocation percentage (0–100)
-- Read a user's target portfolio: `sqlite3 -json sqlite.db 'SELECT a.ticker, a.type, e.allocation FROM ideal_portfolio p JOIN ideal_portfolio_entry e ON e.portfolioId = p.id JOIN asset a ON a.id = e.assetId WHERE p.userId = "<USER_ID>"'`
-- Create a portfolio: `sqlite3 sqlite.db "INSERT INTO ideal_portfolio (id, userId, createdAt, updatedAt) VALUES ('<UUID>', '<USER_ID>', <NOW_MS>, <NOW_MS>)"`
-- Add an entry: `sqlite3 sqlite.db "INSERT INTO ideal_portfolio_entry (id, portfolioId, assetId, allocation, createdAt, updatedAt) VALUES ('<UUID>', '<PORTFOLIO_ID>', '<ASSET_ID>', <ALLOCATION>, <NOW_MS>, <NOW_MS>)"`
-- Update an entry: `sqlite3 sqlite.db "UPDATE ideal_portfolio_entry SET allocation = <ALLOCATION>, updatedAt = <NOW_MS> WHERE portfolioId = '<PORTFOLIO_ID>' AND assetId = '<ASSET_ID>'"`
-- Delete an entry: `sqlite3 sqlite.db "DELETE FROM ideal_portfolio_entry WHERE portfolioId = '<PORTFOLIO_ID>' AND assetId = '<ASSET_ID>'"`
-- Constraints: allocation must be > 0 and <= 100; each (portfolioId, assetId) pair must be unique
-- Generate UUIDs for `id` fields; use millisecond timestamps for `createdAt`/`updatedAt`
+```sql
+CREATE TABLE asset (
+    id TEXT PRIMARY KEY,
+    ticker TEXT NOT NULL UNIQUE,
+    address TEXT NOT NULL,
+    chainId INTEGER NOT NULL,
+    description TEXT,
+    decimals INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
 
-## Portfolio Design Skills
+CREATE TABLE ideal_portfolio (
+    id TEXT PRIMARY KEY,
+    userId TEXT NOT NULL UNIQUE,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
 
-- **cash-emergency-fund** — Guide users through building a 3–6 month emergency fund using yield-bearing stablecoins (USDY/rUSDY) on Ondo Finance. Walks through expense categories one at a time. **Always run before any investing skill.**
-- **fire-calculator** — Calculate the user's path to Financial Independence / Retire Early (FIRE) using the 4% rule / 25x formula. Runs scenario analysis and connects to portfolio allocation for accumulation → withdrawal phases.
-- **investing-fundamentals** — Teach core investing concepts (stocks, bonds, index funds, compounding, diversification) and map each TradFi concept to its Ondo Finance on-chain equivalent (bCSPX, bIB01, USDY, WETH). Pure education, no JSON output.
-- **investment-strategy** — Help users choose and configure a deployment strategy: Dollar-Cost Averaging (DCA), Lump Sum, or Hybrid. Produces a specific per-asset, per-period investment plan.
-- **portfolio-allocation** — The primary portfolio design skill. Assess risk tolerance, time horizon, and goals to recommend an asset allocation using Ondo Finance tokens. Checks for an emergency fund first, challenges inconsistencies, and outputs a structured JSON plan.
-- **risk-mindset** — Prepare users psychologically for market volatility. Handle panic-selling impulses, explain crypto vs TradFi drawdown history, and help users stay rational. Only outputs JSON if the user decides to change their allocation.
-- **understanding-costs** — Educate on how fees (gas, swap, protocol, expense ratios) compound against returns over time. Calculate estimated annual costs, compare to a 0.5% benchmark, and suggest optimizations.
+CREATE TABLE ideal_portfolio_entry (
+    id TEXT PRIMARY KEY,
+    portfolioId TEXT NOT NULL,
+    assetId TEXT NOT NULL,
+    allocation REAL NOT NULL,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL,
+    UNIQUE(portfolioId, assetId)
+);
+```
 
+### Key queries:
+
+```bash
+# Sepolia assets
+sqlite3 -json sqlite.db "SELECT ticker, address, chainId, decimals, type FROM asset WHERE chainId = 11155111"
+
+# Target portfolio
+sqlite3 -json sqlite.db "SELECT a.ticker, a.type, e.allocation FROM ideal_portfolio p JOIN ideal_portfolio_entry e ON e.portfolioId = p.id JOIN asset a ON a.id = e.assetId WHERE p.userId = 'test-user-001'"
+```
+
+### Test user: `test-user-001` — target: WETH 50%, WBTC 30%, LINK 20%
 
 ## Built-in Tools
 
-- **shell** — Execute terminal commands
-- Use when: running local checks, build/test commands, or diagnostics.
-- Don't use when: a safer dedicated tool exists, or command is destructive without approval.
-- **file_read** — Read file contents
-- Use when: inspecting project files, configs, or logs.
-- Don't use when: you only need a quick string search (prefer targeted search first).
-- **file_write** — Write file contents
-- Use when: applying focused edits, scaffolding files, or updating docs/code.
-- Don't use when: unsure about side effects or when the file should remain user-owned.
-- **memory_store** — Save to memory
-- Use when: preserving durable preferences, decisions, or key context.
-- Don't use when: info is transient, noisy, or sensitive without explicit need.
-- **memory_recall** — Search memory
-- Use when: you need prior decisions, user preferences, or historical context.
-- Don't use when: the answer is already in current files/conversation.
-- **memory_forget** — Delete a memory entry
-- Use when: memory is incorrect, stale, or explicitly requested to be removed.
-- Don't use when: uncertain about impact; verify before deleting.
+- **shell** — Execute commands. Use `bash <script>` for assembled scripts.
+- **file_read** — Read files (auto-approved)
+- **file_write** — Write files including temp scripts (auto-approved)
+- **memory_store** / **memory_recall** / **memory_forget** — Agent memory

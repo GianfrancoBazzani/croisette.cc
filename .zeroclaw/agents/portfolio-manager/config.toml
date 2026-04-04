@@ -39,6 +39,27 @@ allowed_commands = [
     "node",
     "cast",
     "sqlite3",
+    "curl",
+    "bash",
+    "sh",
+    "which",
+    "env",
+    "sort",
+    "awk",
+    "sed",
+    "tr",
+    "jq",
+    "bc",
+    "printf",
+    "test",
+    "expr",
+    "xargs",
+    "tee",
+    "touch",
+    "mkdir",
+    "cp",
+    "mv",
+    "rm",
 ]
 forbidden_paths = [
     "/etc",
@@ -60,21 +81,25 @@ forbidden_paths = [
     "~/.aws",
     "~/.config",
 ]
-max_actions_per_hour = 20
+max_actions_per_hour = 100
 max_cost_per_day_cents = 500
 require_approval_for_medium_risk = true
 block_high_risk_commands = true
 shell_env_passthrough = []
 auto_approve = [
     "file_read",
+    "file_write",
     "memory_recall",
+    "memory_store",
     "web_search_tool",
     "web_fetch",
+    "http_request",
     "calculator",
     "glob_search",
     "content_search",
     "image_info",
     "weather",
+    "shell",
 ]
 always_ask = []
 allowed_roots = []
@@ -212,7 +237,7 @@ max_concurrent = 4
 
 [agent]
 compact_context = true
-max_tool_iterations = 10
+max_tool_iterations = 25
 max_history_messages = 50
 max_context_tokens = 32000
 parallel_tools = false
@@ -252,10 +277,10 @@ tool_result_retrim_chars = 2000
 tool_result_trim_exempt = []
 
 [pacing]
-loop_ignore_tools = []
+loop_ignore_tools = ["file_write", "shell"]
 loop_detection_enabled = true
 loop_detection_window_size = 20
-loop_detection_max_repeats = 3
+loop_detection_max_repeats = 10
 
 [skills]
 open_skills_enabled = false

@@ -96,12 +96,13 @@ Actions:
 1. Use the target portfolio allocations from the database (loaded in Step 1). Each entry has an asset and an allocation percentage (0-100) representing the overall target for that asset.
 2. For each asset, compute drift:
    `drift = current_allocation_pct - target_allocation_pct`
-3. Build the action list:
+3. **Apply rebalance threshold (±5%).** If ALL assets have `|drift| < 5%`, the portfolio is sufficiently aligned. Output "portfolio aligned, no rebalance needed" and exit the cycle. Do not propose any swaps.
+4. Build the action list only for assets that exceed the threshold:
    - **WRAP candidates:** If native ETH has a 0% target but WETH has a positive target, generate a WRAP action. WRAP is value-neutral and consumes zero notional budget.
-   - **BUY candidates:** For assets where `drift < -threshold`, generate a buy action from USDC into the under-allocated asset. The buy amount is the gap in USD terms.
-   - **SELL candidates:** For assets where `drift > +threshold`, generate a sell action from the over-allocated asset into USDC.
-4. Filter out dust actions where the USD amount is below a reasonable minimum (e.g., $1 on testnet, $10 on mainnet).
-5. If no actions remain after filtering, output "portfolio aligned, no rebalance needed" and exit.
+   - **BUY candidates:** For assets where `drift < -5%`, generate a buy action from USDC into the under-allocated asset.
+   - **SELL candidates:** For assets where `drift > +5%`, generate a sell action from the over-allocated asset into USDC.
+5. Filter out dust actions where the USD amount is below a reasonable minimum (e.g., $1 on testnet, $10 on mainnet).
+6. If no actions remain after filtering, output "portfolio aligned, no rebalance needed" and exit.
 
 Exit criteria:
 - a deterministic action list exists, or a no-action decision is explicit
@@ -177,19 +178,35 @@ Entry criteria:
 - Step 6 produced at least one approved swap
 
 Actions:
-1. Invoke the `swap-execution` skill with: the approved swap actions, chain_id, valuation asset, wallet_address, Uniswap API credentials, constraints.
-2. Receive back: execution results per swap (tx hash, status, error if failed).
-3. Send an execution report to the user via Telegram:
+1. **Sort approved swaps in execution order:**
+   - WRAP first (ETH → WETH) — value-neutral, no API
+   - SELL next (over-allocated → USDC) — generates USDC for buys
+   - BUY last (USDC → under-allocated) — uses USDC from sells
+
+2. **For WRAP:** Skip if ETH balance < 0.01 ETH. Otherwise wrap all ETH minus 0.01 gas reserve.
+
+3. **For SELL swaps:** Use the pre-calculated amount from the proposal.
+
+4. **For BUY swaps:** Do NOT use pre-calculated USD amounts. Instead:
+   - Before each BUY, query the actual USDC balance on-chain
+   - If multiple BUYs remain, split proportionally based on target allocation ratios
+     - Example: WBTC target 30%, LINK target 20% → WBTC gets 60% of USDC, LINK gets 40%
+   - If this is the last BUY, use the full remaining USDC balance
+   - This handles slippage from earlier swaps automatically
+
+5. **Execute each swap** using the `swap-execution` skill (one script per swap).
+
+6. **Send execution report:**
 
    ```
    ✅ Execution Report
 
-   1️⃣ Buy UNI with 25 USDC — ✅ Executed
-      tx: sepolia.etherscan.io/tx/0x...
+   1️⃣ WRAP 0.009 ETH → WETH — ⏭️ Skipped (insufficient ETH)
+   2️⃣ SELL 0.116 WETH → 709 USDC — ✅ tx: sepolia.etherscan.io/tx/0x...
+   3️⃣ BUY 425 USDC → WBTC — ✅ tx: sepolia.etherscan.io/tx/0x...
+   4️⃣ BUY 284 USDC → LINK — ✅ tx: sepolia.etherscan.io/tx/0x...
 
-   2️⃣ Buy WBTC with 15 USDC — ❌ Failed (simulation error)
-
-   Total: 1/2 swaps executed
+   Total: 3/4 swaps executed
    ```
 
 Exit criteria:
