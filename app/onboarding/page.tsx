@@ -195,7 +195,7 @@ export default function OnboardingPage() {
           sendMessage={sendMessage}
           isReady={isReady}
           hasFirstResponse={hasFirstResponse}
-          userName={session.user.name}
+          userName={profile.name}
           funnelData={{
             name: profile.name,
             age: profile.age,
