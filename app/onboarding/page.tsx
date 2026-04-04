@@ -1042,6 +1042,14 @@ function StepAdvisor({
     }
   };
 
+  // Show sidebar once chat is ready (we have funnel data to display)
+  useEffect(() => {
+    if (hasFirstResponse && !sidebarVisible) {
+      const timer = setTimeout(() => setSidebarVisible(true), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [hasFirstResponse, sidebarVisible]);
+
   // Phase 1: Personalization loader (always runs its full animation)
   if (!personalizationDone) {
     return <StepPersonalizing onComplete={() => setPersonalizationDone(true)} />;
@@ -1051,14 +1059,6 @@ function StepAdvisor({
   if (!hasFirstResponse) {
     return <StepWaitingForAgent />;
   }
-
-  // Show sidebar once chat is ready (we have funnel data to display)
-  useEffect(() => {
-    if (hasFirstResponse && !sidebarVisible) {
-      const timer = setTimeout(() => setSidebarVisible(true), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [hasFirstResponse, sidebarVisible]);
 
   // Phase 3: Chat is ready
   return (
