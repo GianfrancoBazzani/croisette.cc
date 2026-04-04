@@ -18,7 +18,7 @@ export default function Home() {
             </a>
             <a
               className="text-inverse-surface/60 hover:text-primary transition-colors duration-300"
-              href="#dashboard"
+              href="/dashboard"
             >
               Dashboard
             </a>
