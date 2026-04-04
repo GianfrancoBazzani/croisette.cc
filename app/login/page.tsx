@@ -19,29 +19,29 @@ export default function LoginPage() {
     try {
       // Try to sign in via passkey first
       const { data, error: passkeyError } = await signIn.passkey();
-      
+
       if (passkeyError) {
         // If login fails (user not found, canceled, etc), fallback to automated registration flow
         const generatedName = email.split("@")[0] + "-" + Math.random().toString(36).substring(2, 6);
         const secureRandomPassword = crypto.randomUUID() + crypto.randomUUID();
-        
+
         // 1. Sign up the user anonymously using the email/password provider behind the scenes
         const signUpRes = await signUp.email({
           email,
           name: generatedName,
           password: secureRandomPassword,
         });
-        
+
         if (signUpRes.error) {
           setError(signUpRes.error.message || "Failed to authenticate or create account");
           return;
         }
-        
+
         // 2. Immediately attach a passkey to their new session
         const passkeyRes = await authClient.passkey.addPasskey({
           name: "Primary Device Passkey"
         });
-        
+
         if (passkeyRes.error) {
           setError((passkeyRes.error.message as string) || passkeyRes.error.statusText || "Account created, but failed to register passkey. Please try again from your profile.");
         } else {
@@ -75,7 +75,7 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-[480px]">
         {/* Brand Header - Editorial Anchor */}
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-black text-inverse-surface tracking-tighter mb-2 font-headline">Alchemist Wealth</h1>
+          <h1 className="text-4xl font-black text-inverse-surface tracking-tighter mb-2 font-headline">Croisette Finance</h1>
           <p className="text-secondary font-medium tracking-wide uppercase text-[10px]">The Predictive Concierge</p>
         </div>
 
@@ -107,21 +107,21 @@ export default function LoginPage() {
             </div>
 
             {error && (
-               <div className="text-[11px] font-semibold text-error text-center p-2 rounded bg-error-container/20">
-                 {error}
-               </div>
+              <div className="text-[11px] font-semibold text-error text-center p-2 rounded bg-error-container/20">
+                {error}
+              </div>
             )}
 
             {/* Action Buttons */}
             <div className="pt-4 flex flex-col gap-4">
-              <button 
+              <button
                 onClick={handleLogin}
                 disabled={loading}
                 className="gradient-primary text-on-primary font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 group transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-ambient font-label"
               >
                 <span>{loading ? "Authenticating..." : "Continue via Passkey"}</span>
                 {!loading && (
-                    <span className="material-symbols-outlined text-lg group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">north_east</span>
+                  <span className="material-symbols-outlined text-lg group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">north_east</span>
                 )}
               </button>
             </div>
@@ -145,10 +145,10 @@ export default function LoginPage() {
       <div className="hidden lg:block absolute bottom-12 right-12 w-64 h-80 z-20 pointer-events-none">
         <div className="relative w-full h-full transform rotate-2">
           <div className="absolute inset-0 bg-inverse-surface rounded-xl overflow-hidden shadow-ambient">
-            <img 
-                alt="abstract digital art" 
-                className="w-full h-full object-cover opacity-60" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0IKly5zCmSbirUDStQ2LdNk8L33RGvSuNCLTcdE_SYlOOfXEpbbmPZYEFVBf7Fkwr36fS3q1_8rcz4MDPh1v6j7N1puqX6NvN1NnOZkkxSZ1gX04O6IUkwbCydDyC0Vtoy4AnYuSgkWmMUZoybZhSnOeL5PBw6yR4LuUyIwur2TNrn8aS5iDryIbzCZpxpj86Vt11iuw8UX4diu9tXlFLnE2T07GziDMcSSLK9q766Hk_UeAsDzE7n8gaWZBt1GJiLsonKp-2vLo"
+            <img
+              alt="abstract digital art"
+              className="w-full h-full object-cover opacity-60"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0IKly5zCmSbirUDStQ2LdNk8L33RGvSuNCLTcdE_SYlOOfXEpbbmPZYEFVBf7Fkwr36fS3q1_8rcz4MDPh1v6j7N1puqX6NvN1NnOZkkxSZ1gX04O6IUkwbCydDyC0Vtoy4AnYuSgkWmMUZoybZhSnOeL5PBw6yR4LuUyIwur2TNrn8aS5iDryIbzCZpxpj86Vt11iuw8UX4diu9tXlFLnE2T07GziDMcSSLK9q766Hk_UeAsDzE7n8gaWZBt1GJiLsonKp-2vLo"
             />
           </div>
           <div className="absolute -top-4 -left-4 bg-surface-container-lowest p-4 rounded-lg shadow-ambient">

@@ -1,203 +1,247 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                "on-tertiary": "#ffffff",
-                "surface-bright": "#fef8f6",
-                "secondary-fixed": "#ffdbd0",
-                "tertiary": "#5d5c5b",
-                "surface-variant": "#e7e1df",
-                "on-primary": "#ffffff",
-                "surface-dim": "#ded9d7",
-                "inverse-on-surface": "#f5efed",
-                "on-tertiary-fixed-variant": "#474746",
-                "on-secondary-container": "#773924",
-                "surface": "#fef8f6",
-                "surface-container-lowest": "#ffffff",
-                "background": "#fef8f6",
-                "on-primary-container": "#fffbff",
-                "outline-variant": "#dfbec4",
-                "on-primary-fixed-variant": "#8f0042",
-                "on-error": "#ffffff",
-                "on-secondary": "#ffffff",
-                "tertiary-fixed": "#e5e2e1",
-                "on-secondary-fixed": "#390b00",
-                "on-error-container": "#93000a",
-                "on-tertiary-container": "#f7feff",
-                "outline": "#8b7076",
-                "secondary": "#8f4c35",
-                "secondary-container": "#fda68a",
-                "inverse-primary": "#ffb1c3",
-                "on-primary-fixed": "#3f0019",
-                "on-surface": "#1d1b1a",
-                "tertiary-fixed-dim": "#c8c6c5",
-                "error-container": "#ffdad6",
-                "on-tertiary-fixed": "#1c1b1b",
-                "surface-tint": "#b31f59",
-                "on-secondary-fixed-variant": "#723520",
-                "surface-container-low": "#f8f2f0",
-                "surface-container-high": "#ede7e5",
-                "primary-fixed-dim": "#ffb1c3",
-                "inverse-surface": "#32302f",
-                "on-background": "#1d1b1a",
-                "surface-container": "#f2edeb",
-                "on-surface-variant": "#584146",
-                "primary-container": "#d1396f",
-                "error": "#ba1a1a",
-                "tertiary-container": "#757474",
-                "secondary-fixed-dim": "#ffb59d",
-                "primary": "#af1c57",
-                "surface-container-highest": "#e7e1df",
-                "primary-fixed": "#ffd9e0"
-            },
-            "borderRadius": {
-                "DEFAULT": "0.375rem",
-                "lg": "0.25rem",
-                "xl": "0.5rem",
-                "full": "0.75rem"
-            },
-            "fontFamily": {
-                "headline": ["Inter"],
-                "body": ["Inter"],
-                "label": ["Inter"]
-            }
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary": "#ffffff",
+            "surface-bright": "#fef8f6",
+            "secondary-fixed": "#ffdbd0",
+            "tertiary": "#5d5c5b",
+            "surface-variant": "#e7e1df",
+            "on-primary": "#ffffff",
+            "surface-dim": "#ded9d7",
+            "inverse-on-surface": "#f5efed",
+            "on-tertiary-fixed-variant": "#474746",
+            "on-secondary-container": "#773924",
+            "surface": "#fef8f6",
+            "surface-container-lowest": "#ffffff",
+            "background": "#fef8f6",
+            "on-primary-container": "#fffbff",
+            "outline-variant": "#dfbec4",
+            "on-primary-fixed-variant": "#8f0042",
+            "on-error": "#ffffff",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed": "#e5e2e1",
+            "on-secondary-fixed": "#390b00",
+            "on-error-container": "#93000a",
+            "on-tertiary-container": "#f7feff",
+            "outline": "#8b7076",
+            "secondary": "#8f4c35",
+            "secondary-container": "#fda68a",
+            "inverse-primary": "#ffb1c3",
+            "on-primary-fixed": "#3f0019",
+            "on-surface": "#1d1b1a",
+            "tertiary-fixed-dim": "#c8c6c5",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed": "#1c1b1b",
+            "surface-tint": "#b31f59",
+            "on-secondary-fixed-variant": "#723520",
+            "surface-container-low": "#f8f2f0",
+            "surface-container-high": "#ede7e5",
+            "primary-fixed-dim": "#ffb1c3",
+            "inverse-surface": "#32302f",
+            "on-background": "#1d1b1a",
+            "surface-container": "#f2edeb",
+            "on-surface-variant": "#584146",
+            "primary-container": "#d1396f",
+            "error": "#ba1a1a",
+            "tertiary-container": "#757474",
+            "secondary-fixed-dim": "#ffb59d",
+            "primary": "#af1c57",
+            "surface-container-highest": "#e7e1df",
+            "primary-fixed": "#ffd9e0"
           },
+          "borderRadius": {
+            "DEFAULT": "0.375rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "fontFamily": {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          }
         },
-      }
-    </script>
-<style>
-        body { font-family: 'Inter', sans-serif; background-color: #fef8f6; }
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .glass-effect { backdrop-filter: blur(32px); }
-        .radial-texture { background-image: radial-gradient(circle at 50% 50%, rgba(175, 28, 87, 0.05) 0%, transparent 70%); }
-    </style>
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fef8f6;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .glass-effect {
+      backdrop-filter: blur(32px);
+    }
+
+    .radial-texture {
+      background-image: radial-gradient(circle at 50% 50%, rgba(175, 28, 87, 0.05) 0%, transparent 70%);
+    }
+  </style>
 </head>
+
 <body class="bg-surface text-on-surface min-h-screen flex flex-col">
-<!-- Top Navigation (Contextually Suppressed for Onboarding - Using only Logo/Branding) -->
-<header class="fixed top-0 w-full z-50 bg-[#fef8f6]/70 backdrop-blur-xl h-20 flex items-center px-8 justify-between">
-<div class="text-2xl font-black text-inverse-surface tracking-tighter">
-            Alchemist Wealth
+  <!-- Top Navigation (Contextually Suppressed for Onboarding - Using only Logo/Branding) -->
+  <header class="fixed top-0 w-full z-50 bg-[#fef8f6]/70 backdrop-blur-xl h-20 flex items-center px-8 justify-between">
+    <div class="text-2xl font-black text-inverse-surface tracking-tighter">
+      Croisette Finance
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-xs font-['Inter'] uppercase tracking-widest text-on-surface/40">Step 02 / 03</span>
+      <div class="w-32 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+        <div class="w-2/3 h-full bg-primary transition-all duration-500"></div>
+      </div>
+    </div>
+  </header>
+  <!-- Main Canvas -->
+  <main class="flex-grow flex flex-col items-center justify-center pt-32 pb-40 px-6 radial-texture">
+    <div class="max-w-6xl w-full">
+      <!-- Editorial Header Section -->
+      <div class="mb-16 md:mb-24 flex flex-col items-start gap-4">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight text-inverse-surface leading-none">
+          Your Risk <br /><span class="text-primary">Architecture.</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-4">
+          How should the AI agents manage your volatility?
+        </p>
+      </div>
+      <!-- Bento Selection Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
+        <!-- Option 1: Preservation -->
+        <button
+          class="group relative flex flex-col text-left p-8 rounded-xl bg-surface-container-low transition-all duration-300 hover:scale-[1.02] hover:bg-surface-container-high outline-none focus:ring-2 focus:ring-primary/20">
+          <div
+            class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant group-hover:text-primary transition-colors">
+            <span class="material-symbols-outlined" data-icon="shield">shield</span>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-inverse-surface mb-2">Preservation</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-6">Priority on principal protection with
+              minimal fluctuation.</p>
+            <span class="text-xs font-bold uppercase tracking-widest text-on-surface/40">Low Risk</span>
+          </div>
+        </button>
+        <!-- Option 2: Balanced -->
+        <button
+          class="group relative flex flex-col text-left p-8 rounded-xl bg-surface-container-low transition-all duration-300 hover:scale-[1.02] hover:bg-surface-container-high outline-none focus:ring-2 focus:ring-primary/20">
+          <div
+            class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant group-hover:text-primary transition-colors">
+            <span class="material-symbols-outlined" data-icon="balance">balance</span>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-inverse-surface mb-2">Balanced</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-6">A steady hand. Seeking consistent returns
+              through market cycles.</p>
+            <span class="text-xs font-bold uppercase tracking-widest text-on-surface/40">Medium Risk</span>
+          </div>
+        </button>
+        <!-- Option 3: Aggressive -->
+        <button
+          class="group relative flex flex-col text-left p-8 rounded-xl bg-surface-container-low transition-all duration-300 hover:scale-[1.02] hover:bg-surface-container-high outline-none focus:ring-2 focus:ring-primary/20">
+          <div
+            class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant group-hover:text-primary transition-colors">
+            <span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-inverse-surface mb-2">Aggressive</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-6">Capitalizing on growth opportunities with
+              higher tolerance.</p>
+            <span class="text-xs font-bold uppercase tracking-widest text-on-surface/40">High Risk</span>
+          </div>
+        </button>
+        <!-- Option 4: Full Croissette (Active/Selected State Example) -->
+        <button
+          class="group relative flex flex-col text-left p-8 rounded-xl bg-inverse-surface text-on-primary transition-all duration-300 scale-[1.02] shadow-[0_20px_40px_rgba(29,27,26,0.12)] border-2 border-primary/40">
+          <div class="absolute top-4 right-4">
+            <span class="material-symbols-outlined text-primary"
+              style="font-variation-settings: 'FILL' 1;">check_circle</span>
+          </div>
+          <div class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-white/10 text-primary">
+            <span class="material-symbols-outlined" data-icon="auto_awesome"
+              style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-surface mb-2">Full Croissette</h3>
+            <p class="text-sm text-surface-variant leading-relaxed mb-6">Optimized for maximum growth using all
+              proprietary AI signals.</p>
+            <span class="text-xs font-bold uppercase tracking-widest text-primary">AI Optimized</span>
+          </div>
+          <!-- Radial Line Art Background Texture (Low Opacity) -->
+          <div class="absolute inset-0 pointer-events-none opacity-10 overflow-hidden rounded-xl">
+            <svg class="absolute -right-20 -bottom-20 w-80 h-80 text-primary" viewbox="0 0 200 200">
+              <circle cx="100" cy="100" fill="none" r="20" stroke="currentColor" stroke-width="0.5"></circle>
+              <circle cx="100" cy="100" fill="none" r="40" stroke="currentColor" stroke-width="0.5"></circle>
+              <circle cx="100" cy="100" fill="none" r="60" stroke="currentColor" stroke-width="0.5"></circle>
+              <circle cx="100" cy="100" fill="none" r="80" stroke="currentColor" stroke-width="0.5"></circle>
+              <circle cx="100" cy="100" fill="none" r="100" stroke="currentColor" stroke-width="0.5"></circle>
+            </svg>
+          </div>
+        </button>
+      </div>
+      <!-- Visualization Context (Editorial Layer) -->
+      <div class="mt-20 flex flex-col md:flex-row gap-12 items-center">
+        <div class="w-full md:w-1/2">
+          <img alt="Abstract visualization of financial data flowing as digital light particles in a deep charcoal void"
+            class="rounded-xl w-full aspect-video object-cover grayscale opacity-60 hover:grayscale-0 transition-all duration-700"
+            data-alt="abstract visualization of financial data flowing as golden light particles in a deep charcoal digital space with high contrast"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDchvw-1wQ26kRUiNITEacU8KD0gKdah7qj5xZ0qfmk9_luco-zyVzF8_kuz3B2l8dyWF3d4d8qWyEEmtDfTQOQqLg4YRU4fUumpwH5WnDAwFG2rDAzssYFWw7HV6VnnYkapZ0yc8_DImVwbpYf901KzBa2X42oOeRuuI8Ar4NYDG3pcZIE1eyftkDMUagsjonYxXa3jEsZFHeegrFGfhyTTfLehLYCT13BfTPUOkieqWaomAmgbHlbFEUuGg8E0Hg8D5hyiXrm8Q" />
         </div>
-<div class="flex items-center gap-4">
-<span class="text-xs font-['Inter'] uppercase tracking-widest text-on-surface/40">Step 02 / 03</span>
-<div class="w-32 h-1 bg-surface-container-highest rounded-full overflow-hidden">
-<div class="w-2/3 h-full bg-primary transition-all duration-500"></div>
-</div>
-</div>
-</header>
-<!-- Main Canvas -->
-<main class="flex-grow flex flex-col items-center justify-center pt-32 pb-40 px-6 radial-texture">
-<div class="max-w-6xl w-full">
-<!-- Editorial Header Section -->
-<div class="mb-16 md:mb-24 flex flex-col items-start gap-4">
-<h1 class="text-5xl md:text-7xl font-bold tracking-tight text-inverse-surface leading-none">
-                    Your Risk <br/><span class="text-primary">Architecture.</span>
-</h1>
-<p class="text-xl md:text-2xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-4">
-                    How should the AI agents manage your volatility?
-                </p>
-</div>
-<!-- Bento Selection Grid -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
-<!-- Option 1: Preservation -->
-<button class="group relative flex flex-col text-left p-8 rounded-xl bg-surface-container-low transition-all duration-300 hover:scale-[1.02] hover:bg-surface-container-high outline-none focus:ring-2 focus:ring-primary/20">
-<div class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant group-hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="shield">shield</span>
-</div>
-<div>
-<h3 class="text-2xl font-bold text-inverse-surface mb-2">Preservation</h3>
-<p class="text-sm text-on-surface-variant leading-relaxed mb-6">Priority on principal protection with minimal fluctuation.</p>
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface/40">Low Risk</span>
-</div>
-</button>
-<!-- Option 2: Balanced -->
-<button class="group relative flex flex-col text-left p-8 rounded-xl bg-surface-container-low transition-all duration-300 hover:scale-[1.02] hover:bg-surface-container-high outline-none focus:ring-2 focus:ring-primary/20">
-<div class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant group-hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="balance">balance</span>
-</div>
-<div>
-<h3 class="text-2xl font-bold text-inverse-surface mb-2">Balanced</h3>
-<p class="text-sm text-on-surface-variant leading-relaxed mb-6">A steady hand. Seeking consistent returns through market cycles.</p>
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface/40">Medium Risk</span>
-</div>
-</button>
-<!-- Option 3: Aggressive -->
-<button class="group relative flex flex-col text-left p-8 rounded-xl bg-surface-container-low transition-all duration-300 hover:scale-[1.02] hover:bg-surface-container-high outline-none focus:ring-2 focus:ring-primary/20">
-<div class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface-variant group-hover:text-primary transition-colors">
-<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
-</div>
-<div>
-<h3 class="text-2xl font-bold text-inverse-surface mb-2">Aggressive</h3>
-<p class="text-sm text-on-surface-variant leading-relaxed mb-6">Capitalizing on growth opportunities with higher tolerance.</p>
-<span class="text-xs font-bold uppercase tracking-widest text-on-surface/40">High Risk</span>
-</div>
-</button>
-<!-- Option 4: Full Croissette (Active/Selected State Example) -->
-<button class="group relative flex flex-col text-left p-8 rounded-xl bg-inverse-surface text-on-primary transition-all duration-300 scale-[1.02] shadow-[0_20px_40px_rgba(29,27,26,0.12)] border-2 border-primary/40">
-<div class="absolute top-4 right-4">
-<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-</div>
-<div class="mb-12 h-12 w-12 flex items-center justify-center rounded-full bg-white/10 text-primary">
-<span class="material-symbols-outlined" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
-</div>
-<div>
-<h3 class="text-2xl font-bold text-surface mb-2">Full Croissette</h3>
-<p class="text-sm text-surface-variant leading-relaxed mb-6">Optimized for maximum growth using all proprietary AI signals.</p>
-<span class="text-xs font-bold uppercase tracking-widest text-primary">AI Optimized</span>
-</div>
-<!-- Radial Line Art Background Texture (Low Opacity) -->
-<div class="absolute inset-0 pointer-events-none opacity-10 overflow-hidden rounded-xl">
-<svg class="absolute -right-20 -bottom-20 w-80 h-80 text-primary" viewbox="0 0 200 200">
-<circle cx="100" cy="100" fill="none" r="20" stroke="currentColor" stroke-width="0.5"></circle>
-<circle cx="100" cy="100" fill="none" r="40" stroke="currentColor" stroke-width="0.5"></circle>
-<circle cx="100" cy="100" fill="none" r="60" stroke="currentColor" stroke-width="0.5"></circle>
-<circle cx="100" cy="100" fill="none" r="80" stroke="currentColor" stroke-width="0.5"></circle>
-<circle cx="100" cy="100" fill="none" r="100" stroke="currentColor" stroke-width="0.5"></circle>
-</svg>
-</div>
-</button>
-</div>
-<!-- Visualization Context (Editorial Layer) -->
-<div class="mt-20 flex flex-col md:flex-row gap-12 items-center">
-<div class="w-full md:w-1/2">
-<img alt="Abstract visualization of financial data flowing as digital light particles in a deep charcoal void" class="rounded-xl w-full aspect-video object-cover grayscale opacity-60 hover:grayscale-0 transition-all duration-700" data-alt="abstract visualization of financial data flowing as golden light particles in a deep charcoal digital space with high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDchvw-1wQ26kRUiNITEacU8KD0gKdah7qj5xZ0qfmk9_luco-zyVzF8_kuz3B2l8dyWF3d4d8qWyEEmtDfTQOQqLg4YRU4fUumpwH5WnDAwFG2rDAzssYFWw7HV6VnnYkapZ0yc8_DImVwbpYf901KzBa2X42oOeRuuI8Ar4NYDG3pcZIE1eyftkDMUagsjonYxXa3jEsZFHeegrFGfhyTTfLehLYCT13BfTPUOkieqWaomAmgbHlbFEUuGg8E0Hg8D5hyiXrm8Q"/>
-</div>
-<div class="w-full md:w-1/2 flex flex-col gap-6">
-<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
-<p class="text-sm font-medium italic text-on-surface-variant">
-                            "The Alchemist Engine realigns your risk architecture every 300 milliseconds, ensuring that market volatility becomes an instrument of growth rather than a threat to stability."
-                        </p>
-<p class="mt-2 text-xs font-bold uppercase tracking-tighter text-inverse-surface">— Intelligence Protocol A-12</p>
-</div>
-</div>
-</div>
-</div>
-</main>
-<!-- Global Footer (Onboarding Specific) -->
-<footer class="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-12 py-8 border-t border-white/5">
-<div class="hidden md:block">
-<span class="text-surface-variant/40 text-xs font-['Inter'] uppercase tracking-widest">© 2026 Croisette. High-End Editorial Intelligence.</span>
-</div>
-<div class="flex items-center gap-8 w-full md:w-auto justify-between">
-<button class="text-surface-variant/60 hover:text-surface text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">arrow_back</span>
-                Previous
-            </button>
-<button class="bg-gradient-to-br from-primary to-primary-container text-white px-8 py-4 rounded-md font-bold text-sm uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-105 shadow-[0_10px_20px_rgba(175,28,87,0.3)]">
-                Finish Setup
-                <span class="material-symbols-outlined text-lg">north_east</span>
-</button>
-</div>
-</footer>
-</body></html>
+        <div class="w-full md:w-1/2 flex flex-col gap-6">
+          <div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
+            <p class="text-sm font-medium italic text-on-surface-variant">
+              "The Croisette Engine realigns your risk architecture every 300 milliseconds, ensuring that market
+              volatility becomes an instrument of growth rather than a threat to stability."
+            </p>
+            <p class="mt-2 text-xs font-bold uppercase tracking-tighter text-inverse-surface">— Intelligence Protocol
+              A-12</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- Global Footer (Onboarding Specific) -->
+  <footer
+    class="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-12 py-8 border-t border-white/5">
+    <div class="hidden md:block">
+      <span class="text-surface-variant/40 text-xs font-['Inter'] uppercase tracking-widest">© 2026 Croisette. High-End
+        Editorial Intelligence.</span>
+    </div>
+    <div class="flex items-center gap-8 w-full md:w-auto justify-between">
+      <button
+        class="text-surface-variant/60 hover:text-surface text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Previous
+      </button>
+      <button
+        class="bg-gradient-to-br from-primary to-primary-container text-white px-8 py-4 rounded-md font-bold text-sm uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-105 shadow-[0_10px_20px_rgba(175,28,87,0.3)]">
+        Finish Setup
+        <span class="material-symbols-outlined text-lg">north_east</span>
+      </button>
+    </div>
+  </footer>
+</body>
+
+</html>
