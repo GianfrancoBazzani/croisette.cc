@@ -11,9 +11,6 @@ build/
 .vercel/
 next-env.d.ts
 
-# bun
-bun.lockb
-
 # environment
 .env
 .env.*

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <>
@@ -53,10 +55,10 @@ export default function Home() {
               Our AI agents are awake 24/7/365 to keep your money growing.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="gradient-primary text-on-primary px-8 py-5 rounded-md font-semibold text-lg flex items-center justify-center gap-3 transition-transform hover:scale-[1.02] shadow-lg cursor-pointer">
+              <Link href="/login" className="gradient-primary text-on-primary px-8 py-5 rounded-md font-semibold text-lg flex items-center justify-center gap-3 transition-transform hover:scale-[1.02] shadow-lg cursor-pointer">
                 Get Started
                 <span className="material-symbols-outlined">north_east</span>
-              </button>
+              </Link>
               <button className="bg-surface-container-low text-on-surface-variant px-8 py-5 rounded-md font-semibold text-lg hover:bg-surface-container-high transition-colors cursor-pointer">
                 Explore Strategies
               </button>
@@ -317,10 +319,10 @@ export default function Home() {
               </div>
             </div>
             <div className="mt-16">
-              <button className="bg-primary text-on-primary px-10 py-5 rounded-md font-bold tracking-tight shadow-xl hover:bg-primary-container transition-all flex items-center gap-3 cursor-pointer">
+              <Link href="/login" className="bg-primary text-on-primary px-10 py-5 rounded-md font-bold tracking-tight shadow-xl hover:bg-primary-container transition-all flex items-center gap-3 cursor-pointer">
                 START YOUR EVOLUTION
                 <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>
