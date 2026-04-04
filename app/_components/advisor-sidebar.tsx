@@ -53,23 +53,23 @@ export function AdvisorSidebar({
       }}
     >
       {/* Header */}
-      <div className="min-w-[292px] mb-6">
-        <div className="text-xs uppercase font-semibold mb-1 tracking-[0.1em] text-secondary">
+      <div className="min-w-[292px] mb-7">
+        <div className="text-[10px] uppercase font-semibold mb-1.5 tracking-[0.15em] text-inverse-on-surface/30">
           Your Profile
         </div>
-        <div className="text-lg font-bold tracking-editorial">
+        <div className="text-xl font-bold tracking-[-0.02em]">
           Portfolio Blueprint
         </div>
       </div>
 
-      {/* Funnel facts — pre-filled */}
+      {/* Funnel facts */}
       <div className="flex flex-col gap-2 min-w-[292px]">
         {FUNNEL_FIELDS.map(({ key, label }) => (
           <div
             key={key}
-            className="flex justify-between items-center px-3.5 py-2.5 rounded-lg bg-white/6"
+            className="flex justify-between items-center px-3.5 py-2.5 rounded-lg bg-white/[0.05]"
           >
-            <span className="text-xs text-inverse-on-surface/50">
+            <span className="text-[11px] uppercase tracking-[0.06em] text-inverse-on-surface/40">
               {label}
             </span>
             <span className="text-sm font-semibold text-primary">
@@ -79,39 +79,59 @@ export function AdvisorSidebar({
         ))}
       </div>
 
-      {/* Tonal spacing replaces forbidden divider */}
+      {/* Tonal spacing */}
       <div className="py-4" />
 
-      {/* Conversation facts — greyed out until filled */}
-      <div className="flex flex-col gap-2 min-w-[292px]">
-        {CONVERSATION_FIELDS.map(({ key, label }) => {
-          const value = conversationFacts[key];
-          const filled = value !== undefined;
-          return (
-            <div
-              key={key}
-              className={`flex justify-between items-center px-3.5 py-2.5 rounded-lg transition-all duration-300 ${filled ? "bg-white/6 animate-fade-in-up" : "bg-white/[0.02]"}`}
-            >
-              <span className={`text-xs ${filled ? "text-inverse-on-surface/50" : "text-inverse-on-surface/20"}`}>
-                {label}
-              </span>
-              {filled ? (
-                <span className="text-sm font-semibold text-primary">{value}</span>
-              ) : (
-                <span className="text-sm font-semibold text-inverse-on-surface/12">—</span>
-              )}
-            </div>
-          );
-        })}
+      {/* Conversation insights */}
+      <div className="min-w-[292px]">
+        <div className="text-[10px] uppercase font-semibold tracking-[0.15em] text-inverse-on-surface/25 mb-2.5">
+          Conversation Insights
+        </div>
+        <div className="flex flex-col gap-2">
+          {CONVERSATION_FIELDS.map(({ key, label }) => {
+            const value = conversationFacts[key];
+            const filled = value !== undefined;
+            return (
+              <div
+                key={key}
+                className={`flex justify-between items-center px-3.5 py-2.5 rounded-lg transition-all duration-500 ${filled
+                  ? "bg-white/[0.07] animate-fade-in-up"
+                  : "bg-white/[0.02]"
+                  }`}
+              >
+                <span
+                  className={`text-[11px] uppercase tracking-[0.06em] transition-colors duration-500 ${filled
+                    ? "text-inverse-on-surface/40"
+                    : "text-inverse-on-surface/15"
+                    }`}
+                >
+                  {label}
+                </span>
+                {filled ? (
+                  <span className="text-sm font-semibold text-primary">
+                    {value}
+                  </span>
+                ) : (
+                  <span className="text-[11px] text-inverse-on-surface/10">
+                    Pending
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Tonal spacing replaces forbidden divider */}
+      {/* Tonal spacing */}
       <div className="py-4" />
 
       {/* Allocation */}
       <div className="min-w-[292px]">
         <div
-          className={`text-xs uppercase font-semibold mb-4 tracking-[0.1em] ${allocation ? "text-inverse-on-surface/40" : "text-inverse-on-surface/20"}`}
+          className={`text-[10px] uppercase font-semibold tracking-[0.15em] mb-4 transition-colors duration-500 ${allocation
+            ? "text-inverse-on-surface/35"
+            : "text-inverse-on-surface/15"
+            }`}
         >
           Allocation
         </div>
@@ -119,17 +139,17 @@ export function AdvisorSidebar({
           <AllocationChart allocation={allocation} />
         ) : (
           <div className="flex flex-col items-center gap-3 py-4">
-            <div className="relative w-[120px] h-[120px]">
-              <svg viewBox="0 0 36 36" className="w-[120px] h-[120px] -rotate-90">
+            <div className="relative w-[200px] h-[200px]">
+              <svg viewBox="0 0 36 36" className="w-[200px] h-[200px] -rotate-90">
                 <circle cx="18" cy="18" r="14" fill="none" className="stroke-inverse-on-surface/6" strokeWidth="4" />
                 <circle cx="18" cy="18" r="14" fill="none" className="stroke-inverse-on-surface/[0.03]" strokeWidth="4"
                   strokeDasharray="30 87.96" strokeDashoffset="0" />
               </svg>
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <div className="text-sm font-bold text-inverse-on-surface/12">—</div>
+                <div className="text-sm font-bold text-inverse-on-surface/10">—</div>
               </div>
             </div>
-            <p className="text-xs text-inverse-on-surface/15">
+            <p className="text-[11px] tracking-[0.04em] text-inverse-on-surface/18">
               Completes after profiling
             </p>
           </div>
