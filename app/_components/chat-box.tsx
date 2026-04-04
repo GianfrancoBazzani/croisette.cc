@@ -17,6 +17,7 @@ interface ChatBoxProps {
   agentId: string;
   sessionId: string;
   agentName: string;
+  userName?: string;
   onMetadata?: (metadata: AgentMetadata) => void;
 }
 
@@ -24,6 +25,7 @@ export function ChatBox({
   agentId,
   sessionId,
   agentName,
+  userName,
   onMetadata,
 }: ChatBoxProps) {
   const { messages, sendMessage, status } = useChat({
@@ -138,6 +140,11 @@ export function ChatBox({
                         style={{ color: "#8f4c35" }}
                       >
                         Croisette
+                      </p>
+                    )}
+                    {message.role === "user" && userName && (
+                      <p className="text-xs font-semibold mb-1 text-on-primary/70">
+                        {userName}
                       </p>
                     )}
                     {message.parts.map((part, index) =>

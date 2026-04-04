@@ -6,6 +6,7 @@ import { useMemo, useState, useCallback } from "react";
 import { AGENTS } from "@/app/_lib/constants";
 import { ChatBox } from "@/app/_components/chat-box";
 import { SummaryPanel, labelForKey } from "@/app/_components/summary-panel";
+import { useSession } from "@/lib/auth-client";
 import Link from "next/link";
 
 interface ProfileFact {
@@ -23,6 +24,7 @@ interface AgentMetadata {
 
 export default function ChatPage() {
   const params = useParams<{ agentId: string }>();
+  const { data: session } = useSession();
   const agentId = params.agentId;
   const agent = AGENTS[agentId];
   const sessionId = useMemo(() => crypto.randomUUID(), []);
@@ -73,6 +75,7 @@ export default function ChatPage() {
         agentId={agent.slug}
         sessionId={sessionId}
         agentName={agent.name}
+        userName={session?.user.name ?? undefined}
         onMetadata={handleMetadata}
       />
       <SummaryPanel
