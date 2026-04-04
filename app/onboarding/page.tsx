@@ -273,38 +273,39 @@ function StepHorizons({
   onSelect: (id: string) => void;
 }) {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       {/* Background accents */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-secondary-fixed/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-fixed/10 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
       <div className="w-full max-w-5xl z-10">
-        {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface max-w-2xl mx-auto leading-tight">
-            What are your Financial Horizons?
+        {/* Editorial Header */}
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
+            What are your Financial<br />
+            <span className="text-primary">Horizons?</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             Select your primary investment goal.
           </p>
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {HORIZONS.map((h) => {
             const isSelected = selected === h.id;
             return (
               <button
                 key={h.id}
                 onClick={() => onSelect(h.id)}
-                className={`group relative p-10 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col h-full overflow-hidden text-left ${isSelected
+                className={`group relative p-6 rounded-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col h-full overflow-hidden text-left ${isSelected
                   ? "bg-inverse-surface shadow-[0_30px_60px_rgba(29,27,26,0.12)] ring-4 ring-primary"
                   : "bg-surface-container-lowest shadow-ambient ghost-border"
                   }`}
               >
                 {isSelected && (
-                  <div className="absolute top-0 right-0 p-4">
+                  <div className="absolute top-0 right-0 p-3">
                     <span
                       className="material-symbols-outlined text-primary"
                       style={{
@@ -316,27 +317,27 @@ function StepHorizons({
                   </div>
                 )}
 
-                <div className="mb-8">
+                <div className="mb-4">
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center ${isSelected
+                    className={`w-12 h-12 rounded-full flex items-center justify-center ${isSelected
                       ? "bg-primary/20 text-primary-fixed"
                       : "bg-surface-container-high text-primary"
                       }`}
                   >
-                    <span className="material-symbols-outlined text-4xl">
+                    <span className="material-symbols-outlined text-2xl">
                       {h.icon}
                     </span>
                   </div>
                 </div>
 
                 <h3
-                  className={`text-2xl font-bold mb-4 ${isSelected ? "text-surface-bright" : "text-on-surface"
+                  className={`text-xl font-bold mb-2 ${isSelected ? "text-surface-bright" : "text-on-surface"
                     }`}
                 >
                   {h.title}
                 </h3>
                 <p
-                  className={`leading-relaxed text-[15px] ${isSelected
+                  className={`leading-relaxed text-sm ${isSelected
                     ? "text-surface-variant/80"
                     : "text-on-surface-variant"
                     }`}
@@ -344,7 +345,7 @@ function StepHorizons({
                   {h.description}
                 </p>
 
-                <div className="mt-auto pt-8">
+                <div className="mt-auto pt-4">
                   <span
                     className={`material-symbols-outlined transition-colors ${isSelected
                       ? "text-primary"
@@ -374,35 +375,35 @@ function StepRisk({
   onSelect: (id: string) => void;
 }) {
   return (
-    <main className="flex-grow flex flex-col items-center justify-center pt-32 pb-40 px-6">
+    <main className="h-dvh flex flex-col items-center justify-center px-6 pt-16 pb-[66px] overflow-hidden relative">
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="max-w-6xl w-full z-10">
         {/* Editorial Header */}
-        <div className="mb-16 md:mb-24 flex flex-col items-start gap-4">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-inverse-surface leading-none">
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
             Your Risk <br />
             <span className="text-primary">Architecture.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-4">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             How should the AI agents manage your volatility?
           </p>
         </div>
 
         {/* Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-stretch">
           {RISKS.map((r) => {
             const isSelected = selected === r.id;
             return (
               <button
                 key={r.id}
                 onClick={() => onSelect(r.id)}
-                className={`group relative flex flex-col text-left p-8 rounded-xl transition-all duration-300 hover:scale-[1.02] outline-none cursor-pointer ${isSelected
+                className={`group relative flex flex-col text-left p-6 rounded-xl transition-all duration-300 hover:scale-[1.02] outline-none cursor-pointer ${isSelected
                   ? "bg-inverse-surface text-on-primary scale-[1.02] shadow-[0_20px_40px_rgba(29,27,26,0.12)] ghost-border"
                   : "bg-surface-container-low hover:bg-surface-container-high"
                   }`}
               >
                 {isSelected && (
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-3 right-3">
                     <span
                       className="material-symbols-outlined text-primary"
                       style={{
@@ -415,13 +416,13 @@ function StepRisk({
                 )}
 
                 <div
-                  className={`mb-12 h-12 w-12 flex items-center justify-center rounded-full transition-colors ${isSelected
+                  className={`mb-6 h-10 w-10 flex items-center justify-center rounded-full transition-colors ${isSelected
                     ? "bg-white/10 text-primary"
                     : "bg-surface-container-lowest text-on-surface-variant group-hover:text-primary"
                     }`}
                 >
                   <span
-                    className="material-symbols-outlined"
+                    className="material-symbols-outlined text-xl"
                     style={
                       r.featured
                         ? { fontVariationSettings: "'FILL' 1" }
@@ -434,13 +435,13 @@ function StepRisk({
 
                 <div>
                   <h3
-                    className={`text-2xl font-bold mb-2 ${isSelected ? "text-surface" : "text-inverse-surface"
+                    className={`text-xl font-bold mb-1 ${isSelected ? "text-surface" : "text-inverse-surface"
                       }`}
                   >
                     {r.title}
                   </h3>
                   <p
-                    className={`text-sm leading-relaxed mb-6 ${isSelected
+                    className={`text-sm leading-relaxed mb-4 ${isSelected
                       ? "text-surface-variant"
                       : "text-on-surface-variant"
                       }`}
@@ -480,14 +481,14 @@ function StepRisk({
         </div>
 
         {/* Editorial quote */}
-        <div className="mt-20 max-w-2xl">
-          <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
+        <div className="mt-6 max-w-2xl">
+          <div className="bg-surface-container-low p-4 rounded-xl border-l-4 border-primary">
             <p className="text-sm font-medium italic text-on-surface-variant">
               &ldquo;The Croisette  Engine realigns your risk architecture every
               300 milliseconds, ensuring that market volatility becomes an
               instrument of growth rather than a threat to stability.&rdquo;
             </p>
-            <p className="mt-2 text-xs font-bold uppercase tracking-tighter text-inverse-surface">
+            <p className="mt-1 text-xs font-bold uppercase tracking-tighter text-inverse-surface">
               &mdash; Intelligence Protocol A-12
             </p>
           </div>
@@ -548,18 +549,19 @@ function StepProfile({
   }, [countryOpen]);
 
   return (
-    <main className="h-[100dvh] flex flex-col items-center justify-center relative px-6 pt-20 pb-24 overflow-hidden">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/3 -translate-x-1/3" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-secondary-fixed/10 blur-[100px] rounded-full translate-y-1/3 translate-x-1/3" />
 
       <div className="w-full max-w-xl z-10">
-        {/* Header */}
-        <div className="text-center mb-8 space-y-2">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-on-surface leading-tight">
-            Tell Us About <span className="text-primary">You.</span>
+        {/* Editorial Header */}
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
+            Tell Us About<br />
+            <span className="text-primary">You.</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-sm md:text-base uppercase tracking-[0.2em]">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             A few details to personalize your experience.
           </p>
         </div>
@@ -784,19 +786,20 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
       : ((activeIndex + (cardState === "exiting" ? 1 : 0.5)) / VERIFICATION_CARDS.length) * 100;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       {/* Background accents */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary-fixed/10 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
       <div className="w-full max-w-xl z-10">
-        {/* Header */}
-        <div className="text-center mb-16 space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-on-surface leading-tight">
-            Agent <span className="text-primary">Verification.</span>
+        {/* Editorial Header */}
+        <div className="mb-8 flex flex-col items-start gap-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
+            Agent<br />
+            <span className="text-primary">Verification.</span>
           </h1>
-          <p className="text-tertiary-fixed-dim font-medium text-lg uppercase tracking-[0.2em]">
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-xl font-medium leading-relaxed mt-2">
             Securely hashed &amp; verified via OG Blockchain.
           </p>
         </div>
@@ -968,7 +971,7 @@ function StepPersonalizing({ onComplete }: { onComplete: () => void }) {
   }, [activeIndex, charIndex, onComplete]);
 
   return (
-    <main className="h-[100dvh] flex flex-col items-center justify-center relative px-6 pt-20 pb-24 overflow-hidden">
+    <main className="h-dvh flex flex-col items-center justify-center relative px-6 pt-16 pb-[66px] overflow-hidden">
       {/* Background accents */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-fixed/10 blur-[120px] rounded-full -translate-y-1/3 -translate-x-1/3" />
@@ -1205,7 +1208,7 @@ function StepAdvisor({
       {/* Input bar */}
       <div className="px-6 md:px-12 pt-6 pb-6 max-w-4xl mx-auto w-full">
         <form onSubmit={handleSubmit}>
-          <div className="flex items-center bg-surface-container-lowest rounded-xl shadow-ambient ghost-border p-2 pl-6 focus-within:ring-2 focus-within:ring-primary/20 transition-colors">
+          <div className="flex items-center bg-surface-container-high rounded-xl shadow-ambient p-2 pl-6 focus-within:bg-surface-container-highest focus-within:ghost-border transition-colors">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
