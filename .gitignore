@@ -11,13 +11,11 @@ build/
 .vercel/
 next-env.d.ts
 
-# bun
-bun.lockb
-
 # environment
 .env
 .env.*
 !.env.example
+!.env.local.example
 
 # OS
 .DS_Store
@@ -31,6 +29,12 @@ Thumbs.db
 
 # zeroclaw
 **/.secret_key
+
+# database
+sqlite.db
+
+# typescript
+tsconfig.tsbuildinfo
 
 # claude
 .claude/

@@ -4,17 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "bun --bun next build",
-    "start": "bun --bun next start -p 80",
+    "build": "next build",
+    "start": "next start -p 80",
     "lint": "eslint",
-    "agent:register": "bun scripts/register-agent.ts",
-    "agent:check": "bun scripts/check-integrity.ts"
+    "agent:register": "npx tsx scripts/register-agent.ts",
+    "agent:check": "npx tsx scripts/check-integrity.ts"
   },
   "dependencies": {
     "@0gfoundation/0g-ts-sdk": "^1.2.1",
     "@agentclientprotocol/sdk": "^0.18.0",
     "@ai-sdk/react": "^3.0.147",
+    "@better-auth/core": "^1.5.6",
+    "@better-auth/passkey": "^1.5.6",
     "ai": "^6.0.145",
+    "better-auth": "^1.5.6",
+    "better-sqlite3": "^12.8.0",
     "ethers": "^6.16.0",
     "next": "16.2.2",
     "react": "19.2.4",
@@ -22,6 +26,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
