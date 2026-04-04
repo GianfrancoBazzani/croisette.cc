@@ -156,7 +156,7 @@ export default function OnboardingPage() {
   return (
     <>
       {/* ── Header ── */}
-      <header className="fixed top-0 w-full z-50 glass shadow-ambient h-20 flex items-center px-8 justify-between">
+      <header className="fixed top-0 w-full z-50 glass shadow-ambient h-16 flex items-center px-6 justify-between">
         <span className="text-2xl font-black text-inverse-surface tracking-tighter">
           Croisette
         </span>
@@ -195,6 +195,7 @@ export default function OnboardingPage() {
           sendMessage={sendMessage}
           isReady={isReady}
           hasFirstResponse={hasFirstResponse}
+          userName={session.user.name}
           funnelData={{
             name: profile.name,
             age: profile.age,
@@ -206,7 +207,7 @@ export default function OnboardingPage() {
       )}
 
       {/* ── Footer ── */}
-      <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-12 py-8">
+      <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-8 py-5">
         <span className="hidden md:block text-surface-variant/40 text-[10px] font-label uppercase tracking-widest">
           &copy; 2026 Croisette. High-End Editorial Intelligence.
         </span>
@@ -214,7 +215,7 @@ export default function OnboardingPage() {
           {step > 0 ? (
             <button
               onClick={() => setStep((s) => s - 1)}
-              className="text-surface-variant/60 hover:text-surface text-sm font-bold uppercase tracking-widest transition-colors flex items-center gap-2 cursor-pointer"
+              className="text-surface-variant/60 hover:text-surface text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 cursor-pointer"
             >
               <span className="material-symbols-outlined text-sm">
                 arrow_back
@@ -229,7 +230,7 @@ export default function OnboardingPage() {
             <button
               disabled={!canContinue}
               onClick={() => setStep((s) => s + 1)}
-              className="gradient-primary text-on-primary px-8 py-4 rounded-md font-bold text-sm uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
             >
               Continue
               <span className="material-symbols-outlined text-lg">
@@ -244,7 +245,7 @@ export default function OnboardingPage() {
               onClick={() => {
                 /* TODO: persist & navigate */
               }}
-              className="gradient-primary text-on-primary px-8 py-4 rounded-md font-bold text-sm uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
+              className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
             >
               Finish Setup
               <span className="material-symbols-outlined text-lg">
@@ -959,12 +960,14 @@ function StepAdvisor({
   sendMessage,
   isReady,
   hasFirstResponse,
+  userName,
   funnelData,
 }: {
   messages: ReturnType<typeof useChat>["messages"];
   sendMessage: ReturnType<typeof useChat>["sendMessage"];
   isReady: boolean;
   hasFirstResponse: boolean;
+  userName: string;
   funnelData: FunnelData;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1009,7 +1012,7 @@ function StepAdvisor({
 
   // Phase 3: Chat is ready
   return (
-    <main className="fixed inset-0 top-20 bottom-24 flex bg-surface-bright">
+    <main className="fixed inset-0 top-16 bottom-20 flex bg-surface-bright">
       {/* Chat panel */}
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-500">
 
@@ -1028,7 +1031,8 @@ function StepAdvisor({
           if (message.role === "user") {
             return (
               <div key={message.id} className="flex justify-end">
-                <div className="max-w-[70%] space-y-2">
+                <div className="max-w-[70%] space-y-1">
+                  <p className="text-xs font-semibold text-on-surface-variant text-right mr-1">{userName}</p>
                   <div className="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-ambient ghost-border">
                     {message.parts.map((part, i) =>
                       part.type === "text" ? (
@@ -1046,29 +1050,13 @@ function StepAdvisor({
           /* Assistant message */
           return (
             <div key={message.id} className="flex">
-              <div className="max-w-[85%] space-y-4">
-                <div className="bg-inverse-surface text-on-primary-container px-8 py-8 rounded-3xl rounded-tl-none shadow-2xl relative overflow-hidden">
-                  {/* Decorative circles */}
-                  <div className="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
-                    <svg className="w-full h-full text-primary" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                      <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                      <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                    </svg>
-                  </div>
-
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                      <span className="text-xs font-black uppercase tracking-[0.3em] text-primary">
-                        Croissete Sailor
-                      </span>
-                    </div>
-
+              <div className="max-w-[85%] space-y-1">
+                <p className="text-xs font-semibold text-secondary ml-1">Croissete Sailor</p>
+                <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient">
                     {showSpinner ? (
                       <div className="flex items-center gap-3">
-                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                        <span className="text-surface-variant text-sm">
+                        <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                        <span className="text-on-surface-variant text-sm">
                           Thinking&hellip;
                         </span>
                       </div>
@@ -1077,14 +1065,13 @@ function StepAdvisor({
                         part.type === "text" ? (
                           <p
                             key={i}
-                            className="leading-relaxed text-[15px] opacity-90 whitespace-pre-wrap"
+                            className="leading-relaxed text-[15px] whitespace-pre-wrap"
                           >
                             {part.text}
                           </p>
                         ) : null
                       )
                     )}
-                  </div>
                 </div>
               </div>
             </div>
@@ -1096,10 +1083,11 @@ function StepAdvisor({
           (messages.length === 0 ||
             messages[messages.length - 1].role === "user") && (
             <div className="flex">
-              <div className="max-w-[85%]">
-                <div className="bg-inverse-surface text-on-primary-container px-8 py-6 rounded-3xl rounded-tl-none shadow-2xl flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  <span className="text-surface-variant text-sm">
+              <div className="max-w-[85%] space-y-1">
+                <p className="text-xs font-semibold text-secondary ml-1">Croissete Sailor</p>
+                <div className="bg-surface-container-low text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                  <span className="text-on-surface-variant text-sm">
                     Thinking&hellip;
                   </span>
                 </div>
