@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fef8f6",
+                    "secondary-fixed": "#ffdbd0",
+                    "tertiary": "#5d5c5b",
+                    "surface-variant": "#e7e1df",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#ded9d7",
+                    "inverse-on-surface": "#f5efed",
+                    "on-tertiary-fixed-variant": "#474746",
+                    "on-secondary-container": "#773924",
+                    "surface": "#fef8f6",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#fef8f6",
+                    "on-primary-container": "#fffbff",
+                    "outline-variant": "#dfbec4",
+                    "on-primary-fixed-variant": "#8f0042",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#e5e2e1",
+                    "on-secondary-fixed": "#390b00",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-container": "#f7feff",
+                    "outline": "#8b7076",
+                    "secondary": "#8f4c35",
+                    "secondary-container": "#fda68a",
+                    "inverse-primary": "#ffb1c3",
+                    "on-primary-fixed": "#3f0019",
+                    "on-surface": "#1d1b1a",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#1c1b1b",
+                    "surface-tint": "#b31f59",
+                    "on-secondary-fixed-variant": "#723520",
+                    "surface-container-low": "#f8f2f0",
+                    "surface-container-high": "#ede7e5",
+                    "primary-fixed-dim": "#ffb1c3",
+                    "inverse-surface": "#32302f",
+                    "on-background": "#1d1b1a",
+                    "surface-container": "#f2edeb",
+                    "on-surface-variant": "#584146",
+                    "primary-container": "#d1396f",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#757474",
+                    "secondary-fixed-dim": "#ffb59d",
+                    "primary": "#af1c57",
+                    "surface-container-highest": "#e7e1df",
+                    "primary-fixed": "#ffd9e0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-mesh {
+            background-color: #fef8f6;
+            background-image: 
+                radial-gradient(at 0% 0%, #fda68a 0px, transparent 50%),
+                radial-gradient(at 100% 100%, #fef8f6 0px, transparent 50%);
+        }
+        .editorial-shadow {
+            box-shadow: 0 20px 40px rgba(29, 27, 26, 0.06);
+        }
+        .gradient-cta {
+            background: linear-gradient(135deg, #af1c57 0%, #d1396f 100%);
+        }
+    </style>
+</head>
+<body class="bg-mesh font-body text-on-surface min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+<!-- Decorative Radial Line Art Background Element -->
+<div class="absolute inset-0 z-0 opacity-[0.04] pointer-events-none flex items-center justify-center">
+<svg fill="none" height="1200" viewbox="0 0 1200 1200" width="1200" xmlns="http://www.w3.org/2000/svg">
+<circle cx="600" cy="600" r="100" stroke="#32302f" stroke-width="0.5"></circle>
+<circle cx="600" cy="600" r="200" stroke="#32302f" stroke-width="0.5"></circle>
+<circle cx="600" cy="600" r="300" stroke="#32302f" stroke-width="0.5"></circle>
+<circle cx="600" cy="600" r="400" stroke="#32302f" stroke-width="0.5"></circle>
+<circle cx="600" cy="600" r="500" stroke="#32302f" stroke-width="0.5"></circle>
+<circle cx="600" cy="600" r="600" stroke="#32302f" stroke-width="0.5"></circle>
+</svg>
+</div>
+<main class="relative z-10 w-full max-w-[480px]">
+<!-- Brand Header - Editorial Anchor -->
+<div class="mb-12 text-center">
+<h1 class="text-4xl font-black text-inverse-surface tracking-tighter mb-2">Alchemist Wealth</h1>
+<p class="text-secondary font-medium tracking-wide uppercase text-[10px]">The Predictive Concierge</p>
+</div>
+<!-- Authentication Card -->
+<div class="bg-surface-container-lowest rounded-xl editorial-shadow p-10 md:p-12 transition-transform duration-300 hover:scale-[1.005]">
+<div class="mb-10">
+<h2 class="text-3xl font-bold text-inverse-surface tracking-tight mb-3">Intelligence Awaits</h2>
+<p class="text-on-surface-variant text-sm leading-relaxed">Access your bespoke wealth management engine. Effortless precision for the modern capital allocator.</p>
+</div>
+<form class="space-y-6" onsubmit="return false;">
+<!-- Email Input Group -->
+<div class="relative group">
+<label class="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-widest mb-1.5 ml-1">Email Address</label>
+<div class="bg-surface-container-high rounded-lg p-0.5 transition-all duration-200 group-focus-within:bg-outline-variant/30">
+<input class="w-full bg-surface-container-high border-none rounded-[calc(0.5rem-2px)] py-3 px-4 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-1 focus:ring-primary focus:bg-surface-container-highest transition-all outline-none text-sm" placeholder="name@domain.com" type="email"/>
+</div>
+</div>
+<!-- Password Input Group -->
+<div class="relative group">
+<div class="flex justify-between items-center mb-1.5 ml-1">
+<label class="text-[11px] font-semibold text-on-surface-variant uppercase tracking-widest">Password</label>
+<a class="text-[10px] font-bold text-primary hover:text-primary-container transition-colors tracking-tight" href="#">Recover Intelligence</a>
+</div>
+<div class="bg-surface-container-high rounded-lg p-0.5 transition-all duration-200 group-focus-within:bg-outline-variant/30">
+<input class="w-full bg-surface-container-high border-none rounded-[calc(0.5rem-2px)] py-3 px-4 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-1 focus:ring-primary focus:bg-surface-container-highest transition-all outline-none text-sm" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="pt-4 flex flex-col gap-4">
+<button class="gradient-cta text-on-primary font-bold py-4 px-6 rounded-lg flex items-center justify-center gap-2 group transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] editorial-shadow">
+<span class="label-md">Login</span>
+<span class="material-symbols-outlined text-lg group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">north_east</span>
+</button>
+<div class="relative flex items-center py-4">
+<div class="flex-grow border-t border-outline-variant/20"></div>
+<span class="flex-shrink mx-4 text-[10px] font-bold text-on-surface-variant/40 uppercase tracking-[0.2em]">or</span>
+<div class="flex-grow border-t border-outline-variant/20"></div>
+</div>
+<button class="border border-outline-variant/40 text-inverse-surface font-bold py-4 px-6 rounded-lg transition-all duration-200 hover:bg-surface-container-low hover:border-outline-variant/80 active:scale-[0.98]">
+<span class="label-md">Create Account</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Secondary Information -->
+<div class="mt-8 flex justify-center gap-8 px-4">
+<div class="flex items-center gap-2 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<span class="text-[10px] font-medium tracking-wide uppercase">256-Bit Intelligence</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-sm">public</span>
+<span class="text-[10px] font-medium tracking-wide uppercase">Global Strategy</span>
+</div>
+</div>
+</main>
+<!-- Branding Element: Asymmetric Image Card (The Alchemist Signature) -->
+<div class="hidden lg:block absolute bottom-12 right-12 w-64 h-80 z-20">
+<div class="relative w-full h-full transform rotate-2">
+<div class="absolute inset-0 bg-inverse-surface rounded-xl overflow-hidden editorial-shadow">
+<img alt="abstract digital art" class="w-full h-full object-cover opacity-60" data-alt="abstract flowing liquid 3d shapes in shades of deep charcoal and data pink with soft glowing highlights and grainy texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0IKly5zCmSbirUDStQ2LdNk8L33RGvSuNCLTcdE_SYlOOfXEpbbmPZYEFVBf7Fkwr36fS3q1_8rcz4MDPh1v6j7N1puqX6NvN1NnOZkkxSZ1gX04O6IUkwbCydDyC0Vtoy4AnYuSgkWmMUZoybZhSnOeL5PBw6yR4LuUyIwur2TNrn8aS5iDryIbzCZpxpj86Vt11iuw8UX4diu9tXlFLnE2T07GziDMcSSLK9q766Hk_UeAsDzE7n8gaWZBt1GJiLsonKp-2vLo"/>
+</div>
+<div class="absolute -top-4 -left-4 bg-surface-container-lowest p-4 rounded-lg editorial-shadow">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div class="absolute bottom-6 left-6 right-6">
+<p class="text-white text-xs font-bold leading-tight tracking-tight">"The best way to predict the future is to architect it."</p>
+<div class="h-0.5 w-8 bg-primary mt-2"></div>
+</div>
+</div>
+</div>
+<!-- Footer Copyright -->
+<footer class="absolute bottom-8 left-0 w-full flex justify-center">
+<p class="text-[10px] text-on-surface-variant/40 font-bold uppercase tracking-widest">© 2024 AI Wealth Alchemist. High-End Editorial Intelligence.</p>
+</footer>
+</body></html>
