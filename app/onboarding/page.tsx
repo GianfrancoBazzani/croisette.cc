@@ -208,7 +208,7 @@ export default function OnboardingPage() {
 
       {/* ── Footer ── */}
       <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-8 py-5">
-        <span className="hidden md:block text-surface-variant/40 text-[10px] font-label uppercase tracking-widest">
+        <span className="hidden md:block text-[10px] text-surface-variant/40 font-label uppercase tracking-widest">
           &copy; 2026 Croisette. High-End Editorial Intelligence.
         </span>
         <div className="flex items-center gap-8 w-full md:w-auto justify-between">
