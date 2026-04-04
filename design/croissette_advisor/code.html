@@ -1,275 +1,357 @@
 <!DOCTYPE html>
 
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "on-tertiary": "#ffffff",
-                    "surface-bright": "#fef8f6",
-                    "secondary-fixed": "#ffdbd0",
-                    "tertiary": "#5d5c5b",
-                    "surface-variant": "#e7e1df",
-                    "on-primary": "#ffffff",
-                    "surface-dim": "#ded9d7",
-                    "inverse-on-surface": "#f5efed",
-                    "on-tertiary-fixed-variant": "#474746",
-                    "on-secondary-container": "#773924",
-                    "surface": "#fef8f6",
-                    "surface-container-lowest": "#ffffff",
-                    "background": "#fef8f6",
-                    "on-primary-container": "#fffbff",
-                    "outline-variant": "#dfbec4",
-                    "on-primary-fixed-variant": "#8f0042",
-                    "on-error": "#ffffff",
-                    "on-secondary": "#ffffff",
-                    "tertiary-fixed": "#e5e2e1",
-                    "on-secondary-fixed": "#390b00",
-                    "on-error-container": "#93000a",
-                    "on-tertiary-container": "#f7feff",
-                    "outline": "#8b7076",
-                    "secondary": "#8f4c35",
-                    "secondary-container": "#fda68a",
-                    "inverse-primary": "#ffb1c3",
-                    "on-primary-fixed": "#3f0019",
-                    "on-surface": "#1d1b1a",
-                    "tertiary-fixed-dim": "#c8c6c5",
-                    "error-container": "#ffdad6",
-                    "on-tertiary-fixed": "#1c1b1b",
-                    "surface-tint": "#b31f59",
-                    "on-secondary-fixed-variant": "#723520",
-                    "surface-container-low": "#f8f2f0",
-                    "surface-container-high": "#ede7e5",
-                    "primary-fixed-dim": "#ffb1c3",
-                    "inverse-surface": "#32302f",
-                    "on-background": "#1d1b1a",
-                    "surface-container": "#f2edeb",
-                    "on-surface-variant": "#584146",
-                    "primary-container": "#d1396f",
-                    "error": "#ba1a1a",
-                    "tertiary-container": "#757474",
-                    "secondary-fixed-dim": "#ffb59d",
-                    "primary": "#af1c57",
-                    "surface-container-highest": "#e7e1df",
-                    "primary-fixed": "#ffd9e0"
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fef8f6",
+                        "secondary-fixed": "#ffdbd0",
+                        "tertiary": "#5d5c5b",
+                        "surface-variant": "#e7e1df",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#ded9d7",
+                        "inverse-on-surface": "#f5efed",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "on-secondary-container": "#773924",
+                        "surface": "#fef8f6",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fef8f6",
+                        "on-primary-container": "#fffbff",
+                        "outline-variant": "#dfbec4",
+                        "on-primary-fixed-variant": "#8f0042",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#e5e2e1",
+                        "on-secondary-fixed": "#390b00",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#f7feff",
+                        "outline": "#8b7076",
+                        "secondary": "#8f4c35",
+                        "secondary-container": "#fda68a",
+                        "inverse-primary": "#ffb1c3",
+                        "on-primary-fixed": "#3f0019",
+                        "on-surface": "#1d1b1a",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "surface-tint": "#b31f59",
+                        "on-secondary-fixed-variant": "#723520",
+                        "surface-container-low": "#f8f2f0",
+                        "surface-container-high": "#ede7e5",
+                        "primary-fixed-dim": "#ffb1c3",
+                        "inverse-surface": "#32302f",
+                        "on-background": "#1d1b1a",
+                        "surface-container": "#f2edeb",
+                        "on-surface-variant": "#584146",
+                        "primary-container": "#d1396f",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#757474",
+                        "secondary-fixed-dim": "#ffb59d",
+                        "primary": "#af1c57",
+                        "surface-container-highest": "#e7e1df",
+                        "primary-fixed": "#ffd9e0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
             },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Inter"],
-                    "body": ["Inter"],
-                    "label": ["Inter"]
-            }
-          },
-        },
-      }
+        }
     </script>
-<style>
+    <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+
         .editorial-gradient {
             background: linear-gradient(135deg, #af1c57 0%, #d1396f 100%);
         }
+
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
+
         .custom-scrollbar::-webkit-scrollbar-track {
             background: transparent;
         }
+
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #e7e1df;
             border-radius: 10px;
         }
     </style>
 </head>
+
 <body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
-<nav class="fixed top-0 w-full z-50 bg-[#fef8f6]/70 dark:bg-[#32302f]/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(29,27,26,0.06)] flex justify-between items-center px-8 h-20 max-w-full">
-<div class="flex items-center gap-2">
-<span class="text-2xl font-black text-[#32302f] dark:text-[#fef8f6] tracking-tighter">Alchemist Wealth</span>
-</div>
-<div class="hidden md:flex items-center gap-10">
-<a class="font-['Inter'] tracking-tight font-semibold text-[#af1c57] relative after:content-[''] after:absolute after:-bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-[#af1c57] after:rounded-full transition-colors duration-300" href="#">Advisor</a>
-<a class="font-['Inter'] tracking-tight font-semibold text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-colors duration-300" href="#">Dashboard</a>
-<a class="font-['Inter'] tracking-tight font-semibold text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-colors duration-300" href="#">Portfolio</a>
-</div>
-<div class="flex items-center gap-6">
-<button class="text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-transform duration-200 active:scale-95">
-<span class="material-symbols-outlined">notifications</span>
-</button>
-<button class="text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-transform duration-200 active:scale-95">
-<span class="material-symbols-outlined">account_circle</span>
-</button>
-</div>
-</nav>
-<div class="flex pt-20 h-screen overflow-hidden">
-<aside class="h-screen w-64 fixed left-0 top-0 bg-[#fef8f6] dark:bg-[#32302f] flex flex-col py-8 gap-2 pt-28">
-<div class="px-8 mb-6">
-<p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-1">Wealth Intelligence</p>
-<p class="text-[10px] text-on-surface-variant opacity-60">The Alchemist Engine</p>
-</div>
-<nav class="flex flex-col gap-1">
-<a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all" href="#">
-<span class="material-symbols-outlined text-lg">grid_view</span>
+    <nav
+        class="fixed top-0 w-full z-50 bg-[#fef8f6]/70 dark:bg-[#32302f]/70 backdrop-blur-xl shadow-[0_20px_40px_rgba(29,27,26,0.06)] flex justify-between items-center px-8 h-20 max-w-full">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl font-black text-[#32302f] dark:text-[#fef8f6] tracking-tighter">Croisette
+                Finance</span>
+        </div>
+        <div class="hidden md:flex items-center gap-10">
+            <a class="font-['Inter'] tracking-tight font-semibold text-[#af1c57] relative after:content-[''] after:absolute after:-bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-[#af1c57] after:rounded-full transition-colors duration-300"
+                href="#">Advisor</a>
+            <a class="font-['Inter'] tracking-tight font-semibold text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-colors duration-300"
+                href="#">Dashboard</a>
+            <a class="font-['Inter'] tracking-tight font-semibold text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-colors duration-300"
+                href="#">Portfolio</a>
+        </div>
+        <div class="flex items-center gap-6">
+            <button
+                class="text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-transform duration-200 active:scale-95">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <button
+                class="text-[#32302f]/60 dark:text-[#fef8f6]/60 hover:text-[#af1c57] transition-transform duration-200 active:scale-95">
+                <span class="material-symbols-outlined">account_circle</span>
+            </button>
+        </div>
+    </nav>
+    <div class="flex pt-20 h-screen overflow-hidden">
+        <aside class="h-screen w-64 fixed left-0 top-0 bg-[#fef8f6] dark:bg-[#32302f] flex flex-col py-8 gap-2 pt-28">
+            <div class="px-8 mb-6">
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-1">Wealth Intelligence</p>
+                <p class="text-[10px] text-on-surface-variant opacity-60">The Croisette Engine</p>
+            </div>
+            <nav class="flex flex-col gap-1">
+                <a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all"
+                    href="#">
+                    <span class="material-symbols-outlined text-lg">grid_view</span>
                     Overview
                 </a>
-<a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all" href="#">
-<span class="material-symbols-outlined text-lg">trending_up</span>
+                <a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all"
+                    href="#">
+                    <span class="material-symbols-outlined text-lg">trending_up</span>
                     Markets
                 </a>
-<a class="bg-[#32302f] dark:bg-[#fef8f6] text-[#fef8f6] dark:text-[#32302f] rounded-lg mx-4 py-3 px-4 flex items-center gap-4 font-['Inter'] text-sm font-medium translate-x-1 transition-transform" href="#">
-<span class="material-symbols-outlined text-lg">psychology</span>
+                <a class="bg-[#32302f] dark:bg-[#fef8f6] text-[#fef8f6] dark:text-[#32302f] rounded-lg mx-4 py-3 px-4 flex items-center gap-4 font-['Inter'] text-sm font-medium translate-x-1 transition-transform"
+                    href="#">
+                    <span class="material-symbols-outlined text-lg">psychology</span>
                     Intelligence
                 </a>
-<a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all" href="#">
-<span class="material-symbols-outlined text-lg">insights</span>
+                <a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all"
+                    href="#">
+                    <span class="material-symbols-outlined text-lg">insights</span>
                     Strategy
                 </a>
-<a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all" href="#">
-<span class="material-symbols-outlined text-lg">settings</span>
+                <a class="text-[#32302f]/70 dark:text-[#fef8f6]/70 px-8 py-3 flex items-center gap-4 font-['Inter'] text-sm font-medium hover:bg-surface-container-low transition-all"
+                    href="#">
+                    <span class="material-symbols-outlined text-lg">settings</span>
                     Settings
                 </a>
-</nav>
-<div class="mt-auto px-6">
-<button class="w-full editorial-gradient text-on-primary py-3 rounded-md font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+            </nav>
+            <div class="mt-auto px-6">
+                <button
+                    class="w-full editorial-gradient text-on-primary py-3 rounded-md font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
                     Optimize Portfolio
                     <span class="material-symbols-outlined text-sm">north_east</span>
-</button>
-</div>
-</aside>
-<main class="ml-64 flex-1 flex flex-col relative bg-surface-bright">
-<div class="flex-1 overflow-y-auto px-12 py-12 custom-scrollbar space-y-12 max-w-5xl mx-auto w-full">
-<div class="flex justify-center mb-16">
-<div class="text-center">
-<h1 class="text-5xl font-extrabold tracking-tighter text-inverse-surface mb-4">Croissette Advisor</h1>
-<p class="text-on-surface-variant font-medium opacity-70">Editorial Wealth Intelligence &amp; Predictive Analysis</p>
-</div>
-</div>
-<div class="flex justify-end group">
-<div class="max-w-[70%] space-y-2">
-<div class="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-[0_4px_20px_rgba(29,27,26,0.03)] border border-outline-variant/10">
-<p class="leading-relaxed text-[15px]">Croissette, can you analyze my current exposure to emerging markets and suggest a strategy for the upcoming fiscal quarter?</p>
-</div>
-<p class="text-[10px] text-right text-on-surface-variant opacity-50 uppercase tracking-widest font-bold">Today 10:24 AM</p>
-</div>
-</div>
-<div class="flex group">
-<div class="max-w-[85%] space-y-4">
-<div class="bg-inverse-surface text-on-primary-container px-8 py-8 rounded-3xl rounded-tl-none shadow-2xl relative overflow-hidden">
-<div class="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
-<svg class="w-full h-full text-primary" viewbox="0 0 100 100">
-<circle cx="50" cy="50" fill="none" r="40" stroke="currentColor" stroke-width="0.5"></circle>
-<circle cx="50" cy="50" fill="none" r="30" stroke="currentColor" stroke-width="0.5"></circle>
-<circle cx="50" cy="50" fill="none" r="20" stroke="currentColor" stroke-width="0.5"></circle>
-</svg>
-</div>
-<div class="relative z-10">
-<div class="flex items-center gap-2 mb-6">
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-<span class="text-xs font-black uppercase tracking-[0.3em] text-primary">AI Synthesis Active</span>
-</div>
-<p class="text-xl font-semibold mb-6 leading-tight tracking-tight">Based on your portfolio's current 14% allocation in SEA markets, we are seeing a tactical pivot opportunity.</p>
-<div class="grid grid-cols-2 gap-6 mb-8">
-<div class="bg-surface-container-lowest/5 p-4 rounded-xl border border-on-primary-container/10">
-<p class="text-[10px] uppercase tracking-widest opacity-60 mb-1">Projected Yield</p>
-<p class="text-2xl font-bold text-primary">+8.4%</p>
-</div>
-<div class="bg-surface-container-lowest/5 p-4 rounded-xl border border-on-primary-container/10">
-<p class="text-[10px] uppercase tracking-widest opacity-60 mb-1">Risk Adjusted</p>
-<p class="text-2xl font-bold">Moderate</p>
-</div>
-</div>
-<p class="leading-relaxed opacity-90 text-[15px] mb-6">The Alchemist Engine identifies a divergence in regional growth. We recommend rebalancing 4% of lagging equity from domestic large-caps into high-alpha tech ventures within the emerging corridor.</p>
-<div class="flex gap-4">
-<button class="bg-primary text-white px-5 py-2 rounded-md text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-opacity">
+                </button>
+            </div>
+        </aside>
+        <main class="ml-64 flex-1 flex flex-col relative bg-surface-bright">
+            <div class="flex-1 overflow-y-auto px-12 py-12 custom-scrollbar space-y-12 max-w-5xl mx-auto w-full">
+                <div class="flex justify-center mb-16">
+                    <div class="text-center">
+                        <h1 class="text-5xl font-extrabold tracking-tighter text-inverse-surface mb-4">Croissette
+                            Advisor</h1>
+                        <p class="text-on-surface-variant font-medium opacity-70">Editorial Wealth Intelligence &amp;
+                            Predictive Analysis</p>
+                    </div>
+                </div>
+                <div class="flex justify-end group">
+                    <div class="max-w-[70%] space-y-2">
+                        <div
+                            class="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-[0_4px_20px_rgba(29,27,26,0.03)] border border-outline-variant/10">
+                            <p class="leading-relaxed text-[15px]">Croissette, can you analyze my current exposure to
+                                emerging markets and suggest a strategy for the upcoming fiscal quarter?</p>
+                        </div>
+                        <p
+                            class="text-[10px] text-right text-on-surface-variant opacity-50 uppercase tracking-widest font-bold">
+                            Today 10:24 AM</p>
+                    </div>
+                </div>
+                <div class="flex group">
+                    <div class="max-w-[85%] space-y-4">
+                        <div
+                            class="bg-inverse-surface text-on-primary-container px-8 py-8 rounded-3xl rounded-tl-none shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 opacity-10 pointer-events-none">
+                                <svg class="w-full h-full text-primary" viewbox="0 0 100 100">
+                                    <circle cx="50" cy="50" fill="none" r="40" stroke="currentColor" stroke-width="0.5">
+                                    </circle>
+                                    <circle cx="50" cy="50" fill="none" r="30" stroke="currentColor" stroke-width="0.5">
+                                    </circle>
+                                    <circle cx="50" cy="50" fill="none" r="20" stroke="currentColor" stroke-width="0.5">
+                                    </circle>
+                                </svg>
+                            </div>
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-2 mb-6">
+                                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                                    <span class="text-xs font-black uppercase tracking-[0.3em] text-primary">AI
+                                        Synthesis Active</span>
+                                </div>
+                                <p class="text-xl font-semibold mb-6 leading-tight tracking-tight">Based on your
+                                    portfolio's current 14% allocation in SEA markets, we are seeing a tactical pivot
+                                    opportunity.</p>
+                                <div class="grid grid-cols-2 gap-6 mb-8">
+                                    <div
+                                        class="bg-surface-container-lowest/5 p-4 rounded-xl border border-on-primary-container/10">
+                                        <p class="text-[10px] uppercase tracking-widest opacity-60 mb-1">Projected Yield
+                                        </p>
+                                        <p class="text-2xl font-bold text-primary">+8.4%</p>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-lowest/5 p-4 rounded-xl border border-on-primary-container/10">
+                                        <p class="text-[10px] uppercase tracking-widest opacity-60 mb-1">Risk Adjusted
+                                        </p>
+                                        <p class="text-2xl font-bold">Moderate</p>
+                                    </div>
+                                </div>
+                                <p class="leading-relaxed opacity-90 text-[15px] mb-6">The Croisette Engine identifies a
+                                    divergence in regional growth. We recommend rebalancing 4% of lagging equity from
+                                    domestic large-caps into high-alpha tech ventures within the emerging corridor.</p>
+                                <div class="flex gap-4">
+                                    <button
+                                        class="bg-primary text-white px-5 py-2 rounded-md text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:opacity-90 transition-opacity">
                                         Execute Pivot
                                         <span class="material-symbols-outlined text-sm">north_east</span>
-</button>
-<button class="bg-on-primary-container/10 text-white px-5 py-2 rounded-md text-xs font-bold uppercase tracking-widest hover:bg-on-primary-container/20 transition-colors">
+                                    </button>
+                                    <button
+                                        class="bg-on-primary-container/10 text-white px-5 py-2 rounded-md text-xs font-bold uppercase tracking-widest hover:bg-on-primary-container/20 transition-colors">
                                         View Data Model
                                     </button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="flex justify-end group">
-<div class="max-w-[70%] space-y-2">
-<div class="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-[0_4px_20px_rgba(29,27,26,0.03)] border border-outline-variant/10">
-<p class="leading-relaxed text-[15px]">Show me the historical volatility for this proposed rebalancing over a 5-year backtest.</p>
-</div>
-</div>
-</div>
-<div class="flex group">
-<div class="max-w-[85%] space-y-4">
-<div class="bg-surface-container-low p-1 rounded-3xl">
-<div class="bg-surface-container-lowest p-8 rounded-[1.4rem] shadow-sm border border-outline-variant/20">
-<h3 class="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">analytics</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end group">
+                    <div class="max-w-[70%] space-y-2">
+                        <div
+                            class="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-[0_4px_20px_rgba(29,27,26,0.03)] border border-outline-variant/10">
+                            <p class="leading-relaxed text-[15px]">Show me the historical volatility for this proposed
+                                rebalancing over a 5-year backtest.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex group">
+                    <div class="max-w-[85%] space-y-4">
+                        <div class="bg-surface-container-low p-1 rounded-3xl">
+                            <div
+                                class="bg-surface-container-lowest p-8 rounded-[1.4rem] shadow-sm border border-outline-variant/20">
+                                <h3 class="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">analytics</span>
                                     Backtest Intelligence
                                 </h3>
-<div class="h-48 w-full flex items-end gap-2 mb-6">
-<div class="flex-1 bg-surface-container-high rounded-t-sm h-[40%] transition-all hover:h-[45%]"></div>
-<div class="flex-1 bg-surface-container-high rounded-t-sm h-[60%] transition-all hover:h-[65%]"></div>
-<div class="flex-1 bg-primary/40 rounded-t-sm h-[35%] transition-all hover:h-[40%]"></div>
-<div class="flex-1 bg-primary/60 rounded-t-sm h-[75%] transition-all hover:h-[80%]"></div>
-<div class="flex-1 bg-primary rounded-t-sm h-[90%] transition-all hover:h-[95%]"></div>
-<div class="flex-1 bg-inverse-surface rounded-t-sm h-[55%] transition-all hover:h-[60%]"></div>
-<div class="flex-1 bg-surface-container-high rounded-t-sm h-[45%] transition-all hover:h-[50%]"></div>
-</div>
-<p class="text-sm text-on-surface-variant leading-relaxed">The simulation exhibits a 0.72 Sharpe ratio increase. Volatility clusters around Q3 cycles but remains within your established 12% drawdown threshold.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="p-8 bg-surface-bright/80 backdrop-blur-md">
-<div class="max-w-4xl mx-auto relative group">
-<div class="absolute -top-12 left-0 right-0 flex gap-2 justify-center pb-4 opacity-0 group-focus-within:opacity-100 transition-opacity">
-<button class="bg-surface-container-lowest px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-outline-variant/30 text-on-surface-variant hover:border-primary/50 transition-colors">Risk Report</button>
-<button class="bg-surface-container-lowest px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-outline-variant/30 text-on-surface-variant hover:border-primary/50 transition-colors">Yield Forecast</button>
-<button class="bg-surface-container-lowest px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-outline-variant/30 text-on-surface-variant hover:border-primary/50 transition-colors">Tax Efficiency</button>
-</div>
-<div class="flex items-center bg-surface-container-lowest rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-outline-variant/20 p-2 pl-6 focus-within:border-primary/40 transition-colors">
-<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium placeholder:text-on-surface-variant/40 placeholder:font-normal py-4" placeholder="Ask Croissette about your portfolio..." type="text"/>
-<div class="flex items-center gap-2 pr-2">
-<button class="p-3 text-on-surface-variant/40 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">attach_file</span>
-</button>
-<button class="editorial-gradient text-on-primary p-4 rounded-lg flex items-center justify-center hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-primary/20">
-<span class="material-symbols-outlined">north_east</span>
-</button>
-</div>
-</div>
-</div>
-<p class="text-center mt-4 text-[9px] text-on-surface-variant/40 uppercase tracking-[0.2em] font-medium">Croissette AI may provide financial modeling that requires human verification.</p>
-</div>
-</main>
-</div>
-<footer class="w-full py-12 bg-[#32302f] dark:bg-[#1a1a1a] flex flex-col md:flex-row justify-between items-center px-12 border-t border-[#fef8f6]/5 relative z-50">
-<div class="mb-6 md:mb-0">
-<span class="text-[#fef8f6] font-bold text-sm tracking-widest uppercase">Alchemist Wealth</span>
-</div>
-<div class="flex gap-8 mb-6 md:mb-0">
-<a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors" href="#">Terms</a>
-<a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors" href="#">Privacy</a>
-<a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors" href="#">Disclosure</a>
-<a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors" href="#">Contact</a>
-</div>
-<div class="text-[#fef8f6]/40 text-[10px] tracking-widest font-['Inter'] uppercase">
+                                <div class="h-48 w-full flex items-end gap-2 mb-6">
+                                    <div
+                                        class="flex-1 bg-surface-container-high rounded-t-sm h-[40%] transition-all hover:h-[45%]">
+                                    </div>
+                                    <div
+                                        class="flex-1 bg-surface-container-high rounded-t-sm h-[60%] transition-all hover:h-[65%]">
+                                    </div>
+                                    <div class="flex-1 bg-primary/40 rounded-t-sm h-[35%] transition-all hover:h-[40%]">
+                                    </div>
+                                    <div class="flex-1 bg-primary/60 rounded-t-sm h-[75%] transition-all hover:h-[80%]">
+                                    </div>
+                                    <div class="flex-1 bg-primary rounded-t-sm h-[90%] transition-all hover:h-[95%]">
+                                    </div>
+                                    <div
+                                        class="flex-1 bg-inverse-surface rounded-t-sm h-[55%] transition-all hover:h-[60%]">
+                                    </div>
+                                    <div
+                                        class="flex-1 bg-surface-container-high rounded-t-sm h-[45%] transition-all hover:h-[50%]">
+                                    </div>
+                                </div>
+                                <p class="text-sm text-on-surface-variant leading-relaxed">The simulation exhibits a
+                                    0.72 Sharpe ratio increase. Volatility clusters around Q3 cycles but remains within
+                                    your established 12% drawdown threshold.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-8 bg-surface-bright/80 backdrop-blur-md">
+                <div class="max-w-4xl mx-auto relative group">
+                    <div
+                        class="absolute -top-12 left-0 right-0 flex gap-2 justify-center pb-4 opacity-0 group-focus-within:opacity-100 transition-opacity">
+                        <button
+                            class="bg-surface-container-lowest px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-outline-variant/30 text-on-surface-variant hover:border-primary/50 transition-colors">Risk
+                            Report</button>
+                        <button
+                            class="bg-surface-container-lowest px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-outline-variant/30 text-on-surface-variant hover:border-primary/50 transition-colors">Yield
+                            Forecast</button>
+                        <button
+                            class="bg-surface-container-lowest px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-outline-variant/30 text-on-surface-variant hover:border-primary/50 transition-colors">Tax
+                            Efficiency</button>
+                    </div>
+                    <div
+                        class="flex items-center bg-surface-container-lowest rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] border border-outline-variant/20 p-2 pl-6 focus-within:border-primary/40 transition-colors">
+                        <input
+                            class="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium placeholder:text-on-surface-variant/40 placeholder:font-normal py-4"
+                            placeholder="Ask Croissette about your portfolio..." type="text" />
+                        <div class="flex items-center gap-2 pr-2">
+                            <button class="p-3 text-on-surface-variant/40 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined">attach_file</span>
+                            </button>
+                            <button
+                                class="editorial-gradient text-on-primary p-4 rounded-lg flex items-center justify-center hover:scale-[1.02] active:scale-95 transition-all shadow-md shadow-primary/20">
+                                <span class="material-symbols-outlined">north_east</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <p
+                    class="text-center mt-4 text-[9px] text-on-surface-variant/40 uppercase tracking-[0.2em] font-medium">
+                    Croissette AI may provide financial modeling that requires human verification.</p>
+            </div>
+        </main>
+    </div>
+    <footer
+        class="w-full py-12 bg-[#32302f] dark:bg-[#1a1a1a] flex flex-col md:flex-row justify-between items-center px-12 border-t border-[#fef8f6]/5 relative z-50">
+        <div class="mb-6 md:mb-0">
+            <span class="text-[#fef8f6] font-bold text-sm tracking-widest uppercase">Croisette Finance</span>
+        </div>
+        <div class="flex gap-8 mb-6 md:mb-0">
+            <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors"
+                href="#">Terms</a>
+            <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors"
+                href="#">Privacy</a>
+            <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors"
+                href="#">Disclosure</a>
+            <a class="font-['Inter'] text-xs uppercase tracking-widest text-[#fef8f6]/40 hover:text-[#fef8f6] transition-colors"
+                href="#">Contact</a>
+        </div>
+        <div class="text-[#fef8f6]/40 text-[10px] tracking-widest font-['Inter'] uppercase">
             © 2026 Croisette. High-End Editorial Intelligence.
         </div>
-</footer>
-</body></html>
+    </footer>
+</body>
+
+</html>

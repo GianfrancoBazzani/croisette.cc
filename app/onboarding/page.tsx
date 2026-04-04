@@ -463,7 +463,7 @@ function StepRisk({
         <div className="mt-20 max-w-2xl">
           <div className="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
             <p className="text-sm font-medium italic text-on-surface-variant">
-              &ldquo;The Alchemist Engine realigns your risk architecture every
+              &ldquo;The Croisette  Engine realigns your risk architecture every
               300 milliseconds, ensuring that market volatility becomes an
               instrument of growth rather than a threat to stability.&rdquo;
             </p>
@@ -697,8 +697,8 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
             >
               <div
                 className={`h-full rounded-2xl p-10 flex flex-col justify-between relative overflow-hidden shadow-[0_20px_40px_rgba(29,27,26,0.06)] ${isLast && cardState === "visible"
-                    ? "bg-inverse-surface"
-                    : "bg-surface-container-lowest"
+                  ? "bg-inverse-surface"
+                  : "bg-surface-container-lowest"
                   }`}
               >
                 {/* Radial line art */}
@@ -715,8 +715,8 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
                 <div>
                   <div
                     className={`w-14 h-14 rounded-full flex items-center justify-center mb-6 ${isLast && cardState === "visible"
-                        ? "bg-primary/20 text-primary"
-                        : "bg-surface-container-high text-primary"
+                      ? "bg-primary/20 text-primary"
+                      : "bg-surface-container-high text-primary"
                       }`}
                   >
                     <span
@@ -733,16 +733,16 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
 
                   <h3
                     className={`text-2xl font-bold tracking-tight mb-3 ${isLast && cardState === "visible"
-                        ? "text-surface-bright"
-                        : "text-on-surface"
+                      ? "text-surface-bright"
+                      : "text-on-surface"
                       }`}
                   >
                     {card.title}
                   </h3>
                   <p
                     className={`text-[15px] leading-relaxed ${isLast && cardState === "visible"
-                        ? "text-surface-variant/80"
-                        : "text-on-surface-variant"
+                      ? "text-surface-variant/80"
+                      : "text-on-surface-variant"
                       }`}
                   >
                     {card.detail}
@@ -753,8 +753,8 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
                 <div className="flex items-center justify-between mt-6">
                   <span
                     className={`text-xs font-mono tracking-wider ${isLast && cardState === "visible"
-                        ? "text-primary"
-                        : "text-on-surface-variant/40"
+                      ? "text-primary"
+                      : "text-on-surface-variant/40"
                       }`}
                   >
                     {card.hash}
@@ -774,10 +774,10 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
             <div
               key={i}
               className={`h-1.5 rounded-full transition-all duration-500 ${i === activeIndex
-                  ? "w-8 bg-primary"
-                  : i < activeIndex
-                    ? "w-1.5 bg-primary/40"
-                    : "w-1.5 bg-surface-container-highest"
+                ? "w-8 bg-primary"
+                : i < activeIndex
+                  ? "w-1.5 bg-primary/40"
+                  : "w-1.5 bg-surface-container-highest"
                 }`}
             />
           ))}
@@ -811,7 +811,7 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
    Personalization Loader
    ═════════════════════════════════════════════ */
 const PERSONALIZATION_STEPS = [
-  { icon: "psychology", text: "Initializing Alchemist Engine…" },
+  { icon: "psychology", text: "Initializing Croisette  Engine…" },
   { icon: "fingerprint", text: "Reading your investor profile…" },
   { icon: "tune", text: "Calibrating risk architecture…" },
   { icon: "hub", text: "Connecting to live market signals…" },

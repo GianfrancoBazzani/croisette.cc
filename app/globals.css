@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Croisette Design System — "The Predictive Alchemist"
+   Croisette Design System — "The Predictive Croisette "
    High-End Editorial Intelligence
    Tailwind CSS v4 Theme
    ============================================================ */
@@ -99,7 +99,12 @@
   }
 
   /* Editorial typography — tighter headlines */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     letter-spacing: var(--tracking-editorial);
     font-family: var(--font-headline);
   }
@@ -135,4 +140,3 @@
 @utility gradient-primary {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
 }
-
