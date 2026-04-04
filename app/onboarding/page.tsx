@@ -1042,13 +1042,14 @@ function StepAdvisor({
     }
   };
 
-  // Show sidebar once chat is ready (we have funnel data to display)
+  // Show sidebar after the user sends their first message
+  const userHasReplied = messages.filter((m) => m.role === "user").length > 1; // >1 because first is wakeup prompt
   useEffect(() => {
-    if (hasFirstResponse && !sidebarVisible) {
+    if (userHasReplied && !sidebarVisible) {
       const timer = setTimeout(() => setSidebarVisible(true), 300);
       return () => clearTimeout(timer);
     }
-  }, [hasFirstResponse, sidebarVisible]);
+  }, [userHasReplied, sidebarVisible]);
 
   // Phase 1: Personalization loader (always runs its full animation)
   if (!personalizationDone) {
