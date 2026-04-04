@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "bun --bun next build", 
-    "start": "bun --bun next start",
+    "start": "bun --bun next start -p 80",
     "lint": "eslint"
   },
   "dependencies": {
