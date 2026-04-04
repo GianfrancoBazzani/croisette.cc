@@ -341,7 +341,7 @@ export default function Home() {
               the modern era.
             </p>
             <div className="text-xs uppercase tracking-widest pt-4">
-              © 2025 Croisette. High-End Editorial Intelligence.
+              © 2026 Croisette. High-End Editorial Intelligence.
             </div>
           </div>
 
