@@ -3,14 +3,22 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState } from "react";
+import type { VerifyStatus } from "@/app/chat/[agentId]/page";
+import { VerifyBanner } from "@/app/_components/verify-banner";
 
 interface ChatBoxProps {
   agentId: string;
   sessionId: string;
   agentName: string;
+  verifyStatus: VerifyStatus;
 }
 
-export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
+export function ChatBox({
+  agentId,
+  sessionId,
+  agentName,
+  verifyStatus,
+}: ChatBoxProps) {
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: `/api/chat/${agentId}`,
@@ -25,7 +33,9 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
     <div className="flex flex-col h-screen max-w-2xl mx-auto p-4">
       <h1 className="text-xl font-bold mb-4">{agentName}</h1>
 
-      <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+      <VerifyBanner status={verifyStatus} />
+
+      <div className="flex-1 overflow-y-auto space-y-4 mb-4 mt-4">
         {messages.map((message) => {
           const hasText = message.parts.some(
             (part) => part.type === "text" && part.text
@@ -38,14 +48,14 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
               key={message.id}
               className={`p-3 rounded-lg ${
                 message.role === "user"
-                  ? "bg-blue-100 ml-auto max-w-[80%]"
-                  : "bg-gray-100 mr-auto max-w-[80%]"
+                  ? "bg-surface-container-high ml-auto max-w-[80%]"
+                  : "bg-surface-container-low mr-auto max-w-[80%]"
               }`}
             >
               {showSpinner ? (
                 <div className="flex items-center gap-2">
                   <svg
-                    className="animate-spin h-4 w-4 text-gray-400"
+                    className="animate-spin h-4 w-4 text-on-surface-variant"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -64,11 +74,13 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  <span className="text-gray-400 text-sm">Thinking...</span>
+                  <span className="text-on-surface-variant text-sm">
+                    Thinking...
+                  </span>
                 </div>
               ) : (
                 <>
-                  <p className="text-xs font-semibold mb-1">
+                  <p className="text-xs font-semibold mb-1 text-on-surface-variant">
                     {message.role === "user" ? "You" : agentName}
                   </p>
                   {message.parts.map((part, index) =>
@@ -84,9 +96,9 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
         {!isReady &&
           (messages.length === 0 ||
             messages[messages.length - 1].role === "user") && (
-            <div className="p-3 rounded-lg bg-gray-100 mr-auto max-w-[80%] flex items-center gap-2">
+            <div className="p-3 rounded-lg bg-surface-container-low mr-auto max-w-[80%] flex items-center gap-2">
               <svg
-                className="animate-spin h-4 w-4 text-gray-400"
+                className="animate-spin h-4 w-4 text-on-surface-variant"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -105,7 +117,9 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 />
               </svg>
-              <span className="text-gray-400 text-sm">Thinking...</span>
+              <span className="text-on-surface-variant text-sm">
+                Thinking...
+              </span>
             </div>
           )}
       </div>
@@ -125,12 +139,12 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
           onChange={(e) => setInput(e.target.value)}
           disabled={!isReady}
           placeholder="Type a message..."
-          className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 bg-surface-container-high rounded-lg px-4 py-2 focus:outline-none focus:bg-surface-container-highest text-on-surface placeholder:text-on-surface-variant/50 disabled:opacity-50"
         />
         <button
           type="submit"
           disabled={!isReady || !input.trim()}
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg disabled:opacity-50 hover:bg-blue-600"
+          className="gradient-primary text-on-primary px-6 py-2 rounded-lg disabled:opacity-50 hover:scale-[1.02] transition-transform"
         >
           Send
         </button>

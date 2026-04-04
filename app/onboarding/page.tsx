@@ -82,7 +82,7 @@ const RISKS = [
   },
 ] as const;
 
-const AGENT_ID = process.env.NEXT_PUBLIC_AGENT_ID;
+const AGENT_ID = process.env.NEXT_PUBLIC_AGENT_ID!;
 
 /* ═════════════════════════════════════════════
    Main Component
@@ -95,8 +95,40 @@ export default function OnboardingPage() {
   const [profile, setProfile] = useState({ name: "", age: "", country: "", telegram: "" });
   const sessionId = useMemo(() => crypto.randomUUID(), []);
 
-  /* ── Chat: initialize early (step 3) so the response is ready by step 5 ── */
-  const [chatStarted, setChatStarted] = useState(false);
+  /* ── Verification: run when entering step 3 ── */
+  const [verified, setVerified] = useState(false);
+  const [verifyError, setVerifyError] = useState<string | null>(null);
+  const hasStartedVerify = useRef(false);
+
+  useEffect(() => {
+    if (step >= 3 && !hasStartedVerify.current) {
+      hasStartedVerify.current = true;
+      fetch(`/api/verify/${AGENT_ID}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.offChain?.ok) {
+            const files = [...(data.offChain?.failed ?? []), ...(data.offChain?.missing ?? [])];
+            setVerifyError(`Integrity check failed: ${files.join(", ") || "unknown error"}`);
+            return;
+          }
+          if (data.onChain && !data.onChain.ok) {
+            const files = [...data.onChain.failed, ...data.onChain.missing];
+            setVerifyError(`On-chain verification failed: ${files.join(", ")}`);
+            return;
+          }
+          setVerified(true);
+        })
+        .catch(() => {
+          setVerifyError("Network error during verification");
+        });
+    }
+  }, [step, sessionId]);
+
+  /* ── Chat: hook is always called (React rules), but sendMessage only fires after verification ── */
   const chatTransport = useMemo(
     () =>
       new DefaultChatTransport({
@@ -119,18 +151,13 @@ export default function OnboardingPage() {
     `
   }
 
-  // Start the chat connection when we enter step 3 (verification)
+  // Send wakeup prompt only AFTER verification passes and session exists
   useEffect(() => {
-    if (step >= 3) setChatStarted(true);
-  }, [step]);
-
-  // Send wakeup prompt once the transport is ready and we've started
-  useEffect(() => {
-    if (chatStarted && isReady && !hasSentWakeUp.current) {
+    if (verified && isReady && !hasSentWakeUp.current) {
       hasSentWakeUp.current = true;
       sendMessage({ text: generateWakeUpPrompt() });
     }
-  }, [chatStarted, isReady, sendMessage]);
+  }, [verified, isReady, sendMessage]);
 
   const hasFirstResponse = messages.some(
     (m) => m.role === "assistant" && m.parts.some((p) => p.type === "text" && p.text),
@@ -187,7 +214,11 @@ export default function OnboardingPage() {
         <StepProfile profile={profile} onChange={setProfile} />
       )}
       {step === 3 && (
-        <StepVerification onComplete={() => setStep(4)} />
+        <StepVerification
+          onComplete={() => setStep(4)}
+          verified={verified}
+          verifyError={verifyError}
+        />
       )}
       {step === 4 && (
         <StepAdvisor
@@ -629,53 +660,77 @@ const VERIFICATION_CARDS = [
     detail: "Your agent is now tamper-proof and permanently anchored to the OG ledger.",
     hash: "0x91fa…2b77",
   },
-  {
-    icon: "check_circle",
-    title: "Verification Complete",
-    detail: "Agent identity sealed. Ready to deploy your personalized intelligence.",
-    hash: "VERIFIED",
-  },
 ];
 
 const CARD_DURATION = 1500; // ms each card is shown
 
-function StepVerification({ onComplete }: { onComplete: () => void }) {
+function StepVerification({
+  onComplete,
+  verified,
+  verifyError,
+}: {
+  onComplete: () => void;
+  verified: boolean;
+  verifyError: string | null;
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [cardState, setCardState] = useState<"entering" | "visible" | "exiting">("entering");
+  const hasCompleted = useRef(false);
+
+  // Total cards = static cards + 1 dynamic final card
+  const totalCards = VERIFICATION_CARDS.length + 1;
+  const isOnFinalCard = activeIndex === VERIFICATION_CARDS.length;
+  const staticCard = VERIFICATION_CARDS[activeIndex];
+
+  // Determine what the final card shows based on real verification state
+  const finalCardReady = verified || !!verifyError;
 
   useEffect(() => {
-    if (activeIndex >= VERIFICATION_CARDS.length) {
-      const t = setTimeout(onComplete, 400);
-      return () => clearTimeout(t);
+    // Static cards: auto-advance through them
+    if (activeIndex < VERIFICATION_CARDS.length) {
+      setCardState("entering");
+      const enterTimer = setTimeout(() => setCardState("visible"), 50);
+      const exitTimer = setTimeout(() => setCardState("exiting"), CARD_DURATION);
+      const advanceTimer = setTimeout(() => setActiveIndex((i) => i + 1), CARD_DURATION + 400);
+      return () => {
+        clearTimeout(enterTimer);
+        clearTimeout(exitTimer);
+        clearTimeout(advanceTimer);
+      };
     }
 
-    // Enter
+    // Final card: enter it, hold until verification resolves
     setCardState("entering");
     const enterTimer = setTimeout(() => setCardState("visible"), 50);
+    return () => clearTimeout(enterTimer);
+  }, [activeIndex]);
 
-    // Hold, then exit
-    const exitTimer = setTimeout(() => {
+  // If verification fails mid-animation, interrupt and jump to the error card.
+  // Wait until at least card index 2 (third card) so the animation has time to breathe.
+  const MIN_CARD_BEFORE_ERROR = 2;
+  useEffect(() => {
+    if (verifyError && activeIndex >= MIN_CARD_BEFORE_ERROR && activeIndex < VERIFICATION_CARDS.length) {
       setCardState("exiting");
-    }, CARD_DURATION);
+      const jumpTimer = setTimeout(() => {
+        setActiveIndex(VERIFICATION_CARDS.length);
+      }, 400);
+      return () => clearTimeout(jumpTimer);
+    }
+  }, [verifyError, activeIndex]);
 
-    // Advance to next card after exit animation
-    const advanceTimer = setTimeout(() => {
-      setActiveIndex((i) => i + 1);
-    }, CARD_DURATION + 400);
+  // Auto-advance to next step once final card is visible AND verification passed
+  useEffect(() => {
+    if (isOnFinalCard && verified && !verifyError && !hasCompleted.current) {
+      hasCompleted.current = true;
+      const t = setTimeout(onComplete, 1800);
+      return () => clearTimeout(t);
+    }
+  }, [isOnFinalCard, verified, verifyError, onComplete]);
 
-    return () => {
-      clearTimeout(enterTimer);
-      clearTimeout(exitTimer);
-      clearTimeout(advanceTimer);
-    };
-  }, [activeIndex, onComplete]);
-
-  const card = VERIFICATION_CARDS[activeIndex];
-  const isLast = activeIndex === VERIFICATION_CARDS.length - 1;
-  const progress =
-    activeIndex >= VERIFICATION_CARDS.length
-      ? 100
-      : ((activeIndex + (cardState === "exiting" ? 1 : 0.5)) / VERIFICATION_CARDS.length) * 100;
+  const isLastStatic = activeIndex === VERIFICATION_CARDS.length - 1;
+  const progress = isOnFinalCard
+    ? (finalCardReady ? 100 : 90)
+    : ((activeIndex + (cardState === "exiting" ? 1 : 0.5)) / totalCards) * 100;
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center relative px-6 pt-28 pb-40">
@@ -697,7 +752,8 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
 
         {/* Card area — fixed height to prevent layout shift */}
         <div className="relative h-[280px]">
-          {card && (
+          {/* Static cards */}
+          {staticCard && (
             <div
               key={activeIndex}
               className="absolute inset-0 transition-all duration-[400ms]"
@@ -713,7 +769,7 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
               }}
             >
               <div
-                className={`h-full rounded-2xl p-10 flex flex-col justify-between relative overflow-hidden shadow-[0_20px_40px_rgba(29,27,26,0.06)] ${isLast && cardState === "visible"
+                className={`h-full rounded-2xl p-10 flex flex-col justify-between relative overflow-hidden shadow-[0_20px_40px_rgba(29,27,26,0.06)] ${isLastStatic && cardState === "visible"
                   ? "bg-inverse-surface"
                   : "bg-surface-container-lowest"
                   }`}
@@ -728,10 +784,9 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
                   </svg>
                 </div>
 
-                {/* Top: icon + title */}
                 <div>
                   <div
-                    className={`w-14 h-14 rounded-full flex items-center justify-center mb-6 ${isLast && cardState === "visible"
+                    className={`w-14 h-14 rounded-full flex items-center justify-center mb-6 ${isLastStatic && cardState === "visible"
                       ? "bg-primary/20 text-primary"
                       : "bg-surface-container-high text-primary"
                       }`}
@@ -739,45 +794,153 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
                     <span
                       className="material-symbols-outlined text-3xl"
                       style={
-                        isLast
+                        isLastStatic
                           ? { fontVariationSettings: "'FILL' 1" }
                           : undefined
                       }
                     >
-                      {card.icon}
+                      {staticCard.icon}
                     </span>
                   </div>
-
                   <h3
-                    className={`text-2xl font-bold tracking-tight mb-3 ${isLast && cardState === "visible"
+                    className={`text-2xl font-bold tracking-tight mb-3 ${isLastStatic && cardState === "visible"
                       ? "text-surface-bright"
                       : "text-on-surface"
                       }`}
                   >
-                    {card.title}
+                    {staticCard.title}
                   </h3>
                   <p
-                    className={`text-[15px] leading-relaxed ${isLast && cardState === "visible"
+                    className={`text-[15px] leading-relaxed ${isLastStatic && cardState === "visible"
                       ? "text-surface-variant/80"
                       : "text-on-surface-variant"
                       }`}
                   >
-                    {card.detail}
+                    {staticCard.detail}
                   </p>
                 </div>
 
-                {/* Bottom: hash */}
                 <div className="flex items-center justify-between mt-6">
                   <span
-                    className={`text-xs font-mono tracking-wider ${isLast && cardState === "visible"
+                    className={`text-xs font-mono tracking-wider ${isLastStatic && cardState === "visible"
                       ? "text-primary"
                       : "text-on-surface-variant/40"
                       }`}
                   >
-                    {card.hash}
+                    {staticCard.hash}
                   </span>
                   <span className="material-symbols-outlined text-primary text-lg animate-pulse">
-                    {isLast ? "verified" : "pending"}
+                    pending
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Dynamic final card — driven by real verification state */}
+          {isOnFinalCard && (
+            <div
+              key="final"
+              className="absolute inset-0 transition-all duration-[400ms]"
+              style={{
+                transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+                opacity: cardState === "entering" ? 0 : 1,
+                transform:
+                  cardState === "entering"
+                    ? "scale(0.85) translateY(40px)"
+                    : "scale(1) translateY(0)",
+              }}
+            >
+              <div
+                className={`h-full rounded-2xl p-10 flex flex-col justify-between relative overflow-hidden shadow-[0_20px_40px_rgba(29,27,26,0.06)] ${
+                  verifyError
+                    ? "bg-error-container"
+                    : verified
+                      ? "bg-inverse-surface"
+                      : "bg-surface-container-lowest"
+                }`}
+              >
+                {/* Radial line art */}
+                <div className="absolute -right-16 -top-16 w-64 h-64 opacity-[0.06] pointer-events-none">
+                  <svg className="w-full h-full text-primary" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="30" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                    <circle cx="100" cy="100" r="55" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                    <circle cx="100" cy="100" r="100" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                  </svg>
+                </div>
+
+                <div>
+                  <div
+                    className={`w-14 h-14 rounded-full flex items-center justify-center mb-6 ${
+                      verifyError
+                        ? "bg-error/20 text-error"
+                        : verified
+                          ? "bg-primary/20 text-primary"
+                          : "bg-surface-container-high text-primary"
+                    }`}
+                  >
+                    <span
+                      className="material-symbols-outlined text-3xl"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      {verifyError ? "gpp_bad" : verified ? "check_circle" : "hourglass_top"}
+                    </span>
+                  </div>
+                  <h3
+                    className={`text-2xl font-bold tracking-tight mb-3 ${
+                      verifyError
+                        ? "text-on-error-container"
+                        : verified
+                          ? "text-surface-bright"
+                          : "text-on-surface"
+                    }`}
+                  >
+                    {verifyError
+                      ? "Integrity Check Failed"
+                      : verified
+                        ? "Verification Complete"
+                        : "Finalizing Verification..."}
+                  </h3>
+                  <p
+                    className={`text-[15px] leading-relaxed ${
+                      verifyError
+                        ? "text-on-error-container/80"
+                        : verified
+                          ? "text-surface-variant/80"
+                          : "text-on-surface-variant"
+                    }`}
+                  >
+                    {verifyError
+                      ? verifyError
+                      : verified
+                        ? "Agent identity sealed. Ready to deploy your personalized intelligence."
+                        : "Waiting for on-chain consensus to confirm agent integrity..."}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between mt-6">
+                  <span
+                    className={`text-xs font-mono tracking-wider ${
+                      verifyError
+                        ? "text-error"
+                        : verified
+                          ? "text-primary"
+                          : "text-on-surface-variant/40"
+                    }`}
+                  >
+                    {verifyError ? "FAILED" : verified ? "VERIFIED" : "PENDING..."}
+                  </span>
+                  <span
+                    className={`material-symbols-outlined text-lg ${
+                      verifyError
+                        ? "text-error"
+                        : verified
+                          ? "text-primary"
+                          : "text-primary animate-pulse"
+                    }`}
+                  >
+                    {verifyError ? "error" : verified ? "verified" : "pending"}
                   </span>
                 </div>
               </div>
@@ -785,17 +948,20 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
           )}
         </div>
 
-        {/* Step dots */}
+        {/* Step dots — includes final dynamic card */}
         <div className="flex justify-center gap-3 mt-10">
-          {VERIFICATION_CARDS.map((_, i) => (
+          {Array.from({ length: totalCards }).map((_, i) => (
             <div
               key={i}
-              className={`h-1.5 rounded-full transition-all duration-500 ${i === activeIndex
-                ? "w-8 bg-primary"
-                : i < activeIndex
-                  ? "w-1.5 bg-primary/40"
-                  : "w-1.5 bg-surface-container-highest"
-                }`}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                i === activeIndex
+                  ? verifyError && isOnFinalCard
+                    ? "w-8 bg-error"
+                    : "w-8 bg-primary"
+                  : i < activeIndex
+                    ? "w-1.5 bg-primary/40"
+                    : "w-1.5 bg-surface-container-highest"
+              }`}
             />
           ))}
         </div>
@@ -803,7 +969,7 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
         {/* Progress bar */}
         <div className="mt-8 w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary transition-all duration-500 ease-out"
+            className={`h-full transition-all duration-500 ease-out ${verifyError ? "bg-error" : "bg-primary"}`}
             style={{ width: `${progress}%` }}
           />
         </div>
