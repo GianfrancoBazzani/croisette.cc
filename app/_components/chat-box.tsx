@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 interface ChatBoxProps {
   agentId: string;
@@ -172,8 +173,8 @@ export function ChatBox({ agentId, sessionId, agentName }: ChatBoxProps) {
                   <p className="text-xs font-semibold text-on-surface-variant mb-2 uppercase tracking-wider">
                     {agentName}
                   </p>
-                  <div className="text-on-surface leading-relaxed whitespace-pre-wrap">
-                    {parsed?.body || fullText}
+                  <div className="text-on-surface leading-relaxed prose prose-sm max-w-none prose-headings:text-inverse-surface prose-headings:tracking-tight prose-strong:text-on-surface prose-p:text-on-surface prose-li:text-on-surface">
+                    <ReactMarkdown>{parsed?.body || fullText}</ReactMarkdown>
                   </div>
 
                   {displayOptions.length > 0 && (
