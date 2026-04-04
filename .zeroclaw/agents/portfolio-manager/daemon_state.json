@@ -1,0 +1,50 @@
+{
+  "components": {
+    "channel:telegram": {
+      "last_error": null,
+      "last_ok": "2026-04-04T17:02:23.283820+00:00",
+      "restart_count": 0,
+      "status": "ok",
+      "updated_at": "2026-04-04T17:02:23.283804+00:00"
+    },
+    "channels": {
+      "last_error": null,
+      "last_ok": "2026-04-04T15:51:58.425361+00:00",
+      "restart_count": 0,
+      "status": "ok",
+      "updated_at": "2026-04-04T15:51:58.425359+00:00"
+    },
+    "daemon": {
+      "last_error": null,
+      "last_ok": "2026-04-04T15:51:58.336304+00:00",
+      "restart_count": 0,
+      "status": "ok",
+      "updated_at": "2026-04-04T15:51:58.336300+00:00"
+    },
+    "gateway": {
+      "last_error": null,
+      "last_ok": "2026-04-04T15:51:58.338579+00:00",
+      "restart_count": 0,
+      "status": "ok",
+      "updated_at": "2026-04-04T15:51:58.338578+00:00"
+    },
+    "mqtt": {
+      "last_error": null,
+      "last_ok": "2026-04-04T15:51:58.336340+00:00",
+      "restart_count": 0,
+      "status": "ok",
+      "updated_at": "2026-04-04T15:51:58.336339+00:00"
+    },
+    "scheduler": {
+      "last_error": null,
+      "last_ok": "2026-04-04T17:02:23.196980+00:00",
+      "restart_count": 0,
+      "status": "ok",
+      "updated_at": "2026-04-04T17:02:23.196976+00:00"
+    }
+  },
+  "pid": 41562,
+  "updated_at": "2026-04-04T17:02:28.193238+00:00",
+  "uptime_seconds": 2075,
+  "written_at": "2026-04-04T17:02:28.193265+00:00"
+}

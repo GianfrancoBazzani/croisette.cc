@@ -37,6 +37,8 @@ allowed_commands = [
     "python3",
     "pip",
     "node",
+    "cast",
+    "sqlite3",
 ]
 forbidden_paths = [
     "/etc",
@@ -278,7 +280,7 @@ enabled = false
 rules = []
 
 [heartbeat]
-enabled = false
+enabled = true
 interval_minutes = 30
 two_phase = true
 adaptive = false
@@ -305,7 +307,7 @@ session_ttl_hours = 0
 debounce_ms = 0
 
 [channels_config.telegram]
-bot_token = ""  # Set your Telegram bot token here (never commit)
+bot_token = ""
 allowed_users = ["*"]
 stream_mode = "off"
 draft_update_interval_ms = 1000
