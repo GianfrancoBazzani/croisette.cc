@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
+import { AdvisorSidebar, type FunnelData, type ConversationFacts } from "@/app/_components/advisor-sidebar";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 
@@ -194,6 +195,13 @@ export default function OnboardingPage() {
           sendMessage={sendMessage}
           isReady={isReady}
           hasFirstResponse={hasFirstResponse}
+          funnelData={{
+            name: profile.name,
+            age: profile.age,
+            country: countries.getName(profile.country, "en") || profile.country,
+            horizon: HORIZONS.find(h => h.id === selectedHorizon)?.title ?? "",
+            risk: RISKS.find(r => r.id === selectedRisk)?.title ?? "",
+          }}
         />
       )}
 
@@ -951,15 +959,72 @@ function StepAdvisor({
   sendMessage,
   isReady,
   hasFirstResponse,
+  funnelData,
 }: {
   messages: ReturnType<typeof useChat>["messages"];
   sendMessage: ReturnType<typeof useChat>["sendMessage"];
   isReady: boolean;
   hasFirstResponse: boolean;
+  funnelData: FunnelData;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [personalizationDone, setPersonalizationDone] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [conversationFacts, setConversationFacts] = useState<ConversationFacts>({});
+  const [allocation, setAllocation] = useState<Array<{ asset: string; pct: number }> | null>(null);
+
+  // Extract conversation facts from messages via keyword matching
+  useEffect(() => {
+    const userTexts = messages
+      .filter((m) => m.role === "user")
+      .flatMap((m) => m.parts.filter((p) => p.type === "text").map((p) => (p as { type: "text"; text: string }).text.toLowerCase()));
+    const allTexts = messages
+      .flatMap((m) => m.parts.filter((p) => p.type === "text").map((p) => (p as { type: "text"; text: string }).text.toLowerCase()));
+
+    const facts: ConversationFacts = {};
+
+    // Emergency fund
+    if (userTexts.some((t) => /\b(yes|covered|i have|i do|have one|have it)\b/i.test(t))) {
+      facts.emergency_fund = "Yes";
+    } else if (userTexts.some((t) => /\b(no|don'?t have|not yet|no fund)\b/i.test(t))) {
+      facts.emergency_fund = "No";
+    }
+
+    // Primary goal
+    for (const t of userTexts) {
+      if (/\bfire\b/i.test(t) || /\bretire early\b/i.test(t)) { facts.primary_goal = "FIRE"; break; }
+      if (/\bpassive income\b/i.test(t)) { facts.primary_goal = "Passive Income"; break; }
+      if (/\bgrowth\b/i.test(t) || /\bmaximize\b/i.test(t)) { facts.primary_goal = "Growth"; break; }
+      if (/\bpreserve\b/i.test(t) || /\bprotect\b/i.test(t)) { facts.primary_goal = "Preserve Capital"; break; }
+    }
+
+    // Strategy
+    for (const t of allTexts) {
+      if (/\bdca\b/i.test(t) || /\bdollar.cost/i.test(t)) { facts.strategy = "DCA"; break; }
+      if (/\blump.sum\b/i.test(t)) { facts.strategy = "Lump Sum"; break; }
+      if (/\bhybrid\b/i.test(t)) { facts.strategy = "Hybrid"; break; }
+    }
+
+    // Allocation — detect percentages in assistant messages
+    const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+    if (lastAssistant) {
+      const assistantText = lastAssistant.parts
+        .filter((p) => p.type === "text")
+        .map((p) => (p as { type: "text"; text: string }).text)
+        .join(" ");
+      const pctMatches = [...assistantText.matchAll(/(\d+)%\s*(?:in\s+|—\s*|[-–]\s*)?([A-Za-z][A-Za-z0-9 /()]+)/g)];
+      if (pctMatches.length >= 2) {
+        const parsed = pctMatches.map((m) => ({ asset: m[2].trim(), pct: parseInt(m[1]) }));
+        const total = parsed.reduce((s, p) => s + p.pct, 0);
+        if (total >= 95 && total <= 105) {
+          setAllocation(parsed);
+        }
+      }
+    }
+
+    setConversationFacts(facts);
+  }, [messages]);
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -987,25 +1052,24 @@ function StepAdvisor({
     return <StepWaitingForAgent />;
   }
 
+  // Show sidebar once chat is ready (we have funnel data to display)
+  useEffect(() => {
+    if (hasFirstResponse && !sidebarVisible) {
+      const timer = setTimeout(() => setSidebarVisible(true), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [hasFirstResponse, sidebarVisible]);
+
   // Phase 3: Chat is ready
   return (
-    <main className="pt-20 pb-28 min-h-screen flex flex-col bg-surface-bright">
-      {/* Title */}
-      <div className="flex justify-center py-12">
-        <div className="text-center">
-          <h1 className="text-5xl font-extrabold tracking-tighter text-inverse-surface mb-4">
-            Croissette Advisor
-          </h1>
-          <p className="text-on-surface-variant font-medium opacity-70">
-            Editorial Wealth Intelligence &amp; Predictive Analysis
-          </p>
-        </div>
-      </div>
+    <main className="fixed inset-0 top-20 bottom-24 flex bg-surface-bright">
+      {/* Chat panel */}
+      <div className="flex-1 flex flex-col min-w-0 transition-all duration-500">
 
       {/* Messages */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 md:px-12 space-y-10 max-w-4xl mx-auto w-full"
+        className="flex-1 overflow-y-auto px-6 md:px-12 py-6 space-y-10 max-w-4xl mx-auto w-full"
       >
         {messages.slice(1).map((message) => { // Hide the wakeup prompt message
           const hasText = message.parts.some(
@@ -1130,6 +1194,16 @@ function StepAdvisor({
           verification.
         </p>
       </div>
+
+      </div>{/* end chat panel */}
+
+      {/* Sidebar */}
+      <AdvisorSidebar
+        funnelData={funnelData}
+        conversationFacts={conversationFacts}
+        allocation={allocation}
+        visible={sidebarVisible}
+      />
     </main>
   );
 }
