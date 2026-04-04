@@ -31,3 +31,6 @@ Thumbs.db
 
 # zeroclaw
 **/.secret_key
+
+# claude
+.claude/
