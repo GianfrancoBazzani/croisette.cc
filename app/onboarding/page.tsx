@@ -687,7 +687,7 @@ function StepVerification({ onComplete }: { onComplete: () => void }) {
         </div>
 
         {/* Card area — fixed height to prevent layout shift */}
-        <div className="relative h-[260px]">
+        <div className="relative h-[280px]">
           {card && (
             <div
               key={activeIndex}
