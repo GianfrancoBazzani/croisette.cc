@@ -5,6 +5,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
 import { AdvisorSidebar, type FunnelData } from "@/app/_components/advisor-sidebar";
+import Markdown from "react-markdown";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
 
@@ -1038,9 +1039,9 @@ function StepAdvisor({
                   <div className="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-ambient ghost-border">
                     {message.parts.map((part, i) =>
                       part.type === "text" ? (
-                        <p key={i} className="leading-relaxed text-[15px]">
-                          {part.text}
-                        </p>
+                        <div key={i} className="leading-relaxed text-[15px]">
+                          <Markdown>{part.text}</Markdown>
+                        </div>
                       ) : null
                     )}
                   </div>
@@ -1065,12 +1066,12 @@ function StepAdvisor({
                     ) : (
                       message.parts.map((part, i) =>
                         part.type === "text" ? (
-                          <p
+                          <div
                             key={i}
-                            className="leading-relaxed text-[15px] whitespace-pre-wrap"
+                            className="leading-relaxed text-[15px]"
                           >
-                            {part.text}
-                          </p>
+                            <Markdown>{part.text}</Markdown>
+                          </div>
                         ) : null
                       )
                     )}
