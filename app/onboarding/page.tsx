@@ -109,6 +109,20 @@ export default function OnboardingPage() {
   const isReady = status === "ready";
   const hasSentWakeUp = useRef(false);
 
+  // Deterministic user identifier from email (first 16 bytes of SHA-256)
+  const [userHash, setUserHash] = useState<string | null>(null);
+  useEffect(() => {
+    const email = session?.user?.email;
+    if (!email) return;
+    const encoded = new TextEncoder().encode(email);
+    crypto.subtle.digest("SHA-256", encoded).then((digest) => {
+      const hex = Array.from(new Uint8Array(digest).slice(0, 8))
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      setUserHash(hex);
+    });
+  }, [session?.user?.email]);
+
   // Wake up prompt
   function generateWakeUpPrompt(): string {
     return `Hello Croissette Portfolio Agent, I am ${profile.name}, a ${profile.age}-year-old investor from ${countries.getName(profile.country, "en")}.
@@ -116,6 +130,7 @@ export default function OnboardingPage() {
     Please use this information to tailor your investment strategies and recommendations for me.
     Let's work together to optimize my portfolio according to my preferences and goals.
     To ensure a easier iteration switch to my natal language during this conversation, do not notify me just doo switch it.
+    My unique identifier is ${userHash}.
     `
   }
 
@@ -124,13 +139,13 @@ export default function OnboardingPage() {
     if (step >= 3) setChatStarted(true);
   }, [step]);
 
-  // Send wakeup prompt once the transport is ready and we've started
+  // Send wakeup prompt once the transport is ready, hash is computed, and we've started
   useEffect(() => {
-    if (chatStarted && isReady && !hasSentWakeUp.current) {
+    if (chatStarted && isReady && userHash && !hasSentWakeUp.current) {
       hasSentWakeUp.current = true;
       sendMessage({ text: generateWakeUpPrompt() });
     }
-  }, [chatStarted, isReady, sendMessage]);
+  }, [chatStarted, isReady, userHash, sendMessage]);
 
   const hasFirstResponse = messages.some(
     (m) => m.role === "assistant" && m.parts.some((p) => p.type === "text" && p.text),
