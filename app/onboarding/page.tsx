@@ -11,6 +11,42 @@ import enLocale from "i18n-iso-countries/langs/en.json";
 
 countries.registerLocale(enLocale);
 
+/**
+ * Split a message into separate bubble segments:
+ * - Paragraphs separated by blank lines become individual bubbles.
+ * - Within a paragraph, sentences ending with "?" are extracted as their own bubble.
+ */
+function splitIntoBubbles(text: string): string[] {
+  const paragraphs = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  const bubbles: string[] = [];
+
+  for (const para of paragraphs) {
+    // Split sentences that end with "?" into their own bubble,
+    // while keeping non-question sentences grouped together.
+    // Match: everything up to and including a "?" (possibly followed by whitespace)
+    const parts = para.split(/(?<=\?)\s+/);
+    let nonQuestion = "";
+
+    for (const part of parts) {
+      if (part.trimEnd().endsWith("?")) {
+        // Flush any accumulated non-question text first
+        if (nonQuestion.trim()) {
+          bubbles.push(nonQuestion.trim());
+          nonQuestion = "";
+        }
+        bubbles.push(part.trim());
+      } else {
+        nonQuestion += (nonQuestion ? " " : "") + part;
+      }
+    }
+    if (nonQuestion.trim()) {
+      bubbles.push(nonQuestion.trim());
+    }
+  }
+
+  return bubbles.length > 0 ? bubbles : [text];
+}
+
 const COUNTRY_LIST = Object.entries(countries.getNames("en"))
   .map(([code, name]) => ({ code, name }))
   .sort((a, b) => a.name.localeCompare(b.name));
@@ -224,54 +260,54 @@ export default function OnboardingPage() {
 
       {/* ── Footer (hidden on chat step) ── */}
       {step !== 4 && (
-      <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-8 py-5">
-        <span className="hidden md:block text-[10px] text-surface-variant/40 font-label uppercase tracking-widest">
-          &copy; 2026 Croisette. High-End Editorial Intelligence.
-        </span>
-        <div className="flex items-center gap-8 w-full md:w-auto justify-between">
-          {step > 0 ? (
-            <button
-              onClick={() => setStep((s) => s - 1)}
-              className="text-surface-variant/60 hover:text-surface text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-sm">
-                arrow_back
-              </span>
-              Previous
-            </button>
-          ) : (
-            <span />
-          )}
+        <footer className="fixed bottom-0 w-full z-40 bg-inverse-surface flex items-center justify-between px-8 py-5">
+          <span className="hidden md:block text-[10px] text-surface-variant/40 font-label uppercase tracking-widest">
+            &copy; 2026 Croisette. High-End Editorial Intelligence.
+          </span>
+          <div className="flex items-center gap-8 w-full md:w-auto justify-between">
+            {step > 0 ? (
+              <button
+                onClick={() => setStep((s) => s - 1)}
+                className="text-surface-variant/60 hover:text-surface text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-sm">
+                  arrow_back
+                </span>
+                Previous
+              </button>
+            ) : (
+              <span />
+            )}
 
-          {step < 3 ? (
-            <button
-              disabled={!canContinue}
-              onClick={() => setStep((s) => s + 1)}
-              className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-            >
-              Continue
-              <span className="material-symbols-outlined text-lg">
-                north_east
-              </span>
-            </button>
-          ) : step === 3 ? (
-            /* Step 4 (verification) auto-advances — hide the button */
-            <span />
-          ) : (
-            <button
-              onClick={() => {
-                /* TODO: persist & navigate */
-              }}
-              className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
-            >
-              Finish Setup
-              <span className="material-symbols-outlined text-lg">
-                north_east
-              </span>
-            </button>
-          )}
-        </div>
-      </footer>
+            {step < 3 ? (
+              <button
+                disabled={!canContinue}
+                onClick={() => setStep((s) => s + 1)}
+                className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              >
+                Continue
+                <span className="material-symbols-outlined text-lg">
+                  north_east
+                </span>
+              </button>
+            ) : step === 3 ? (
+              /* Step 4 (verification) auto-advances — hide the button */
+              <span />
+            ) : (
+              <button
+                onClick={() => {
+                  /* TODO: persist & navigate */
+                }}
+                className="gradient-primary text-on-primary px-6 py-3 rounded-md font-bold text-xs uppercase tracking-widest flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95 shadow-lg cursor-pointer"
+              >
+                Finish Setup
+                <span className="material-symbols-outlined text-lg">
+                  north_east
+                </span>
+              </button>
+            )}
+          </div>
+        </footer>
       )}
     </>
   );
@@ -535,8 +571,8 @@ function StepProfile({
     () =>
       countrySearch.trim()
         ? COUNTRY_LIST.filter((c) =>
-            c.name.toLowerCase().includes(countrySearch.toLowerCase()),
-          )
+          c.name.toLowerCase().includes(countrySearch.toLowerCase()),
+        )
         : COUNTRY_LIST,
     [countrySearch],
   );
@@ -628,17 +664,15 @@ function StepProfile({
                   setCountryOpen((o) => !o);
                   setCountrySearch("");
                 }}
-                className={`w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-left transition-all flex items-center justify-between cursor-pointer ${
-                  countryOpen
+                className={`w-full bg-surface-container-high rounded-xl px-6 py-4 text-sm font-medium text-left transition-all flex items-center justify-between cursor-pointer ${countryOpen
                     ? "bg-surface-container-highest ring-1 ring-primary/30"
                     : ""
-                } ${selectedCountryName ? "text-on-surface" : "text-on-surface-variant/40"}`}
+                  } ${selectedCountryName ? "text-on-surface" : "text-on-surface-variant/40"}`}
               >
                 <span>{selectedCountryName || "Select your country"}</span>
                 <span
-                  className={`material-symbols-outlined text-on-surface-variant/40 text-lg transition-transform duration-200 ${
-                    countryOpen ? "rotate-180" : ""
-                  }`}
+                  className={`material-symbols-outlined text-on-surface-variant/40 text-lg transition-transform duration-200 ${countryOpen ? "rotate-180" : ""
+                    }`}
                 >
                   expand_more
                 </span>
@@ -682,11 +716,10 @@ function StepProfile({
                                 setCountryOpen(false);
                                 setCountrySearch("");
                               }}
-                              className={`w-full text-left px-5 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                                isActive
+                              className={`w-full text-left px-5 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${isActive
                                   ? "bg-primary/10 text-primary"
                                   : "text-on-surface hover:bg-surface-container-high"
-                              }`}
+                                }`}
                             >
                               {c.name}
                             </button>
@@ -1140,119 +1173,133 @@ function StepAdvisor({
       {/* Chat panel */}
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-500">
 
-      {/* Messages */}
-      <div
-        ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 md:px-12 py-6 space-y-10 max-w-4xl mx-auto w-full"
-      >
-        {messages.slice(1).map((message) => { // Hide the wakeup prompt message
-          const hasText = message.parts.some(
-            (part) => part.type === "text" && part.text
-          );
-          const showSpinner =
-            !isReady && message.role === "assistant" && !hasText;
-
-          if (message.role === "user") {
-            return (
-              <div key={message.id} className="flex justify-end">
-                <div className="max-w-[70%] space-y-1">
-                  <p className="text-xs font-semibold text-on-surface-variant text-right mr-1">{userName}</p>
-                  <div className="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-ambient ghost-border">
-                    {message.parts.map((part, i) =>
-                      part.type === "text" ? (
-                        <div key={i} className="leading-relaxed text-[15px]">
-                          <Markdown>{part.text}</Markdown>
-                        </div>
-                      ) : null
-                    )}
-                  </div>
-                </div>
-              </div>
+        {/* Messages */}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto px-6 md:px-12 py-6 space-y-10 max-w-4xl mx-auto w-full"
+        >
+          {messages.slice(1).map((message) => { // Hide the wakeup prompt message
+            const hasText = message.parts.some(
+              (part) => part.type === "text" && part.text
             );
-          }
+            const showSpinner =
+              !isReady && message.role === "assistant" && !hasText;
 
-          /* Assistant message */
-          return (
-            <div key={message.id} className="flex">
-              <div className="max-w-[85%] space-y-1">
-                <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
-                <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient">
-                    {showSpinner ? (
+            if (message.role === "user") {
+              const fullText = message.parts
+                .filter((p): p is { type: "text"; text: string } => p.type === "text")
+                .map((p) => p.text)
+                .join("");
+              const userBubbles = splitIntoBubbles(fullText);
+
+              return (
+                <div key={message.id} className="flex flex-col items-end gap-3">
+                  <p className="text-xs font-semibold text-on-surface-variant text-right mr-1">{userName}</p>
+                  {userBubbles.map((bubble, bi) => (
+                    <div key={bi} className="max-w-[70%]">
+                      <div className="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-bubble-user ghost-border">
+                        <div className="leading-relaxed text-[15px]">
+                          <Markdown>{bubble}</Markdown>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+
+            /* Assistant message */
+            if (showSpinner) {
+              return (
+                <div key={message.id} className="flex">
+                  <div className="max-w-[85%] space-y-1">
+                    <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
+                    <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-bubble-assistant ghost-border">
                       <div className="flex items-center gap-3">
                         <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
                         <span className="text-on-surface-variant text-sm">
                           Thinking&hellip;
                         </span>
                       </div>
-                    ) : (
-                      message.parts.map((part, i) =>
-                        part.type === "text" ? (
-                          <div
-                            key={i}
-                            className="leading-relaxed text-[15px]"
-                          >
-                            <Markdown>{part.text}</Markdown>
-                          </div>
-                        ) : null
-                      )
-                    )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
+              );
+            }
 
-        {/* Standalone spinner when waiting for first assistant chunk */}
-        {!isReady &&
-          (messages.length === 0 ||
-            messages[messages.length - 1].role === "user") && (
-            <div className="flex">
-              <div className="max-w-[85%] space-y-1">
+            const assistantText = message.parts
+              .filter((p): p is { type: "text"; text: string } => p.type === "text")
+              .map((p) => p.text)
+              .join("");
+            const assistantBubbles = splitIntoBubbles(assistantText);
+
+            return (
+              <div key={message.id} className="flex flex-col items-start gap-3">
                 <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
-                <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-ambient flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
-                  <span className="text-on-surface-variant text-sm">
-                    Thinking&hellip;
-                  </span>
+                {assistantBubbles.map((bubble, bi) => (
+                  <div key={bi} className="max-w-[85%]">
+                    <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-bubble-assistant ghost-border">
+                      <div className="leading-relaxed text-[15px]">
+                        <Markdown>{bubble}</Markdown>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+
+          {/* Standalone spinner when waiting for first assistant chunk */}
+          {!isReady &&
+            (messages.length === 0 ||
+              messages[messages.length - 1].role === "user") && (
+              <div className="flex">
+                <div className="max-w-[85%] space-y-1">
+                  <p className="text-xs font-semibold text-secondary ml-1">Croisette Advisor</p>
+                  <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-bubble-assistant ghost-border flex items-center gap-3">
+                    <span className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
+                    <span className="text-on-surface-variant text-sm">
+                      Thinking&hellip;
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-      </div>
+            )}
+        </div>
 
-      {/* Input bar */}
-      <div className="px-6 md:px-12 pt-6 pb-6 max-w-4xl mx-auto w-full">
-        <form onSubmit={handleSubmit}>
-          <div className="flex items-center bg-surface-container-high rounded-xl shadow-ambient p-2 pl-6 focus-within:bg-surface-container-highest focus-within:ghost-border transition-colors">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              disabled={!isReady}
-              placeholder="Ask Croissette about your portfolio..."
-              className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium placeholder:text-on-surface-variant/40 placeholder:font-normal py-4"
-            />
-            <div className="flex items-center gap-2 pr-2">
-              <button
-                type="button"
-                className="p-3 text-on-surface-variant/40 hover:text-primary transition-colors cursor-pointer"
-              >
-                <span className="material-symbols-outlined">attach_file</span>
-              </button>
-              <button
-                type="submit"
-                disabled={!isReady || !input.trim()}
-                className="gradient-primary text-on-primary p-4 rounded-lg flex items-center justify-center hover:scale-[1.02] active:scale-95 transition-all shadow-md disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
-              >
-                <span className="material-symbols-outlined">north_east</span>
-              </button>
+        {/* Input bar */}
+        <div className="px-6 md:px-12 pt-6 pb-6 max-w-4xl mx-auto w-full">
+          <form onSubmit={handleSubmit}>
+            <div className="flex items-center bg-surface-container-high rounded-xl shadow-ambient p-2 pl-6 focus-within:bg-surface-container-highest focus-within:ghost-border transition-colors">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={!isReady}
+                placeholder="Ask Croissette about your portfolio..."
+                className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium placeholder:text-on-surface-variant/40 placeholder:font-normal py-4"
+              />
+              <div className="flex items-center gap-2 pr-2">
+                <button
+                  type="button"
+                  className="p-3 text-on-surface-variant/40 hover:text-primary transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined">attach_file</span>
+                </button>
+                <button
+                  type="submit"
+                  disabled={!isReady || !input.trim()}
+                  className="gradient-primary text-on-primary p-4 rounded-lg flex items-center justify-center hover:scale-[1.02] active:scale-95 transition-all shadow-md disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                >
+                  <span className="material-symbols-outlined">north_east</span>
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
-        <p className="text-center mt-4 text-[9px] text-on-surface-variant/40 uppercase tracking-[0.2em] font-medium">
-          Croissette AI may provide financial modeling that requires human
-          verification.
-        </p>
-      </div>
+          </form>
+          <p className="text-center mt-4 text-[9px] text-on-surface-variant/40 uppercase tracking-[0.2em] font-medium">
+            Croissette AI may provide financial modeling that requires human
+            verification.
+          </p>
+        </div>
 
       </div>{/* end chat panel */}
 
