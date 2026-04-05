@@ -12,6 +12,7 @@ export interface FunnelData {
 
 export interface ConversationFacts {
   emergency_fund?: string;
+  risk_level?: string;
   primary_goal?: string;
   strategy?: string;
 }
@@ -33,6 +34,7 @@ const FUNNEL_FIELDS: { key: keyof FunnelData; label: string }[] = [
 
 const CONVERSATION_FIELDS: { key: keyof ConversationFacts; label: string }[] = [
   { key: "emergency_fund", label: "Emergency Fund" },
+  { key: "risk_level", label: "Risk Level" },
   { key: "primary_goal", label: "Primary Goal" },
   { key: "strategy", label: "Strategy" },
 ];

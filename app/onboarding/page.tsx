@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
-import { AdvisorSidebar, type FunnelData } from "@/app/_components/advisor-sidebar";
+import { AdvisorSidebar, type FunnelData, type ConversationFacts } from "@/app/_components/advisor-sidebar";
 import Markdown from "react-markdown";
 import Link from "next/link";
 import countries from "i18n-iso-countries";
@@ -281,6 +281,7 @@ export default function OnboardingPage() {
           isReady={isReady}
           hasFirstResponse={hasFirstResponse}
           userName={profile.name}
+          userHash={userHash}
           funnelData={{
             name: profile.name,
             age: profile.age,
@@ -1286,6 +1287,7 @@ function StepAdvisor({
   isReady,
   hasFirstResponse,
   userName,
+  userHash,
   funnelData,
 }: {
   messages: ReturnType<typeof useChat>["messages"];
@@ -1293,12 +1295,57 @@ function StepAdvisor({
   isReady: boolean;
   hasFirstResponse: boolean;
   userName: string;
+  userHash: string | null;
   funnelData: FunnelData;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [personalizationDone, setPersonalizationDone] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [conversationFacts, setConversationFacts] = useState<ConversationFacts>({});
+  const [allocation, setAllocation] = useState<Array<{ asset: string; pct: number }> | null>(null);
+
+  // Poll portfolio JSON after each assistant message
+  useEffect(() => {
+    if (!userHash) return;
+    const assistantCount = messages.filter((m) => m.role === "assistant").length;
+    if (assistantCount === 0) return;
+
+    const titleCase = (s: string) =>
+      s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+    try {
+      fetch(`/api/portfolio/${userHash}`)
+        .then((res) => {
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then((data) => {
+          if (!data || data.error) return;
+
+          const facts: ConversationFacts = {};
+          if (data.emergency_reserve?.length > 0) facts.emergency_fund = "Yes";
+          if (data.risk_level) facts.risk_level = titleCase(data.risk_level);
+          if (data.user_profile?.investment_horizon) facts.primary_goal = titleCase(data.user_profile.investment_horizon);
+          if (data.strategy?.type) facts.strategy = data.strategy.type;
+          setConversationFacts(facts);
+
+          if (data.investments?.length > 0) {
+            setAllocation(
+              data.investments.map((inv: { asset: { ticker: string }; allocation_percentage: number }) => ({
+                asset: inv.asset.ticker,
+                pct: inv.allocation_percentage,
+              }))
+            );
+          }
+        })
+        .catch(() => {
+          // Silently ignore — file may not exist yet
+        });
+    } catch {
+      // Silently ignore any errors
+    }
+  }, [userHash, messages.length]);
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -1474,8 +1521,8 @@ function StepAdvisor({
       {/* Sidebar */}
       <AdvisorSidebar
         funnelData={funnelData}
-        conversationFacts={{}}
-        allocation={null}
+        conversationFacts={conversationFacts}
+        allocation={allocation}
         visible={sidebarVisible}
       />
     </main>
