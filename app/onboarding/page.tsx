@@ -281,6 +281,7 @@ export default function OnboardingPage() {
           isReady={isReady}
           hasFirstResponse={hasFirstResponse}
           userName={profile.name}
+          userHash={userHash}
           funnelData={{
             name: profile.name,
             age: profile.age,
@@ -1286,6 +1287,7 @@ function StepAdvisor({
   isReady,
   hasFirstResponse,
   userName,
+  userHash,
   funnelData,
 }: {
   messages: ReturnType<typeof useChat>["messages"];
@@ -1293,12 +1295,68 @@ function StepAdvisor({
   isReady: boolean;
   hasFirstResponse: boolean;
   userName: string;
+  userHash: string | null;
   funnelData: FunnelData;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
   const [personalizationDone, setPersonalizationDone] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+
+  // Portfolio hydration: poll every 3s until the JSON exists
+  const [portfolio, setPortfolio] = useState<import("@/lib/portfolio").Portfolio | null>(null);
+
+  useEffect(() => {
+    if (!userHash) return;
+    console.log("[portfolio-poll] userHash:", userHash);
+
+    let stopped = false;
+
+    const poll = () => {
+      if (stopped) return;
+      fetch(`/api/portfolio/${userHash}?t=${Date.now()}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data && !stopped) {
+            setPortfolio(data);
+            stopped = true;
+          }
+        })
+        .catch(() => {});
+    };
+
+    poll();
+    const id = setInterval(poll, 3000);
+
+    return () => {
+      stopped = true;
+      clearInterval(id);
+    };
+  }, [userHash]);
+
+  // Derive sidebar data from portfolio
+  const conversationFacts = useMemo(() => {
+    if (!portfolio) return {};
+    return {
+      emergency_fund: portfolio.emergency_reserve.length > 0
+        ? portfolio.emergency_reserve.map((a) => a.ticker).join(", ")
+        : "None",
+      primary_goal: portfolio.fire
+        ? `FIRE (${portfolio.fire.fire_variant})`
+        : portfolio.user_profile?.investment_horizon?.replace(/_/g, " ") ?? undefined,
+      strategy: portfolio.strategy
+        ? `${portfolio.strategy.type}${portfolio.strategy.dca_amount ? ` — $${portfolio.strategy.dca_amount.toLocaleString()}/mo` : ""}`
+        : undefined,
+    } satisfies import("@/app/_components/advisor-sidebar").ConversationFacts;
+  }, [portfolio]);
+
+  const allocation = useMemo(() => {
+    if (!portfolio?.investments?.length) return null;
+    return portfolio.investments.map((inv) => ({
+      asset: inv.asset.ticker,
+      pct: inv.allocation_percentage,
+    }));
+  }, [portfolio]);
 
   // Auto-scroll on new messages
   useEffect(() => {
@@ -1474,8 +1532,9 @@ function StepAdvisor({
       {/* Sidebar */}
       <AdvisorSidebar
         funnelData={funnelData}
-        conversationFacts={{}}
-        allocation={null}
+        conversationFacts={conversationFacts}
+        allocation={allocation}
+        portfolio={portfolio}
         visible={sidebarVisible}
       />
     </main>
