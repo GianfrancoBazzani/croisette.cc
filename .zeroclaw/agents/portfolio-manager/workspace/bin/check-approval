@@ -1,0 +1,51 @@
+#!/bin/sh
+# Checks if a token needs approval for Uniswap and executes approval if needed
+# Usage: ./bin/check-approval <chainId> <tokenAddress> <amountRaw>
+# Reads credentials from .env
+# If approval is needed, broadcasts the approval tx automatically
+
+set -e
+
+CHAIN_ID="$1"
+TOKEN="$2"
+AMOUNT="$3"
+
+if [ -z "$CHAIN_ID" ] || [ -z "$TOKEN" ] || [ -z "$AMOUNT" ]; then
+  echo "Usage: ./bin/check-approval <chainId> <tokenAddress> <amountRaw>" >&2
+  exit 1
+fi
+
+# Load env
+export $(grep -v '^#' .env | xargs)
+CAST="./bin/cast"
+
+if [ "$CHAIN_ID" = "1" ]; then
+  RPC="$ETHEREUM_RPC_URL"
+else
+  RPC="$ETHEREUM_SEPOLIA_RPC_URL"
+fi
+
+# Check approval
+RESULT=$(curl -s -X POST "$UNISWAP_API_BASE_URL/check_approval" \
+  -H "x-api-key: $UNISWAP_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{\"token\":\"$TOKEN\",\"amount\":\"$AMOUNT\",\"chainId\":$CHAIN_ID,\"walletAddress\":\"$MANAGED_WALLET_ADDRESS\"}")
+
+NEEDS_APPROVAL=$(echo "$RESULT" | python3 -c "import json,sys; d=json.load(sys.stdin); print('yes' if d.get('approval') else 'no')" 2>/dev/null)
+
+if [ "$NEEDS_APPROVAL" = "yes" ]; then
+  APPROVAL_TO=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['approval']['to'])")
+  APPROVAL_DATA=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['approval']['data'])")
+  APPROVAL_VALUE=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['approval'].get('value','0x00'))")
+
+  echo ">>> Approval needed. Broadcasting approval tx..." >&2
+  $CAST send "$APPROVAL_TO" \
+    --data "$APPROVAL_DATA" \
+    --value "$APPROVAL_VALUE" \
+    --private-key "$MANAGED_WALLET_PRIVATE_KEY" \
+    --rpc-url "$RPC" 2>&1
+
+  echo "{\"status\": \"approved\", \"token\": \"$TOKEN\"}"
+else
+  echo "{\"status\": \"already_approved\", \"token\": \"$TOKEN\"}"
+fi
