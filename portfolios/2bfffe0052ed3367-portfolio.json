@@ -1,0 +1,78 @@
+{
+  "investments": [
+    {
+      "asset": {
+        "ticker": "ARC_USYC",
+        "chainId": 1,
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 6,
+        "type": "cash",
+        "description": "Arc USYC yield-bearing tokenized money market position"
+      },
+      "allocation_percentage": 60
+    },
+    {
+      "asset": {
+        "ticker": "SPYon",
+        "chainId": 1,
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "type": "stocks",
+        "description": "SPDR S&P 500 ETF tokenized exposure on Ethereum mainnet"
+      },
+      "allocation_percentage": 30
+    },
+    {
+      "asset": {
+        "ticker": "WETH",
+        "chainId": 1,
+        "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        "decimals": 18,
+        "type": "crypto",
+        "description": "Wrapped Ether on Ethereum mainnet"
+      },
+      "allocation_percentage": 10
+    }
+  ],
+  "risk_level": "low",
+  "emergency_reserve": [
+    {
+      "ticker": "ARC_USYC",
+      "chainId": 1,
+      "address": "0x0000000000000000000000000000000000000000",
+      "decimals": 6,
+      "type": "cash",
+      "description": "Arc USYC yield-bearing tokenized money market position"
+    }
+  ],
+  "strategy": {
+    "type": "DCA",
+    "initial_investment": 0,
+    "dca_amount": 2000,
+    "dca_frequency": "monthly",
+    "dca_duration_months": 120,
+    "monthly_investment_after_dca": 2000,
+    "effort_level": "low"
+  },
+  "fire": {
+    "fire_number": 450000,
+    "fire_variant": "regular",
+    "annual_expenses_retirement": 18000,
+    "current_portfolio": 0,
+    "target_age": 55,
+    "years_to_fire": 10,
+    "monthly_investment_needed": 2000,
+    "expected_annual_return": 5,
+    "withdrawal_rate": 0.04,
+    "note": "Basat en despeses de 1.500€/mes i 25x per FIRE."
+  },
+  "user_profile": {
+    "age": 45,
+    "country": "Andorra",
+    "monthly_expenses": 1500,
+    "investment_horizon": "retire_early",
+    "risk_profile": "low"
+  },
+  "created_at": "2026-04-05T03:20:00Z",
+  "last_updated": "2026-04-05T03:20:00Z"
+}
