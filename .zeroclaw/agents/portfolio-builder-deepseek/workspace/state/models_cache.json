@@ -2,7 +2,7 @@
   "entries": [
     {
       "provider": "openrouter",
-      "fetched_at_unix": 1775318687,
+      "fetched_at_unix": 1775368463,
       "models": [
         "ai21/jamba-large-1.7",
         "aion-labs/aion-1.0",
@@ -24,7 +24,6 @@
         "anthracite-org/magnum-v4-72b",
         "anthropic/claude-3-haiku",
         "anthropic/claude-3.5-haiku",
-        "anthropic/claude-3.5-sonnet",
         "anthropic/claude-3.7-sonnet",
         "anthropic/claude-3.7-sonnet:thinking",
         "anthropic/claude-haiku-4.5",
