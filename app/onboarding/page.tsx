@@ -218,6 +218,28 @@ export default function OnboardingPage() {
     (m) => m.role === "assistant" && m.parts.some((p) => p.type === "text" && p.text),
   );
 
+  const [provisioning, setProvisioning] = useState(false);
+
+  const handleFinishSetup = useCallback(async () => {
+    setProvisioning(true);
+    try {
+      const res = await fetch("/api/provision", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telegramHandle: profile.telegram }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Provisioning failed");
+      }
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.error("Provisioning error:", err);
+      setProvisioning(false);
+      alert(err instanceof Error ? err.message : "Provisioning failed. Please try again.");
+    }
+  }, [profile.telegram]);
+
   useEffect(() => {
     if (!isPending && !session) {
       window.location.href = "/";
@@ -290,6 +312,8 @@ export default function OnboardingPage() {
             horizon: HORIZONS.find(h => h.id === selectedHorizon)?.title ?? "",
             risk: RISKS.find(r => r.id === selectedRisk)?.title ?? "",
           }}
+          onFinish={handleFinishSetup}
+          provisioning={provisioning}
         />
       )}
 
@@ -1290,6 +1314,8 @@ function StepAdvisor({
   userName,
   userHash,
   funnelData,
+  onFinish,
+  provisioning,
 }: {
   messages: ReturnType<typeof useChat>["messages"];
   sendMessage: ReturnType<typeof useChat>["sendMessage"];
@@ -1298,6 +1324,8 @@ function StepAdvisor({
   userName: string;
   userHash: string | null;
   funnelData: FunnelData;
+  onFinish: () => void;
+  provisioning: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
@@ -1501,20 +1529,32 @@ function StepAdvisor({
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                disabled={!isReady}
+                disabled={!isReady || provisioning}
                 placeholder="Ask Croissette about your portfolio..."
                 className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm font-medium placeholder:text-on-surface-variant/40 placeholder:font-normal py-4"
               />
               <div className="flex items-center gap-2 pr-2">
                 <button
                   type="button"
-                  className="p-3 text-on-surface-variant/40 hover:text-primary transition-colors cursor-pointer"
+                  disabled={provisioning}
+                  onClick={onFinish}
+                  className="gradient-primary text-on-primary px-5 py-3 rounded-lg font-bold text-xs uppercase tracking-widest flex items-center gap-2 transition-transform hover:scale-[1.02] active:scale-95 shadow-md disabled:opacity-60 disabled:pointer-events-none cursor-pointer whitespace-nowrap"
                 >
-                  <span className="material-symbols-outlined">attach_file</span>
+                  {provisioning ? (
+                    <>
+                      <span className="w-4 h-4 rounded-full border-2 border-on-primary/30 border-t-on-primary animate-spin" />
+                      Deploying...
+                    </>
+                  ) : (
+                    <>
+                      Finish Setup
+                      <span className="material-symbols-outlined text-lg">north_east</span>
+                    </>
+                  )}
                 </button>
                 <button
                   type="submit"
-                  disabled={!isReady || !input.trim()}
+                  disabled={!isReady || !input.trim() || provisioning}
                   className="gradient-primary text-on-primary p-4 rounded-lg flex items-center justify-center hover:scale-[1.02] active:scale-95 transition-all shadow-md disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
                 >
                   <span className="material-symbols-outlined">north_east</span>
