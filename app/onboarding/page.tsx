@@ -1307,11 +1307,9 @@ function StepAdvisor({
 
   // Poll portfolio JSON after each assistant message
   useEffect(() => {
-    console.log("[sidebar-sync] userHash:", userHash, "messages:", messages.length);
     if (!userHash) return;
     const assistantCount = messages.filter((m) => m.role === "assistant").length;
     if (assistantCount === 0) return;
-    console.log("[sidebar-sync] fetching portfolio for", userHash);
 
     const titleCase = (s: string) =>
       s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -1323,8 +1321,7 @@ function StepAdvisor({
           return res.json();
         })
         .then((data) => {
-          if (!data || data.error) { console.log("[sidebar-sync] no data or error"); return; }
-          console.log("[sidebar-sync] got portfolio data:", Object.keys(data));
+          if (!data || data.error) return;
 
           const facts: ConversationFacts = {};
           if (data.emergency_reserve?.length > 0) facts.emergency_fund = "Yes";
