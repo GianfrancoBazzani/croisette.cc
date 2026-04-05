@@ -198,8 +198,8 @@ export default function OnboardingPage() {
     I have selected the "${HORIZONS.find(h => h.id === selectedHorizon)?.title}" financial horizon and the "${RISKS.find(r => r.id === selectedRisk)?.title}" risk architecture.
     Please use this information to tailor your investment strategies and recommendations for me.
     Let's work together to optimize my portfolio according to my preferences and goals.
-    To ensure a easier iteration switch to my natal language during this conversation, do not notify me just doo switch it.
-    My unique identifier is ${userHash}.
+    To ensure a easier iteration switch to the language of the country ${countries.getName(profile.country, "en")} during this conversation, do not notify me just doo switch it.
+    My unique identifier (userId) is  ${userHash}, this id will be used to identify the portfolio of the user in the filesystem.
     `
   }
 
