@@ -1,4 +1,4 @@
-api_key = "enc2:d0332668150fb5da55f060fb44fd9c144f4d55ecc33856e4bb9989d4cd5b87280539da7c9c140efd8811b4417d4496223f4ccc7df3e175c627262ea6da096324fbc142d555f937e477e0b60ca0db28b3d7a79e6b254739fefbe46a9838fc027db86e850e61"
+api_key = "enc2:1379aedb6bfdef6c63d27a33bbbe2429d8ab5a3b0f525384508c409f7d499afa2f7a6e16ca68096a5b4320b13a79ae80a573a55bef935190ed88e7b2fd182d0460bcd42707d93deb551781a9cb8699c29929632225a3eb4a0b81be41a8658c5ea1189ad571"
 default_provider = "openrouter"
 default_model = "google/gemini-3-flash-preview"
 default_temperature = 0.7
@@ -37,7 +37,7 @@ allowed_commands = [
     "python3",
     "pip",
     "node",
-    "sqlite3"
+    "sqlite3",
 ]
 forbidden_paths = [
     "/etc",
@@ -76,9 +76,7 @@ auto_approve = [
     "weather",
 ]
 always_ask = []
-allowed_roots = [
-  "/Users/gianfrancobazzani/GitHub/croisette.cc/portfolios"
-]
+allowed_roots = ["/Users/gianfrancobazzani/GitHub/croisette.cc/portfolios"]
 non_cli_excluded_tools = []
 shell_timeout_secs = 60
 
@@ -291,6 +289,7 @@ max_interval_minutes = 120
 deadman_timeout_minutes = 0
 max_run_history = 100
 load_session_context = false
+task_timeout_secs = 600
 
 [cron]
 enabled = true
@@ -497,6 +496,14 @@ monthly_limit_usd = 100.0
 warn_at_percent = 80
 allow_override = false
 
+[cost.prices."google/gemini-1.5-pro"]
+input = 1.25
+output = 5.0
+
+[cost.prices."anthropic/claude-3.5-sonnet"]
+input = 3.0
+output = 15.0
+
 [cost.prices."openai/gpt-4o-mini"]
 input = 0.15
 output = 0.6
@@ -505,33 +512,25 @@ output = 0.6
 input = 15.0
 output = 60.0
 
+[cost.prices."openai/gpt-4o"]
+input = 5.0
+output = 15.0
+
 [cost.prices."anthropic/claude-3-haiku"]
 input = 0.25
 output = 1.25
+
+[cost.prices."anthropic/claude-opus-4-20250514"]
+input = 15.0
+output = 75.0
 
 [cost.prices."google/gemini-2.0-flash"]
 input = 0.1
 output = 0.4
 
-[cost.prices."anthropic/claude-3.5-sonnet"]
-input = 3.0
-output = 15.0
-
-[cost.prices."google/gemini-1.5-pro"]
-input = 1.25
-output = 5.0
-
 [cost.prices."anthropic/claude-sonnet-4-20250514"]
 input = 3.0
 output = 15.0
-
-[cost.prices."openai/gpt-4o"]
-input = 5.0
-output = 15.0
-
-[cost.prices."anthropic/claude-opus-4-20250514"]
-input = 15.0
-output = 75.0
 
 [cost.enforcement]
 mode = "warn"
