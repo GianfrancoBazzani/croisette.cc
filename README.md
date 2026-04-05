@@ -1,4 +1,3 @@
-> Gianfran.co:
 # 🌴 Croisette.cc
 
 ![Croisette Finance logo](public/croissete-white.svg)
