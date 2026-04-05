@@ -2,77 +2,88 @@
   "investments": [
     {
       "asset": {
-        "ticker": "ARC_USYC",
-        "chainId": 1,
-        "address": "0x0000000000000000000000000000000000000000",
-        "decimals": 6,
-        "type": "cash",
-        "description": "Arc USYC yield-bearing tokenized money market position"
-      },
-      "allocation_percentage": 60
-    },
-    {
-      "asset": {
         "ticker": "SPYon",
         "chainId": 1,
-        "address": "0x0000000000000000000000000000000000000000",
+        "address": "0x...",
         "decimals": 18,
         "type": "stocks",
-        "description": "SPDR S&P 500 ETF tokenized exposure on Ethereum mainnet"
+        "description": "SPDR S&P 500 ETF tokenized exposure"
       },
-      "allocation_percentage": 30
+      "allocation_percentage": 50
     },
     {
       "asset": {
         "ticker": "WETH",
         "chainId": 1,
-        "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        "address": "0x...",
         "decimals": 18,
         "type": "crypto",
-        "description": "Wrapped Ether on Ethereum mainnet"
+        "description": "Wrapped Ether on Ethereum"
+      },
+      "allocation_percentage": 25
+    },
+    {
+      "asset": {
+        "ticker": "WBTC",
+        "chainId": 1,
+        "address": "0x...",
+        "decimals": 8,
+        "type": "crypto",
+        "description": "Wrapped Bitcoin on Ethereum"
+      },
+      "allocation_percentage": 15
+    },
+    {
+      "asset": {
+        "ticker": "ARC_USYC",
+        "chainId": 1,
+        "address": "0x...",
+        "decimals": 6,
+        "type": "cash",
+        "description": "Arc USYC yield-bearing tokenized money market"
       },
       "allocation_percentage": 10
     }
   ],
-  "risk_level": "low",
+  "risk_level": "very_high",
   "emergency_reserve": [
     {
       "ticker": "ARC_USYC",
       "chainId": 1,
-      "address": "0x0000000000000000000000000000000000000000",
+      "address": "0x...",
       "decimals": 6,
       "type": "cash",
-      "description": "Arc USYC yield-bearing tokenized money market position"
+      "description": "Emergency Fund (6 months of expenses)"
     }
   ],
   "strategy": {
     "type": "DCA",
     "initial_investment": 0,
-    "dca_amount": 2000,
+    "dca_amount": 30000,
     "dca_frequency": "monthly",
     "dca_duration_months": 120,
-    "monthly_investment_after_dca": 2000,
+    "monthly_investment_after_dca": 30000,
     "effort_level": "low"
   },
   "fire": {
-    "fire_number": 450000,
+    "fire_number": 4500000,
     "fire_variant": "regular",
-    "annual_expenses_retirement": 18000,
-    "current_portfolio": 0,
-    "target_age": 55,
-    "years_to_fire": 10,
-    "monthly_investment_needed": 2000,
-    "expected_annual_return": 5,
+    "annual_expenses_retirement": 180000,
+    "current_portfolio": 90000,
+    "target_age": 37,
+    "years_to_fire": 11,
+    "monthly_investment_needed": 30000,
+    "expected_annual_return": 8,
     "withdrawal_rate": 0.04,
-    "note": "Basat en despeses de 1.500€/mes i 25x per FIRE."
+    "note": "High savings rate allows for aggressive FIRE timeline."
   },
   "user_profile": {
-    "age": 45,
+    "age": 26,
     "country": "Andorra",
-    "monthly_expenses": 1500,
+    "monthly_expenses": 15000,
     "investment_horizon": "retire_early",
-    "risk_profile": "low"
+    "risk_profile": "very_high"
   },
-  "created_at": "2026-04-05T03:20:00Z",
-  "last_updated": "2026-04-05T03:20:00Z"
+  "created_at": "2026-04-05T03:35:00Z",
+  "last_updated": "2026-04-05T03:35:00Z"
 }
