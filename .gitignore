@@ -50,3 +50,4 @@ tsconfig.tsbuildinfo
 
 # claude
 .claude/
+marketing/internUse.md

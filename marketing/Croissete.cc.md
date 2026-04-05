@@ -23,7 +23,7 @@ That’s exactly why we built Croissete Finance. We think investing should be as
 
 We cut out the middlemen, the confusing charts, and the high fees. You just answer a few simple questions about your goals, and you're done.
 
-Behind the scenes, we use blockchain tech and AI—but you don't need to know how any of that works. What you *do* need to know is that instead of a guy in a suit who clocks out at 5 PM, your money is managed by intelligent AI agents that are awake **24/7/365**. They constantly read the news, watch global trends, and automatically shift your money to keep it safe and growing, day or night.
+Behind the scenes, we use blockchain and AI but you don't need to know how any of that works. What you *do* need to know is that instead of a guy in a suit who clocks out at 5 PM, your money is managed by intelligent AI agents that are awake **24/7/365**. They constantly read the news, watch global trends, and automatically shift your money to keep it safe and growing, day or night.
 
 ---
 
