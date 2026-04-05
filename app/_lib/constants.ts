@@ -4,6 +4,9 @@ export const ACP_DEFAULTS = {
   sessionTimeout: 3600, // seconds
 } as const;
 
+export const TEMPLATE_DIR = ".zeroclaw/templates/portfolio-manager";
+export const BASE_GATEWAY_PORT = 43000;
+
 export interface AgentConfig {
   slug: string;
   name: string;

@@ -85,6 +85,26 @@ CREATE TABLE IF NOT EXISTS ideal_portfolio_entry (
     updatedAt INTEGER NOT NULL,
     UNIQUE(portfolioId, assetId)
 );
+CREATE TABLE IF NOT EXISTS telegram_bot (
+    id TEXT PRIMARY KEY,
+    botUsername TEXT NOT NULL UNIQUE,
+    botToken TEXT NOT NULL,
+    userId TEXT UNIQUE REFERENCES user(id),
+    createdAt INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS user_agent (
+    id TEXT PRIMARY KEY,
+    userId TEXT NOT NULL UNIQUE REFERENCES user(id),
+    agentDirName TEXT NOT NULL UNIQUE,
+    walletAddress TEXT NOT NULL,
+    telegramBotId TEXT NOT NULL REFERENCES telegram_bot(id),
+    gatewayPort INTEGER NOT NULL UNIQUE,
+    daemonPid INTEGER,
+    status TEXT NOT NULL DEFAULT 'provisioning'
+        CHECK(status IN ('provisioning', 'running', 'stopped', 'error')),
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
 `);
 
 seedAssets();
