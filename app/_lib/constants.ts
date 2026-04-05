@@ -25,7 +25,7 @@ export const AGENTS: Record<string, AgentConfig> = {
     name: "Portfolio Builder (DeepSeek)",
     description: "Portfolio allocation, DCA strategies, FIRE calculator",
     configDir: ".zeroclaw/agents/portfolio-builder-deepseek",
-    manifestRootHash: "0x3fefb1274dd17385e1e00ab72e4961b14a29a3b3d4e87068fed7e957769ab66a",
+    manifestRootHash: "0xcdc776f05be2787501242bdafe306afa352acec73d520062e9acf71cd33d48aa",
 
   },
 };
