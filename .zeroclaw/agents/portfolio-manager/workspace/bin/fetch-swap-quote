@@ -1,0 +1,26 @@
+#!/bin/sh
+# Fetches a Uniswap swap quote for a single pair
+# Usage: ./bin/fetch-swap-quote <chainId> <tokenIn> <tokenOut> <amountRaw>
+# Reads Uniswap credentials from .env
+# Returns the full quote response JSON
+
+set -e
+
+CHAIN_ID="$1"
+TOKEN_IN="$2"
+TOKEN_OUT="$3"
+AMOUNT_RAW="$4"
+
+if [ -z "$CHAIN_ID" ] || [ -z "$TOKEN_IN" ] || [ -z "$TOKEN_OUT" ] || [ -z "$AMOUNT_RAW" ]; then
+  echo "Usage: ./bin/fetch-swap-quote <chainId> <tokenIn> <tokenOut> <amountRaw>" >&2
+  exit 1
+fi
+
+# Load env
+export $(grep -v '^#' .env | xargs)
+
+curl -s -X POST "$UNISWAP_API_BASE_URL/quote" \
+  -H "x-api-key: $UNISWAP_API_KEY" \
+  -H "Content-Type: application/json" \
+  -H "x-universal-router-version: 2.0" \
+  -d "{\"tokenIn\":\"$TOKEN_IN\",\"tokenOut\":\"$TOKEN_OUT\",\"tokenInChainId\":$CHAIN_ID,\"tokenOutChainId\":$CHAIN_ID,\"amount\":\"$AMOUNT_RAW\",\"type\":\"EXACT_INPUT\",\"swapper\":\"$MANAGED_WALLET_ADDRESS\",\"routingPreference\":\"BEST_PRICE\",\"protocols\":[\"V2\",\"V3\",\"V4\"]}"

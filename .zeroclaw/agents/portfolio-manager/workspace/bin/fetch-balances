@@ -1,0 +1,55 @@
+#!/bin/sh
+# Fetches all balances for supported assets on a given chain
+# Usage: ./bin/fetch-balances <chainId>
+# Reads wallet address and RPC from .env
+# Reads assets from sqlite.db
+
+set -e
+
+CHAIN_ID="${1:-11155111}"
+
+# Load env
+export $(grep -v '^#' .env | xargs)
+
+# Determine RPC
+if [ "$CHAIN_ID" = "1" ]; then
+  RPC="$ETHEREUM_RPC_URL"
+elif [ "$CHAIN_ID" = "11155111" ]; then
+  RPC="$ETHEREUM_SEPOLIA_RPC_URL"
+else
+  echo "Unknown chainId: $CHAIN_ID" >&2
+  exit 1
+fi
+
+WALLET="$MANAGED_WALLET_ADDRESS"
+CAST="./bin/cast"
+
+echo "{"
+echo "  \"wallet\": \"$WALLET\","
+echo "  \"chainId\": $CHAIN_ID,"
+echo "  \"rpc\": \"$RPC\","
+echo "  \"balances\": ["
+
+FIRST=true
+sqlite3 -separator '|' sqlite.db "SELECT ticker, address, decimals FROM asset WHERE chainId = $CHAIN_ID" | while IFS='|' read -r TICKER ADDRESS DECIMALS; do
+  if [ "$FIRST" = true ]; then
+    FIRST=false
+  else
+    echo "    ,"
+  fi
+
+  # Fetch balance
+  if [ "$ADDRESS" = "0x0000000000000000000000000000000000000000" ]; then
+    RAW=$($CAST balance "$WALLET" --rpc-url "$RPC" 2>/dev/null || echo "0")
+  else
+    RAW=$($CAST call "$ADDRESS" "balanceOf(address)(uint256)" "$WALLET" --rpc-url "$RPC" 2>/dev/null || echo "0")
+  fi
+
+  # Clean up the output (remove whitespace, brackets)
+  RAW=$(echo "$RAW" | tr -d '[:space:]' | sed 's/\[.*\]//')
+
+  echo "    {\"ticker\": \"$TICKER\", \"address\": \"$ADDRESS\", \"decimals\": $DECIMALS, \"raw_balance\": \"$RAW\"}"
+done
+
+echo "  ]"
+echo "}"
