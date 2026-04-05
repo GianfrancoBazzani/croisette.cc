@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
@@ -131,6 +131,7 @@ export default function OnboardingPage() {
   const [selectedRisk, setSelectedRisk] = useState<string | null>(null);
   const [profile, setProfile] = useState({ name: "", age: "", country: "", telegram: "" });
   const sessionId = useMemo(() => crypto.randomUUID(), []);
+  const goToAdvisor = useCallback(() => setStep(4), []);
 
   /* ── Verification: run when entering step 3 ── */
   const [verified, setVerified] = useState(false);
@@ -267,7 +268,7 @@ export default function OnboardingPage() {
       )}
       {step === 3 && (
         <StepVerification
-          onComplete={() => setStep(4)}
+          onComplete={goToAdvisor}
           verified={verified}
           verifyError={verifyError}
         />
