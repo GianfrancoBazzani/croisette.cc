@@ -6,7 +6,6 @@ import { DefaultChatTransport } from "ai";
 import { useSession } from "@/lib/auth-client";
 import { AdvisorSidebar, type FunnelData } from "@/app/_components/advisor-sidebar";
 import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import Link from "next/link";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
@@ -1368,7 +1367,7 @@ function StepAdvisor({
                     <div key={bi} className="max-w-[70%]">
                       <div className="bg-surface-container-lowest text-on-surface px-6 py-4 rounded-2xl rounded-tr-none shadow-bubble-user ghost-border">
                         <div className="leading-relaxed text-[15px]">
-                          <Markdown remarkPlugins={[remarkGfm]}>{bubble}</Markdown>
+                          <Markdown>{bubble}</Markdown>
                         </div>
                       </div>
                     </div>
@@ -1409,7 +1408,7 @@ function StepAdvisor({
                   <div key={bi} className="max-w-[85%]">
                     <div className="bg-surface-container text-on-surface px-6 py-5 rounded-3xl rounded-tl-none shadow-bubble-assistant ghost-border">
                       <div className="leading-relaxed text-[15px]">
-                        <Markdown remarkPlugins={[remarkGfm]}>{bubble}</Markdown>
+                        <Markdown>{bubble}</Markdown>
                       </div>
                     </div>
                   </div>
