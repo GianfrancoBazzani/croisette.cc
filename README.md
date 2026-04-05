@@ -1,8 +1,29 @@
-# Croisette.cc
+# 🌴 Croisette.cc
+
+![Croisette Finance logo](public/croissete.svg)
 
 Agentic investment platform - ETH Global Cannes 2026
 
-## Commands
+
+
+## Tech Stack
+
+Next.js frontend 
+
+[ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) Agents with 0Gs LLMs using [0G-Compute-Adapter](https://github.com/claraverse-space/0G-Compute-Adapter)
+
+Portfolio Manager Agent
+
+
+
+0G Agent Verification technology
+
+
+
+
+
+
+## Useful Commands
 
 Init ZeroClaw agents:
 ```
@@ -25,8 +46,3 @@ allowed_roots = [
 ]
 ```
 
-## Tech Stack
-
-TODO
-
-## TODO fill with hackaton application questions
