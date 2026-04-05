@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2026-04-04T21:35:33.401Z",
+  "created": "2026-04-05T01:46:53.250Z",
   "agentId": "portfolio-builder-deepseek",
   "files": {
     "SOUL.md": {
@@ -14,19 +14,19 @@
       "size": 2332
     },
     "AGENTS.md": {
-      "rootHash": "0x8d4154eafdb3747e6e54d8b02695f51941ccbe1d8901bdba7e0516f11d0fcaf2",
-      "sha256": "83c25e93726d50aea96201c292c1bb8a7ecadc4a7c5bbb8b4fb5a8fcacb42744",
-      "size": 8881
+      "rootHash": "0xa180f8b05b84117f9954514803e74ea77178b318402315d457045819a66cf759",
+      "sha256": "38793c2d20ad954c0a007cc42a157d3f6386bc892968054d9157d6c0ee4a805d",
+      "size": 10581
     },
     "TOOLS.md": {
-      "rootHash": "0xc097b84e07fdbe5cc7993403b2c9e9755fbb1a292214bb73dd3a1451269ac6c4",
-      "sha256": "b306e24497adb610049b45cd39a40a1cb3c926bafc24d2ccda44f4499748ef42",
-      "size": 4853
+      "rootHash": "0x7450dbaaf3ac3ce41fb36294fbf3d1d2301501ed031545f8d013e9b3b343149a",
+      "sha256": "0c6fb4671abfd307bdd03c2feb7afc191112665b75ad63a5e73c8e1316d63fa5",
+      "size": 3279
     },
     "USER.md": {
-      "rootHash": "0x86761f2c74d77b7caa61d73c6f44aa524269e36ea21c55695b9f9ba1ce294a34",
-      "sha256": "e21e2827a66dcc5595f7107a543ec3fb619da9323fdfd873092233b3042cac11",
-      "size": 1133
+      "rootHash": "0xbc1883dc7bde8da9a098890bc57a20613f7a634eff63af376c28966d7bbe9913",
+      "sha256": "372ca6fa3cd1e885998cdb32a66c4b65d15b945b2c1a9da664213061e3c8b6ca",
+      "size": 1038
     },
     "MEMORY.md": {
       "rootHash": "0xe9f7994f11b4959f8256917c6fbaa11c9711fe5d96afde14d24b496dddbe599b",
@@ -39,5 +39,5 @@
       "size": 325
     }
   },
-  "manifestRootHash": "0x3fefb1274dd17385e1e00ab72e4961b14a29a3b3d4e87068fed7e957769ab66a"
+  "manifestRootHash": "0xcdc776f05be2787501242bdafe306afa352acec73d520062e9acf71cd33d48aa"
 }
