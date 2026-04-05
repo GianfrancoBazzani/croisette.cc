@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /Users/polurenaheras/.foundry/bin/cast "$@"
+exec "$HOME/.foundry/bin/cast" "$@"

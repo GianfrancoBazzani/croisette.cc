@@ -29,6 +29,13 @@ Thumbs.db
 
 # zeroclaw
 **/.secret_key
+.zeroclaw/**/config.toml
+.zeroclaw/**/memory/
+.zeroclaw/**/sessions/
+.zeroclaw/**/.env
+.zeroclaw/**/state/
+.zeroclaw/**/audit.log
+.zeroclaw/**/tmp_*.sh
 
 # database
 sqlite.db
