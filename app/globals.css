@@ -163,3 +163,25 @@
 .animate-fade-in-up {
   animation: fade-in-up 0.4s ease-out;
 }
+
+/* Markdown table styling for chat bubbles */
+@layer base {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    margin: 0.75rem 0;
+  }
+  th {
+    text-align: left;
+    font-weight: 700;
+    padding: 0.5rem 0.75rem;
+    background-color: color-mix(in srgb, currentColor 6%, transparent);
+  }
+  td {
+    padding: 0.5rem 0.75rem;
+  }
+  tr + tr {
+    border-top: 1px solid color-mix(in srgb, currentColor 8%, transparent);
+  }
+}
