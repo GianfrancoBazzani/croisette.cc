@@ -1138,7 +1138,7 @@ function StepVerification({
               token
             </span>
             <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">
-              Powered by 0G Verification Protocol
+              Powered by 0G Agent Verification Protocol
             </span>
           </div>
         </div>
