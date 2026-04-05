@@ -9,6 +9,21 @@ Init ZeroClaw agents:
 zeroclaw onboard --config-dir .zeroclaw/agents/<agent-name>/
 ```
 
+Create Symbolic links:
+```
+ln -s /Users/gianfrancobazzani/GitHub/croisette.cc/portfolios ./portfolios
+```
+```
+ln -s /Users/gianfrancobazzani/GitHub/croisette.cc/sqlite.db ./sqlite.db
+```
+
+To configure allowed roots for portfolio paths:
+```
+[autonomy]
+allowed_roots = [
+  "/Users/gianfrancobazzani/GitHub/croisette.cc/portfolios",
+]
+```
 
 ## Tech Stack
 
