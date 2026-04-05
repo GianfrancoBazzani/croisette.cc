@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "created": "2026-04-04T16:05:18.516Z",
+  "agentId": "portfolio-builder-og",
+  "files": {
+    "SOUL.md": {
+      "rootHash": "0xe3e421f9ec26142d895c3d592879c130162eeb7b066b097b1db64005ee488a7c",
+      "sha256": "ee7c248c4334548cb5a4ab44646e632266ac4e6598c0fd97b5b8400c8743bc53",
+      "size": 1799
+    },
+    "IDENTITY.md": {
+      "rootHash": "0x0232dc4260463ce6d0d5b6ec5adf5bdfa2a18c146e582f9008d4122564304c25",
+      "sha256": "d61b36ce2ca6c36fb29fdf74db9e316f5fad00a920449d4825ad4d85f35b1481",
+      "size": 295
+    },
+    "AGENTS.md": {
+      "rootHash": "0x0f099784da1f4147b05a568248278773a5aca57f0746d8db8dd62faae097c16d",
+      "sha256": "89a4624c68ca9e6bf9b8483efcfa1596413a856f6cb1369db752075790523adc",
+      "size": 2026
+    },
+    "TOOLS.md": {
+      "rootHash": "0x8293997a8decb9a0c11205ab5bfe5f4bacb68391390d73c33aafb887a71e2d81",
+      "sha256": "c9688671c36f11ef6e978da6920bd2dc21fb2874cdfdb3ef106e4c33ead811ae",
+      "size": 1518
+    },
+    "USER.md": {
+      "rootHash": "0x1dae7c42051362a3058956bba9bd41bb782c3d6c26bf02e8213c0b15d8f0a66e",
+      "sha256": "ad60897c342163925c79d8166f7a6b486cb8b9fa0839a477ff9176f6ddef8d9f",
+      "size": 623
+    },
+    "HEARTBEAT.md": {
+      "rootHash": "0xb0779a4c54a45113ee30d598fa4f55fe635f5374102bbaae6d942023b0b14e46",
+      "sha256": "3fa5b42475eaf5973c5b049ba2e429f3480babc2d2a0cb1ea57d7e3fa9d88b64",
+      "size": 325
+    }
+  },
+  "manifestRootHash": "0x75fc23f4b5307805afae84df2b9600e304038289fa51e7825b03ea6fabb6ae90"
+}
