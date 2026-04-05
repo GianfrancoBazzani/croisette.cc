@@ -1,6 +1,6 @@
 # 🌴 Croisette.cc
 
-![Croisette Finance logo](public/croissete.svg)
+![Croisette Finance logo](public/croissete-white.svg)
 
 Agentic investment platform - ETH Global Cannes 2026
 
