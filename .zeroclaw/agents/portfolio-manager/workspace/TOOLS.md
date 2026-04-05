@@ -116,7 +116,45 @@ sqlite3 -json sqlite.db "SELECT ticker, address, chainId, decimals, type FROM as
 sqlite3 -json sqlite.db "SELECT a.ticker, a.type, e.allocation FROM ideal_portfolio p JOIN ideal_portfolio_entry e ON e.portfolioId = p.id JOIN asset a ON a.id = e.assetId WHERE p.userId = 'test-user-001'"
 ```
 
-### Test user: `test-user-001` — target: WETH 50%, WBTC 30%, LINK 20%
+### Test user: `test-user-001`
+- **Investing target (Sepolia):** WETH 50%, WBTC 30%, LINK 20%
+- **Emergency liquidity target (Arc):** $500 in ARC_USDC
+- **Rebalance threshold:** ±5% drift before proposing swaps
+
+## Emergency Liquidity (Arc Testnet)
+
+- Chain ID: 5042002
+- RPC: `$ARC_RPC_URL` (from .env: `https://arc-testnet.drpc.org`)
+- ARC_USDC: `0x3600000000000000000000000000000000000000` (6 decimals, valued at par)
+- ARC_EURC: `0x89B50855Aa3bE2F677cD6303Cec089B5F319D72a` (6 decimals, valued at par)
+- Emergency target: **$50 ARC_USDC** (keep $50 on Arc for emergencies)
+- If `ARC_USDC > emergency_target`: surplus can be bridged Arc → Sepolia for investing
+- If `ARC_USDC < emergency_target`: bridge Sepolia → Arc to top up emergency fund
+- Bridge uses CCTP TokenMessengerV2 (same address on both chains)
+
+## CCTP Bridge Details (both directions)
+
+| Field | Sepolia | Arc Testnet |
+|---|---|---|
+| CCTP Domain | `0` | `26` |
+| TokenMessengerV2 | `0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA` | `0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA` |
+| USDC | `0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238` | `0x3600000000000000000000000000000000000000` |
+| RPC env var | `$ETHEREUM_SEPOLIA_RPC_URL` | `$ARC_RPC_URL` |
+
+Bridge script pattern (works both directions):
+```bash
+# Approve USDC for TokenMessenger on the SOURCE chain
+$CAST send $SOURCE_USDC "approve(address,uint256)" $TOKEN_MESSENGER $AMOUNT \
+  --private-key $KEY --rpc-url $SOURCE_RPC
+
+# Bridge: burn on source, mint on destination
+RECIPIENT="0x000000000000000000000000${WALLET#0x}"
+$CAST send $TOKEN_MESSENGER \
+  "depositForBurn(uint256,uint32,bytes32,address,bytes32,uint256,uint32)" \
+  $AMOUNT $DEST_DOMAIN $RECIPIENT $SOURCE_USDC \
+  "0x0000000000000000000000000000000000000000000000000000000000000000" 0 1000 \
+  --private-key $KEY --rpc-url $SOURCE_RPC
+```
 
 ## Built-in Tools
 

@@ -1,4 +1,4 @@
-api_key = ""  # Set via OPENROUTER_API_KEY env var or paste here (never commit)
+api_key = "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"  # Set via OPENROUTER_API_KEY env var or paste here (never commit)
 default_provider = "openrouter"
 default_model = "deepseek/deepseek-v3.2"
 default_temperature = 0.7
@@ -333,7 +333,7 @@ session_ttl_hours = 0
 debounce_ms = 0
 
 [channels_config.telegram]
-bot_token = ""
+bot_token = "8663234531:AAEjWMC8cNjZcoJz8de6ZEW5-trHICZJUUg"
 allowed_users = ["*"]
 stream_mode = "off"
 draft_update_interval_ms = 1000

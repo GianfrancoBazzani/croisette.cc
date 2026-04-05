@@ -9,9 +9,10 @@ Single entry point for every heartbeat cycle. Executes a strict 7-step pipeline.
 
 ## Active Skills
 
-- `portfolio-snapshot`
-- `swap-preparation`
-- `swap-execution`
+- `portfolio-snapshot` — fetches balances on Sepolia + Arc
+- `swap-preparation` — gets Uniswap quotes for Sepolia swaps
+- `swap-execution` — executes approved Sepolia swaps
+- `usdc-bridge` — bridges USDC from Sepolia to Arc via CCTP
 
 ## Data Sources
 
@@ -80,12 +81,15 @@ Entry criteria:
 - Step 1 completed
 
 Actions:
-1. Invoke the `portfolio-snapshot` skill with: wallet address, chain_id, supported asset list (from DB), valuation asset (USDC), RPC URL, Uniswap API credentials.
-2. Receive back: per-asset balances, USD valuations, allocation percentages, total portfolio value.
-3. If total portfolio value is zero or the snapshot is degraded, log the issue and exit the cycle early.
+1. Invoke the `portfolio-snapshot` skill to fetch balances on **both chains**:
+   - **Sepolia (investing):** all Sepolia assets from the DB
+   - **Arc (emergency liquidity):** ARC_USDC, ARC_EURC, ARC_USYC from the DB
+2. Receive back: per-asset balances and USD valuations for both chains.
+3. If Sepolia total portfolio value is zero or the snapshot is degraded, log the issue and exit the cycle early.
 
 Exit criteria:
-- a normalized portfolio snapshot with allocation percentages exists
+- investing portfolio snapshot (Sepolia) with allocation percentages exists
+- emergency liquidity snapshot (Arc) with USD values exists
 
 ### Step 3. Strategy Comparison
 
@@ -93,19 +97,36 @@ Entry criteria:
 - Step 2 completed
 
 Actions:
+
+**3a. Investing portfolio (Sepolia):**
 1. Use the target portfolio allocations from the database (loaded in Step 1). Each entry has an asset and an allocation percentage (0-100) representing the overall target for that asset.
 2. For each asset, compute drift:
    `drift = current_allocation_pct - target_allocation_pct`
-3. **Apply rebalance threshold (±5%).** If ALL assets have `|drift| < 5%`, the portfolio is sufficiently aligned. Output "portfolio aligned, no rebalance needed" and exit the cycle. Do not propose any swaps.
+3. **Apply rebalance threshold (±5%).** If ALL Sepolia assets have `|drift| < 5%`, mark the investing portfolio as "aligned".
 4. Build the action list only for assets that exceed the threshold:
-   - **WRAP candidates:** If native ETH has a 0% target but WETH has a positive target, generate a WRAP action. WRAP is value-neutral and consumes zero notional budget.
+   - **WRAP candidates:** If native ETH has a 0% target but WETH has a positive target, generate a WRAP action.
    - **BUY candidates:** For assets where `drift < -5%`, generate a buy action from USDC into the under-allocated asset.
    - **SELL candidates:** For assets where `drift > +5%`, generate a sell action from the over-allocated asset into USDC.
-5. Filter out dust actions where the USD amount is below a reasonable minimum (e.g., $1 on testnet, $10 on mainnet).
-6. If no actions remain after filtering, output "portfolio aligned, no rebalance needed" and exit.
+5. Filter out dust actions (< $1 on testnet, < $10 on mainnet).
+
+**3b. Emergency liquidity (Arc):**
+6. Check the ARC_USDC balance from the snapshot.
+7. Compare against the emergency liquidity target (from TOOLS.md — default $50 ARC_USDC).
+8. **If `ARC_USDC > emergency_target` (surplus on Arc):**
+   - Calculate surplus: `surplus = ARC_USDC_balance - emergency_target`
+   - Add a **BRIDGE Arc→Sepolia** action: bridge `surplus` USDC from Arc to Sepolia for investing
+   - This generates USDC on Sepolia that can be used for BUY swaps
+9. **If `ARC_USDC < emergency_target` (deficit on Arc):**
+   - Calculate gap: `gap = emergency_target - ARC_USDC_balance`
+   - Add a **BRIDGE Sepolia→Arc** action: bridge `gap` USDC from Sepolia to Arc
+10. **If `ARC_USDC == emergency_target`:** no bridge needed.
+
+**3c. Combined decision:**
+10. If the investing portfolio is "aligned" AND no bridge is needed: output "portfolio aligned, no rebalance needed" and exit the cycle.
+11. If any actions exist: proceed to Step 4.
 
 Exit criteria:
-- a deterministic action list exists, or a no-action decision is explicit
+- a deterministic action list exists (swaps + optional bridge), or a no-action decision is explicit
 
 ### Step 4. Swap Preparation
 
@@ -125,28 +146,27 @@ Entry criteria:
 - Step 4 completed
 
 Actions:
-1. Format a structured Telegram message with **numbered swaps** for per-swap approval:
+1. Format a structured Telegram message with **numbered actions** for per-action approval:
 
    ```
    📊 Rebalance Proposal
 
-   Current portfolio:
-   • WETH: 0.08 ($150) — 65%
-   • USDC: 80 ($80) — 35%
+   INVESTING PORTFOLIO (Sepolia):
+   • WETH: 0.263 ($1,603) — 50.3%
+   • WBTC: 0.013 ($961) — 30.2%
+   • LINK: 18.2 ($339) — 10.6%
+   Target: WETH 50% | WBTC 30% | LINK 20%
 
-   Target: WETH 50% | UNI 30% | WBTC 20%
+   EMERGENCY LIQUIDITY (Arc):
+   • ARC_USDC: $100 / $500 target (needs $400 bridge)
 
-   Proposed swaps:
-   1️⃣ Buy UNI with 25 USDC → ~3.5 UNI — slippage 0.8%, gas ~$0.10
-   2️⃣ Buy WBTC with 15 USDC → ~0.0002 WBTC — slippage 0.8%, gas ~$0.10
+   Proposed actions:
+   1️⃣ SELL 0.116 WETH → ~700 USDC — impact 0.1%
+   2️⃣ BUY ~467 USDC → WBTC — impact 0.4%
+   3️⃣ BUY ~301 USDC → LINK — impact 1.2%
+   4️⃣ BRIDGE ~400 USDC Sepolia → Arc (emergency liquidity)
 
-   ❌ Rejected: (none)
-
-   Reply with:
-   • "approve all" — execute all swaps
-   • "approve 1" — execute only swap 1
-   • "approve 1,2" — execute swaps 1 and 2
-   • "reject all" — cancel, no execution
+   Reply: "approve all", "approve 1,2,3", or "reject all"
    ```
 
 2. Wait for user reply.
@@ -178,10 +198,12 @@ Entry criteria:
 - Step 6 produced at least one approved swap
 
 Actions:
-1. **Sort approved swaps in execution order:**
-   - WRAP first (ETH → WETH) — value-neutral, no API
-   - SELL next (over-allocated → USDC) — generates USDC for buys
-   - BUY last (USDC → under-allocated) — uses USDC from sells
+1. **Sort approved actions in execution order:**
+   - BRIDGE Arc→Sepolia first (if Arc has surplus) — generates USDC on Sepolia
+   - WRAP next (ETH → WETH) — value-neutral, no API
+   - SELL next (over-allocated → USDC) — generates more USDC for buys
+   - BUY next (USDC → under-allocated) — uses USDC from bridge + sells
+   - BRIDGE Sepolia→Arc last (if Arc has deficit) — tops up emergency fund
 
 2. **For WRAP:** Skip if ETH balance < 0.01 ETH. Otherwise wrap all ETH minus 0.01 gas reserve.
 
@@ -189,12 +211,19 @@ Actions:
 
 4. **For BUY swaps:** Do NOT use pre-calculated USD amounts. Instead:
    - Before each BUY, query the actual USDC balance on-chain
+   - If there are more BUYs or a BRIDGE after this one, reserve the appropriate portion
    - If multiple BUYs remain, split proportionally based on target allocation ratios
      - Example: WBTC target 30%, LINK target 20% → WBTC gets 60% of USDC, LINK gets 40%
-   - If this is the last BUY, use the full remaining USDC balance
+   - If this is the last BUY (and no BRIDGE pending), use the full remaining USDC balance
    - This handles slippage from earlier swaps automatically
 
-5. **Execute each swap** using the `swap-execution` skill (one script per swap).
+5. **For BRIDGE:** Use the `usdc-bridge` skill to bridge USDC from Sepolia to Arc.
+   - The bridge script: approve USDC for TokenMessengerV2, call `depositForBurn`, wait for attestation
+   - Query actual USDC balance before bridging (don't use pre-calculated amounts)
+   - Use the full remaining USDC if that's less than the proposed bridge amount
+   - See `usdc-bridge/SKILL.md` for the full bridge flow and contract addresses
+
+6. **Execute each action** using the appropriate skill (one script per action).
 
 6. **Send execution report:**
 
