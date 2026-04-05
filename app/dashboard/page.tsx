@@ -2,6 +2,8 @@
 
 import { useSession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { AllocationChart } from "@/app/_components/allocation-chart";
 
 interface AgentInfo {
   botLink: string;
@@ -12,9 +14,36 @@ interface AgentInfo {
   createdAt: number;
 }
 
+interface PortfolioData {
+  investments: Array<{
+    asset: { ticker: string; type: string; description: string };
+    allocation_percentage: number;
+  }>;
+  risk_level: string;
+  strategy: { type: string };
+  fire: { fire_number: number; fire_variant: string; years_to_fire: number };
+  user_profile: { investment_horizon: string };
+  created_at: string;
+  last_updated: string;
+}
+
+const TYPE_LABELS: Record<string, string> = {
+  stocks: "Equities",
+  crypto: "Crypto",
+  cash: "Stable / Cash",
+  bonds: "Bonds",
+  commodities: "Commodities",
+  precious_metals: "Precious Metals",
+};
+
+function titleCase(s: string) {
+  return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function DashboardPage() {
   const { data: session, isPending } = useSession();
   const [agent, setAgent] = useState<AgentInfo | null>(null);
+  const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -25,6 +54,7 @@ export default function DashboardPage() {
     }
   }, [isPending, session]);
 
+  // Fetch agent info
   useEffect(() => {
     if (!session) return;
 
@@ -41,6 +71,26 @@ export default function DashboardPage() {
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [session]);
+
+  // Fetch portfolio from JSON file via userHash
+  useEffect(() => {
+    if (!session?.user?.email) return;
+
+    const email = session.user.email;
+    crypto.subtle
+      .digest("SHA-256", new TextEncoder().encode(email))
+      .then((buf) => {
+        const hex = Array.from(new Uint8Array(buf).slice(0, 8))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+        return fetch(`/api/portfolio/${hex}`);
+      })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && !data.error) setPortfolio(data);
+      })
+      .catch(() => {});
+  }, [session?.user?.email]);
 
   const copyAddress = () => {
     if (!agent) return;
@@ -71,26 +121,33 @@ export default function DashboardPage() {
             ? "Stopped"
             : "Unknown";
 
+  const allocation = portfolio?.investments.map((inv) => ({
+    asset: inv.asset.ticker,
+    pct: inv.allocation_percentage,
+    type: inv.asset.type,
+    description: inv.asset.description,
+  }));
+
   return (
     <>
       {/* Header */}
       <header className="fixed top-0 w-full z-50 glass shadow-ambient h-16 flex items-center px-6 justify-between">
-        <span className="text-2xl font-black text-inverse-surface tracking-tighter">
+        <Link href="/" className="text-2xl font-black text-inverse-surface tracking-tighter">
           Croisette
-        </span>
+        </Link>
         <span className="text-xs font-label uppercase tracking-widest text-on-surface/40">
           Dashboard
         </span>
       </header>
 
-      <main className="min-h-dvh flex flex-col items-center justify-center relative px-6 pt-24 pb-16 overflow-hidden">
+      <main className="min-h-dvh flex flex-col items-center relative px-6 pt-24 pb-16 overflow-hidden">
         {/* Background accents */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 radial-art" />
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-secondary-fixed/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-primary-fixed/10 blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
-        <div className="w-full max-w-2xl z-10">
-          {/* Header */}
+        <div className="w-full max-w-5xl z-10">
+          {/* Page Title */}
           <div className="mb-10 flex flex-col items-start gap-2">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tighter text-inverse-surface leading-none">
               Your Portfolio<br />
@@ -130,7 +187,7 @@ export default function DashboardPage() {
           )}
 
           {agent && (
-            <div className="space-y-6">
+            <div className="space-y-6 max-w-2xl">
               {/* Status */}
               <div className="bg-surface-container-lowest rounded-2xl p-6 shadow-ambient ghost-border">
                 <div className="flex items-center gap-3 mb-2">
@@ -214,8 +271,135 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
+
+          {/* ── Portfolio Section ── */}
+          <div className="mt-16 max-w-5xl">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold tracking-tighter text-inverse-surface">
+                Designed Portfolio
+              </h2>
+              <p className="text-on-surface-variant mt-1 text-sm">
+                Your ideal allocation designed with the Croisette Advisor.
+              </p>
+            </div>
+
+            {portfolio && allocation ? (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left: Chart + Metadata */}
+                <div className="lg:col-span-1 flex flex-col gap-6">
+                  <div className="bg-inverse-surface text-surface rounded-xl p-8 shadow-ambient">
+                    <div
+                      className="text-xs uppercase font-semibold mb-6"
+                      style={{ letterSpacing: "0.1em", color: "#8f4c35" }}
+                    >
+                      Ideal Allocation
+                    </div>
+                    <AllocationChart allocation={allocation} />
+                  </div>
+
+                  <div className="bg-surface-container-lowest rounded-xl p-6 shadow-ambient">
+                    <div className="text-xs uppercase font-semibold text-on-surface-variant/50 tracking-widest mb-4">
+                      Portfolio Info
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-on-surface-variant">Risk Level</span>
+                        <span className="text-sm font-semibold text-primary">{titleCase(portfolio.risk_level)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-on-surface-variant">Strategy</span>
+                        <span className="text-sm font-semibold text-on-surface">{portfolio.strategy.type}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-on-surface-variant">Horizon</span>
+                        <span className="text-sm text-on-surface">{titleCase(portfolio.user_profile.investment_horizon)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-on-surface-variant">Created</span>
+                        <span className="text-sm text-on-surface">{new Date(portfolio.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-on-surface-variant">Last Updated</span>
+                        <span className="text-sm text-on-surface">{new Date(portfolio.last_updated).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Breakdown + Comparison */}
+                <div className="lg:col-span-2 flex flex-col gap-6">
+                  <div className="bg-surface-container-lowest rounded-xl p-8 shadow-ambient">
+                    <div className="text-xs uppercase font-semibold text-on-surface-variant/50 tracking-widest mb-6">
+                      Asset Breakdown
+                    </div>
+                    <div className="space-y-4">
+                      {allocation.map((item) => (
+                        <div key={item.asset} className="flex items-center justify-between py-3">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center">
+                              <span className="material-symbols-outlined text-on-surface-variant text-lg">
+                                {item.type === "stocks"
+                                  ? "trending_up"
+                                  : item.type === "crypto"
+                                    ? "currency_bitcoin"
+                                    : "account_balance"}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-on-surface">{item.asset}</p>
+                              <p className="text-xs text-on-surface-variant">{TYPE_LABELS[item.type] ?? item.type}</p>
+                            </div>
+                          </div>
+                          <p className="text-lg font-bold text-on-surface">{item.pct}%</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Real vs Ideal — placeholder */}
+                  <div className="bg-surface-container-lowest rounded-xl p-8 shadow-ambient">
+                    <div className="text-xs uppercase font-semibold text-on-surface-variant/50 tracking-widest mb-6">
+                      Real vs Ideal Allocation
+                    </div>
+                    <div className="flex flex-col items-center justify-center py-12 gap-4">
+                      <div className="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center">
+                        <span className="material-symbols-outlined text-on-surface-variant/30 text-3xl">
+                          account_balance_wallet
+                        </span>
+                      </div>
+                      <p className="text-sm text-on-surface-variant/40 text-center max-w-sm">
+                        Connect your wallet to compare your real portfolio distribution with your ideal allocation.
+                      </p>
+                      <button
+                        disabled
+                        className="mt-2 px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-widest bg-surface-container text-on-surface-variant/40 cursor-not-allowed"
+                      >
+                        Coming Soon
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-surface-container-low rounded-2xl p-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-surface-container mx-auto mb-4 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-on-surface-variant/30 text-3xl">pie_chart</span>
+                </div>
+                <p className="text-sm text-on-surface-variant/50">
+                  Complete the onboarding advisor to see your designed portfolio here.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-inverse-surface flex justify-center px-8 py-5">
+        <span className="text-[10px] text-surface-variant/40 font-label uppercase tracking-widest">
+          &copy; 2026 Croisette. High-End Editorial Intelligence.
+        </span>
+      </footer>
     </>
   );
 }
