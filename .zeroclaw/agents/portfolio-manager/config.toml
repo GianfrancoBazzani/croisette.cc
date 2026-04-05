@@ -1,6 +1,6 @@
-api_key = "enc2:78a5526d34d24f1331f2a76c77ddf8048a76117b20a45bd9bc52e8ac21b3911efa31e6e448e27ac842a7d27476b69b0a9ac94356510e3fdbfd33d8f3a750c9827f38e40ab00897d7c13470febf6bbc4d5e82ae211db0ffb53502e9f0a7f6ff3f4029fa7ec5"
+api_key = ""  # Set via OPENROUTER_API_KEY env var or paste here (never commit)
 default_provider = "openrouter"
-default_model = "google/gemini-3-flash-preview"
+default_model = "deepseek/deepseek-v3.2"
 default_temperature = 0.7
 provider_timeout_secs = 120
 model_routes = []
@@ -17,7 +17,7 @@ runtime_trace_path = "state/runtime-trace.jsonl"
 runtime_trace_max_entries = 200
 
 [autonomy]
-level = "full"
+level = "supervised"
 workspace_only = true
 allowed_commands = [
     "git",
@@ -37,6 +37,7 @@ allowed_commands = [
     "python3",
     "pip",
     "node",
+    "cast",
     "sqlite3",
 ]
 forbidden_paths = [
@@ -66,7 +67,6 @@ block_high_risk_commands = true
 shell_env_passthrough = []
 auto_approve = [
     "file_read",
-    "file_write",
     "memory_recall",
     "web_search_tool",
     "web_fetch",
@@ -77,7 +77,7 @@ auto_approve = [
     "weather",
 ]
 always_ask = []
-allowed_roots = ["/root/croisette.cc/portfolios"]
+allowed_roots = []
 non_cli_excluded_tools = []
 shell_timeout_secs = 60
 
@@ -89,7 +89,8 @@ correction_penalty = 0.05
 success_boost = 0.01
 
 [security.sandbox]
-backend = "auto"
+enabled = false
+backend = "none"
 firejail_args = []
 
 [security.resources]
@@ -280,7 +281,7 @@ enabled = false
 rules = []
 
 [heartbeat]
-enabled = false
+enabled = true
 interval_minutes = 30
 two_phase = true
 adaptive = false
@@ -289,7 +290,6 @@ max_interval_minutes = 120
 deadman_timeout_minutes = 0
 max_run_history = 100
 load_session_context = false
-task_timeout_secs = 600
 
 [cron]
 enabled = true
@@ -307,9 +307,17 @@ session_backend = "sqlite"
 session_ttl_hours = 0
 debounce_ms = 0
 
+[channels_config.telegram]
+bot_token = ""
+allowed_users = ["*"]
+stream_mode = "off"
+draft_update_interval_ms = 1000
+interrupt_on_new_message = false
+mention_only = false
+
 [memory]
 backend = "markdown"
-auto_save = false
+auto_save = true
 hygiene_enabled = false
 archive_after_days = 0
 purge_after_days = 0
@@ -394,7 +402,7 @@ scopes = ["https://graph.microsoft.com/.default"]
 token_cache_encrypted = true
 
 [secrets]
-encrypt = true
+encrypt = false
 
 [browser]
 enabled = true
@@ -496,13 +504,21 @@ monthly_limit_usd = 100.0
 warn_at_percent = 80
 allow_override = false
 
-[cost.prices."google/gemini-2.0-flash"]
-input = 0.1
-output = 0.4
+[cost.prices."anthropic/claude-sonnet-4-20250514"]
+input = 3.0
+output = 15.0
 
-[cost.prices."anthropic/claude-opus-4-20250514"]
+[cost.prices."openai/gpt-4o-mini"]
+input = 0.15
+output = 0.6
+
+[cost.prices."openai/o1-preview"]
 input = 15.0
-output = 75.0
+output = 60.0
+
+[cost.prices."anthropic/claude-3.5-sonnet"]
+input = 3.0
+output = 15.0
 
 [cost.prices."google/gemini-1.5-pro"]
 input = 1.25
@@ -512,25 +528,17 @@ output = 5.0
 input = 5.0
 output = 15.0
 
+[cost.prices."google/gemini-2.0-flash"]
+input = 0.1
+output = 0.4
+
+[cost.prices."anthropic/claude-opus-4-20250514"]
+input = 15.0
+output = 75.0
+
 [cost.prices."anthropic/claude-3-haiku"]
 input = 0.25
 output = 1.25
-
-[cost.prices."anthropic/claude-sonnet-4-20250514"]
-input = 3.0
-output = 15.0
-
-[cost.prices."openai/gpt-4o-mini"]
-input = 0.15
-output = 0.6
-
-[cost.prices."anthropic/claude-3.5-sonnet"]
-input = 3.0
-output = 15.0
-
-[cost.prices."openai/o1-preview"]
-input = 15.0
-output = 60.0
 
 [cost.enforcement]
 mode = "warn"
