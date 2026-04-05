@@ -41,9 +41,9 @@ export default function Home() {
       </nav>
 
       {/* ── Hero Section ── */}
-      <header className="relative pt-40 pb-32 px-8 overflow-hidden">
+      <header className="relative min-h-screen px-8 overflow-hidden flex items-center">
         <div className="absolute inset-0 radial-art opacity-40 pointer-events-none" />
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left — Headline & CTA */}
           <div className="lg:col-span-7 z-10">
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8 text-on-surface">
@@ -68,10 +68,10 @@ export default function Home() {
           {/* Right — Hero Visual */}
           <div className="lg:col-span-5 relative">
             {/* Logo above the card */}
-            <div className="mb-6">
+            <div className="mb-6 flex justify-center">
               <img alt="Croisette" className="h-20 md:h-32" src="/croissete.svg" />
             </div>
-            <div className="aspect-square bg-inverse-surface rounded-3xl overflow-hidden shadow-2xl relative p-10 flex flex-col justify-between">
+            <div className="aspect-[5/4] bg-inverse-surface rounded-3xl overflow-hidden shadow-2xl relative p-8 flex flex-col justify-between">
               {/* Radial art background texture */}
               <div className="absolute inset-0 radial-art opacity-[0.06] pointer-events-none" />
 
