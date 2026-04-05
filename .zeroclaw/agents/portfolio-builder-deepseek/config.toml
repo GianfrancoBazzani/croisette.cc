@@ -77,7 +77,7 @@ auto_approve = [
     "weather",
 ]
 always_ask = []
-allowed_roots = []
+allowed_roots = ["/root/croisette.cc/portfolios"]
 non_cli_excluded_tools = []
 shell_timeout_secs = 60
 
