@@ -41,6 +41,18 @@ Thumbs.db
 .zeroclaw/agents/*/workspace/devices.db
 bots.json
 
+.zeroclaw/agents/pm-*/
+.zeroclaw/agents/*/daemon_state.json
+.zeroclaw/agents/*/workspace/cron/jobs.db
+.zeroclaw/agents/*/workspace/sessions/
+.zeroclaw/agents/*/workspace/state/
+.zeroclaw/agents/*/workspace/memory/
+.zeroclaw/agents/*/.env
+.zeroclaw/agents/*/audit.log
+.zeroclaw/agents/*/workspace/sqlite.db
+.zeroclaw/agents/*/workspace/devices.db
+bots.json
+
 # database
 sqlite.db
 
@@ -49,3 +61,4 @@ tsconfig.tsbuildinfo
 
 # claude
 .claude/
+marketing/internUse.md

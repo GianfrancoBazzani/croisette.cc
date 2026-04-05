@@ -1,6 +1,6 @@
 api_key = "enc2:d0332668150fb5da55f060fb44fd9c144f4d55ecc33856e4bb9989d4cd5b87280539da7c9c140efd8811b4417d4496223f4ccc7df3e175c627262ea6da096324fbc142d555f937e477e0b60ca0db28b3d7a79e6b254739fefbe46a9838fc027db86e850e61"
 default_provider = "openrouter"
-default_model = "deepseek/deepseek-v3.2"
+default_model = "google/gemini-3-flash-preview"
 default_temperature = 0.7
 provider_timeout_secs = 120
 model_routes = []
@@ -17,7 +17,7 @@ runtime_trace_path = "state/runtime-trace.jsonl"
 runtime_trace_max_entries = 200
 
 [autonomy]
-level = "readonly"
+level = "supervised"
 workspace_only = true
 allowed_commands = [
     "git",
@@ -37,6 +37,7 @@ allowed_commands = [
     "python3",
     "pip",
     "node",
+    "sqlite3"
 ]
 forbidden_paths = [
     "/etc",
@@ -75,7 +76,9 @@ auto_approve = [
     "weather",
 ]
 always_ask = []
-allowed_roots = []
+allowed_roots = [
+  "/Users/gianfrancobazzani/GitHub/croisette.cc/portfolios"
+]
 non_cli_excluded_tools = []
 shell_timeout_secs = 60
 
@@ -87,7 +90,8 @@ correction_penalty = 0.05
 success_boost = 0.01
 
 [security.sandbox]
-backend = "auto"
+enabled = false
+backend = "none"
 firejail_args = []
 
 [security.resources]

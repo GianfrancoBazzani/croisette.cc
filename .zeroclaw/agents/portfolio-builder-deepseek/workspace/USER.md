@@ -21,6 +21,3 @@
 - Building and managing a personal investment portfolio
 - Learning foundational financial literacy: budgeting, saving, debt management, and investing
 - Exploring tokenized real-world assets (RWAs) and DeFi as part of a broader allocation strategy
-
----
-*Update this anytime. The more Croisette.cc Portfolio Builder knows, the better it helps.*

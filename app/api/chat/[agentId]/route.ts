@@ -4,9 +4,11 @@ import {
   type UIMessage,
 } from "ai";
 import { NextRequest, NextResponse } from "next/server";
+import path from "node:path";
 import { AGENTS } from "@/app/_lib/constants";
 import { ZeroClawClient } from "@/app/_lib/acp";
 import { getSession, setSession } from "@/app/_lib/session-store";
+import { checkIntegrity } from "@/app/_lib/integrity";
 
 export const maxDuration = 60;
 
@@ -32,11 +34,34 @@ export async function POST(
     );
   }
 
+  // Reuse existing session — integrity was already checked at creation time
   let session = getSession(sessionId);
+
   if (!session) {
+    // First message for this session — run integrity check once, then create session
+    const agentConfigDir = path.resolve(process.cwd(), agent.configDir);
+    const workspaceDir = path.join(agentConfigDir, "workspace");
+    const integrity = checkIntegrity(agentConfigDir, workspaceDir);
+
+    if (!integrity.ok) {
+      console.error(
+        `[integrity] FAILED for ${agentId}:`,
+        JSON.stringify({ failed: integrity.failed, missing: integrity.missing })
+      );
+      return NextResponse.json(
+        {
+          error: "Agent integrity check failed",
+          tampered: integrity.failed,
+          missing: integrity.missing,
+        },
+        { status: 403 }
+      );
+    }
+
     const client = new ZeroClawClient(agent);
     setSession(sessionId, client);
     session = getSession(sessionId)!;
+    console.log(`[chat] Session created for ${agentId} (${sessionId.slice(0, 8)}...)`);
   }
 
   // Build prompt string from messages
