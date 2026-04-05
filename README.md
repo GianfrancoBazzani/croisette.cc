@@ -31,7 +31,6 @@ On-chain agent files: [0x8f61…1e24 on 0G StorageScan](https://storagescan-gali
 
 <img src="public/1cf89d5c-9f4e-45f7-9cf9-6903673389c0.png" alt="0G Agent Verification" width="400">
 
-> Gianfran.co:
 ### Uniswap and Arc Integration
 
 Croisette uses the Uniswap Trading API as its quoting and swap routing provider, combined with [cast](https://book.getfoundry.sh/reference/cast/) (Foundry's Ethereum CLI) to manage agent wallets and execute on-chain settlement transactions. We found cast to be exceptionally reliable for agent-driven workflows because agents work very well with CLI tools. In the same way, we integrated the Arc testnet to allow users to obtain yield through yield-bearing stablecoins and by depositing into lending protocols that pay interest on deposits. To make the agents expert in both integrations, we built dedicated skills for swap preparation, swap execution, and USDC bridging.
