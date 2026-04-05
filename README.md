@@ -11,10 +11,10 @@ zeroclaw onboard --config-dir .zeroclaw/agents/<agent-name>/
 
 Create Symbolic links:
 ```
-ln -s /Users/gianfrancobazzani/GitHub/croisette.cc/portfolios ./portfolios
+ln -s /Users/gianfrancobazzani/GitHub/croisette.cc/portfolios /Users/gianfrancobazzani/GitHub/croisette.cc/.zeroclaw/agents/portfolio-builder-deepseek/workspace/portfolios
 ```
 ```
-ln -s /Users/gianfrancobazzani/GitHub/croisette.cc/sqlite.db ./sqlite.db
+ln -s /Users/gianfrancobazzani/GitHub/croisette.cc/sqlite.db /Users/gianfrancobazzani/GitHub/croisette.cc/.zeroclaw/agents/portfolio-builder-deepseek/workspace/sqlite.db
 ```
 
 To configure allowed roots for portfolio paths:
