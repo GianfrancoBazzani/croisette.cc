@@ -4,6 +4,13 @@
 
 Agentic investment platform - ETH Global Cannes 2026
 
+## Prizes
+
+Winner of best OpenClaw Agent on 0G track at ETH Global Cannes 2026
+
+<img width="2048" height="917" alt="image" src="https://github.com/user-attachments/assets/50382132-e853-4688-b189-c718b32b660c" />
+
+
 ## Description
 
 Croisette Finance is built to eliminate the "headache" and intimidation often associated with traditional investing. Currently, 55% of people leave their money in bank accounts where it loses value to inflation, and 80% of everyday investors lose money because they lack the time or expertise to manage complex portfolios. Croisette fixes this by replacing expensive brokers and "bankers' hours" with intelligent AI agents that work 24/7/365.
